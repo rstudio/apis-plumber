@@ -1,0 +1,14 @@
+--- 
+title: "Creating APIs in R with Plumber"
+author: "Jeff Allen"
+date: "`r Sys.Date()`"
+site: bookdown::bookdown_site
+output: bookdown::gitbook
+documentclass: book
+github-repo: trestletech/apis-plumber
+description: "Use the plumber R package to create HTTP APIs in R."
+---
+
+# Welcome
+
+Hi
