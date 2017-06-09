@@ -1,0 +1,7 @@
+
+# Routing & Input {#routing-and-input}
+
+  - Routing, HTTP verbs
+  - Filters
+  - Input parsing and alignment to parameters
+  - What gets executed at load time vs with each call

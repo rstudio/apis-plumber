@@ -9,6 +9,20 @@ github-repo: trestletech/apis-plumber
 description: "Use the plumber R package to create HTTP APIs in R."
 ---
 
-# Welcome
+```{r, echo=FALSE}
+include_r <- function(file){
+  cat("```r\n")
+  cat(paste0(readLines(file), collapse="\n"))
+  cat("\n```\n")
+}
+```
 
-Hi
+# Introduction {#intro}
+
+APIs \@ref(intro).
+
+ 1. Introduction
+   - Motivation -- HTTP APIs, R
+   - Installation R and plumber
+   
+## Installation {#installation}

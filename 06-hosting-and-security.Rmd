@@ -1,0 +1,13 @@
+
+# Hosting & Security {#hosting-and-security}
+    
+  - Reasons why you shouldn't host on your desktop or RStudio IDE
+  - DO
+  - RSC
+  - Docker
+  - pm2
+  - Security
+   - CORS
+ - 
+ - Networking & Firewalls {#networking} 
+   - How to access an API running on a remote machine (referenced this in the quickstart)

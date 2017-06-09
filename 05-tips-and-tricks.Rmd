@@ -1,0 +1,11 @@
+
+# Tips & Tricks {#tips-tricks}
+
+   - Debugging
+   - Testing
+   - Managing State
+     - In-memory Environments and <<-. BAD, STATELESS
+     - Cookies
+     - Concurrent programming (if multiple proc's)
+  - Organizing Large Applications
+  - Swagger
