@@ -7,9 +7,9 @@ Plumber allows you to create APIs by merely decorating your existing R code with
 include_r("files/apis/01-01-quickstart.R")
 ```
 
-This file defines two Plumber "endpoints." One is hosted at the path `/rand` and generates some random numbers then returns a summary; the other is hosted at the path `/graph` and returns an image showing a simple R plot.
+This file defines two Plumber "endpoints." One is hosted at the path `/echo` and simply echoes the message passed in; the other is hosted at the path `/graph` and returns an image showing a simple R plot.
 
-If you haven't installed `plumber` yet, see the [installation section](#installation). Once  you have plumber installed, you can use the `plumber::plumb` function to translate this R file into a Plumber API:
+If you haven't installed `plumber` yet, see the [installation section](#installation). Once  you have `plumber` installed, you can use the `plumber::plumb` function to translate this R file into a Plumber API:
 
 ```r
 pr <- plumber::plumb("plumber.R")
@@ -21,9 +21,11 @@ The `pr` object now encapsulates all the logic represented in your `plumber.R` f
 pr$run()
 ```
 
-You should see a message about your API running on your computer on port `8000`.  If you're running this code locally on your personal machine, you should be able to open http://localhost:8000/rand or http://localhost:8000/graph in a web browser to test your new API endpoints. 
+You should see a message about your API running on your computer on port `8000`. The API will continue running in your R session until you press the `Esc` key. If you're running this code locally on your personal machine, you should be able to open http://localhost:8000/echo or http://localhost:8000/graph in a web browser to test your new API endpoints. 
+ 
+> If you're using a tool like RStudio Server to run your R code on a remote machine, you should see the [networking section](#networking) for help with visiting your API.
 
-The `/rand` endpoint should show output resembling the following (though the numbers will of course differ since they are random after all).
+The `/echo` endpoint should show output resembling the following.
 
 ```{r, echo=FALSE, results='asis'}
 pr <- plumber::plumb("files/apis/01-01-quickstart.R")
@@ -42,13 +44,11 @@ res <- plumber:::PlumberResponse$new()
 do.call(e[['.__enclos_env__']]$private$func, list())
 ```
 
- > If you're using a tool like RStudio Server to run your R code on a remote machine, you should see the [networking section](#networking) for help with visiting your API.
-
 If you see something like the above: congratulations! You've just created your first Plumber API! You've already tested your API from a web browser, but there's nothing stopping you from leveraging this API from third-party tools or a client developed in R or any other programming language.
 
 ## Specifying the Inputs
 
-You may have noticed that the functions that define our endpoints accept parameters. These parameters will allow us to customize the behavior of our endpoints. One of the ways to do this is using "query strings" which are a way of passing variables into an HTTP API. If you visit http://localhost:8000/graph?n=100&color=red, you should see a similar graph to the one you saw before, but now there are more points and they're red.
+You may have noticed that the functions that define our endpoints accept parameters. These parameters allow us to customize the behavior of our endpoints. One of the ways to do this is using "query strings" which are a way of passing variables into an HTTP API. If you visit http://localhost:8000/graph?n=25&color=red, you should see a similar graph to the one you saw before, but now there are more points and they're red.
 
 ```{r, echo=FALSE, results='asis'}
 e <- pr$endpoints[[1]][[2]]
@@ -56,13 +56,27 @@ res <- plumber:::PlumberResponse$new()
 
 # Reach in to the private func and generate the image.
 # Otherwise the processors route this into a file so we can't see it.
-do.call(e[['.__enclos_env__']]$private$func, list(n=100, color="red"))
+do.call(e[['.__enclos_env__']]$private$func, list(n=25, color="red"))
 ```
 
-More details on how Plumber processes inputs are available in the [Routing & Input Chapter](#routing-and-input).
+As you might have guessed, the `n=25` portion of the URL sets the `n` parameter to `25` and `color=red` specifies the color for the graph. More details on how Plumber processes inputs are available in the [Routing & Input Chapter](#routing-and-input).
 
 ## Customizing The Output
 
-In the previous example, you saw one endpoint that rendered into JSON and one that produced an image. Unless instructed otherwise, Plumber will attempt to render whatever your endpoint function returns as JSON. However, you can specify alternative "serializers" which instruct Plumber to render the output as some other format such as HTML (`@html`), PNG (`@png`), or JPEG (`@jpeg`). You can even provide your own custom serializers and define how to translate the R object produced by your endpoint into the bits that will be used to respond to the incoming HTTP request.
+In the previous example, you saw one endpoint that rendered into JSON and one that produced an image. Unless instructed otherwise, Plumber will attempt to render whatever your endpoint function returns as JSON. However, you can specify alternative "serializers" which instruct Plumber to render the output as some other format such as HTML (`@html`), PNG (`@png`), or JPEG (`@jpeg`). 
+
+```{r, echo=FALSE, results='asis'}
+include_r("files/apis/01-02-html.R")
+```
+
+This endpoint would produce something like the following, when visited. It also sets the appropriate `Content-Type` header so that a browser that visits this page would know to render the result as HTML.
+
+```{r, echo=FALSE, results='asis'}
+pr <- plumber::plumb("files/apis/01-02-html.R")
+e <- pr$endpoints[[1]][[1]]
+code_chunk(e$exec(), "html")
+```
+
+You can even provide your own custom serializers and define how to translate the R object produced by your endpoint into the bits that will be used to respond to the incoming HTTP request.
 
 You can find more details in the [Rendering & Output chapter](#rendering-and-output).

@@ -3,3 +3,4 @@
 
   - Serializers & Content Types
   - Error Handling
+  - Custom serializer

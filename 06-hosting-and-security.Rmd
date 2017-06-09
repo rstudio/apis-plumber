@@ -8,6 +8,9 @@
   - pm2
   - Security
    - CORS
+   - XSRF
+   - Injection
+   - DOS -- check numerical inputs.
  - 
  - Networking & Firewalls {#networking} 
    - How to access an API running on a remote machine (referenced this in the quickstart)
