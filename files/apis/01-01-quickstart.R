@@ -2,13 +2,18 @@
 
 #' Simulate random numbers and return a summary
 #' @get /rand
-function(n=0){
+function(n=10){
+  # Don't accept a value that's too big...
+  if (n > 10000){
+    n <- 10000
+  }
+
   # Simulate n random numbers
   nums <- rnorm(n)
 
   # Return a list of info about the numbers
   list(
-    n = nums,
+    n = n,
     min = min(nums),
     max = max(nums),
     mean = mean(nums)

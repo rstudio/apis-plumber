@@ -1,5 +1,5 @@
 
-# Rendering Output {#rendering}
+# Rendering Output {#rendering-and-output}
 
   - Serializers & Content Types
   - Error Handling
