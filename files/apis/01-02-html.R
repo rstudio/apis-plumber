@@ -1,5 +1,4 @@
-#' @get /
-#' @html
+#' @get /hello
 function(){
-  "<html><h1>Hello, World!</h1></html>"
+  "hello world"
 }

@@ -1,0 +1,17 @@
+
+# Runtime {#runtime}
+
+Rename this chapter. I don't know what to call it.
+
+## Execution Model {#execution-model}
+
+Execution model
+ - what gets run at plumb() and run() time.
+
+Not sure if this really belongs here, but not sure where else to put it if not a new chapter.
+   
+## Managing State
+
+     - In-memory Environments and <<-. BAD, STATELESS
+     - Cookies
+     - Concurrent programming (if multiple proc's)
