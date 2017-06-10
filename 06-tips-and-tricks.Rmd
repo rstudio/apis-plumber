@@ -1,6 +1,8 @@
 
 # Tips & Tricks {#tips-tricks}
 
+## Setting Cookies {#setting-cookies}
+
    - Debugging
    - Testing
    - Managing State
