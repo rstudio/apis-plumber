@@ -23,13 +23,13 @@ HTTP APIs don't implicitly contain a notion of a "session." Without some additio
 Plumber can both set and receive cookies. For details on setting cookies, see the [Setting Cookies section](#setting-cookies). The API below will send you a random letter, but it remembers your preferences on whether you like capitalized or lower-case letters. 
 
 ```{r, echo=FALSE, results='asis'}
-include_r("files/apis/03-05-capitalize.R")
+include_r("files/apis/06-01-capitalize.R")
 ```
 
 Since we need to craft a `PUT` request to test this API, we'll use `curl` on the command line to test it. We can start by visiting the `/letter` endpoint and we'll see that the API defaults to a lower-case alphabet. `curl http://localhost:8000/letter`
 
 ```{r, echo=FALSE, results='asis'}
-pr <- plumber::plumb("files/apis/03-05-capitalize.R")
+pr <- plumber::plumb("files/apis/06-01-capitalize.R")
 e <- pr$endpoints[[1]][[2]]
 code_chunk(json_serialize(e$exec(req=list(cookies=list()))), "json")
 ```
@@ -44,6 +44,6 @@ This is a simple example showing how to persist user preferences across HTTP req
 
 There are two common work-arounds to this concern. You can simply store a long (cryptographically) random identifier in the user's cookie, and have some mapping on the server that allows you to lookup the session associated with that random ID. Alternatively, you could use signed/encrypted cookies, as detailed [below](#encrypted-cookies).
 
-### Setting Encrypted Cookies
+### Setting Encrypted Cookies {#encrypted-cookies}
 
 //TODO: See https://plumber.trestletech.com/docs/sessions/ -- it's got a pretty good start

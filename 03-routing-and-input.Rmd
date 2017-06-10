@@ -182,15 +182,25 @@ As demonstrated above, the raw request body is made available as `req$postBody`.
 
 ### Cookies
 
+If cookies are attached to the incoming request, they'll be made available via `req$cookies`. This will contain a list of all the raw cookies that were included with the request. See the [Setting Cookies section](#setting-cookies) for details on how to set cookies from Plumber.
 
-#### Encrypted Cookies {#encrypted-cookies}
-
-
-
+If you've set encrypted cookies (as discussed in the [Encrypted Cookies section](#encrypted-cookies)), that session will be decrypted and made available at `req$session`.
 
 ### Headers
 
-// TODO
+HTTP headers attached to the incoming request are attached to the request object. They are prefixed with `HTTP_` and the name of the header is capitalized. 
 
-Conflicts between path, query string, body?
+```{r, echo=FALSE, results='asis'}
+include_r("files/apis/03-05-headers.R")
+```
+
+Running `curl --header "customheader: abc123" http://localhost:8000` will return:
+
+```{r, echo=FALSE, results='asis'}
+code_chunk(json_serialize(list(val="abc123")), "json")
+```
+
+You can print out the names of all of the properties attached to the request by running `print(ls(req))` inside an endpoint.
+
+// TODO: Conflicts between path, query string, body?
 

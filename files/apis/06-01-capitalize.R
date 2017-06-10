@@ -8,6 +8,7 @@ function(res, capital){
 
 #' @get /letter
 function(req) {
+  print(ls(req))
   capitalize <- req$cookies$capitalize
 
   # Default to lower-case unless user preference is capitalized
