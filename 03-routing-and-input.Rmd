@@ -40,7 +40,7 @@ function(){
 
 ### Dynamic Routes {#dynamic-routes}
 
-In addition to having hardcoded routes like `/hello`, Plumber endpoints can have dynamic routes. Dynamic routes allow endpoints to define a more flexible set of paths against which they should match.
+In addition to having hard-coded routes like `/hello`, Plumber endpoints can have dynamic routes. Dynamic routes allow endpoints to define a more flexible set of paths against which they should match.
 
 A common REST convention is to include the identifier of an object in the API paths associated with it. So to lookup information about user #13, you might make a `GET` request to the path `/users/13`. Rather than having to register routes for every user your API might possible encounter, you can use a dynamic route to associate an endpoint with a variety of paths.
 
@@ -50,7 +50,7 @@ include_r("files/apis/03-01-dynamic.R")
 
 This API uses the dynamic path `/users/<id>` to match any request that is of the form `/users/` followed by some path element like a number or letters. In this case, it will return information about the user if a user with the associated ID was found, or an empty object if not.
 
-You can name these dynamic path elements however you'd like, but note that the name used in the dynamic path must match the name of the parameter for the functon (in this case, both `id`).
+You can name these dynamic path elements however you'd like, but note that the name used in the dynamic path must match the name of the parameter for the function (in this case, both `id`).
 
 You can even do more complex dynamic routes like:
 
@@ -61,7 +61,7 @@ function(from, to){
 }
 ```
 
-In both the hardcoded and dynamic examples given above, the parameters will be provided to the function as a character string.
+In both the hard-coded and dynamic examples given above, the parameters will be provided to the function as a character string.
 
 ### Typed Dynamic Routes {#typed-dynamic-routes}
 
@@ -108,8 +108,85 @@ integer	| `int`
 
 ### Filters {#filters}
 
+Unlike endpoints, a request may go through multiple Plumber filters before being served by an endpoint.
+
+//TODO
+
 ## Input Handling {#input-handling}
 
-Howwhat things get from request to parameters
+Plumber routes requests based exclusively on the path and method of the incoming HTTP request, but requests can contain much more information than just this. They might include additional HTTP headers, a query string, or a request body. All of these fields may be viewed as "inputs" to your Plumber API.
+
+### The Request Object
+
+// TODO
+
+### Query Strings {#query-strings}
+
+A query string may be appended to a URL in order to convey additional information beyond just the request route. Query strings allow for the encoding of character string keys and values. For example, in the URL `https://duckduckgo.com/?q=bread&pretty=1`, everything following the `?` constitutes the query string. In this case, two variables (`q` and `pretty`) have been set (to `bread` and `1`, respectively).
+
+Plumber will automatically forward information from the query string into the function being executed by aligning the name of the query string with the name of the function parameter. The following example defines a search API that mimics the example from [DuckDuckGo](https://duckduckgo.com) above but merely prints out what it receives.
+
+```{r, echo=FALSE, results='asis'}
+include_r("files/apis/03-03-search.R")
+```
+
+Visiting http://localhost:8000/?q=bread&pretty=1 will print:
+
+```{r, echo=FALSE, results='asis'}
+pr <- plumber::plumb("files/apis/03-03-search.R")
+e <- pr$endpoints[[1]][[1]]
+code_chunk(json_serialize(e$exec(q="bread", pretty="1")), "json")
+```
+
+This is equivalent to calling `search(q="bread", pretty="1")`. If a parameter were not specified in the query string, it would just be omitted from the invocation of the endpoint. For example http://localhost:8000/?q=cereal would be equivalent to `search(q="cereal")`. The function would fall back to the default value of the `pretty` parameter (`0`), since that was defined in the function signature.
+
+```{r, echo=FALSE, results='asis'}
+code_chunk(json_serialize(e$exec(q="cereal")), "json")
+```
+
+Including additional query string arguments that do not map to a parameter of the function has no effect. For instance http://localhost:8000/?test=123 will return the same results as calling `search()`.
+
+```{r, echo=FALSE, results='asis'}
+code_chunk(json_serialize(e$exec()), "json")
+```
+
+(Note that the raw query string is available as `req$QUERY_STRING`.)
+
+Some web browsers impose limitations on the length of a URL. Internet Explorer, in particular, caps the query string at 2,048 characters. If you need to send large amounts of data from a client to your API, it would likely be a better idea to send it in a [request body](#request-body).
+
+//TODO: Redundant keys?
+
+### Request Body {#request-body}
+
+Another way to provide additional information inside an HTTP request is using the message body. Effectively, once a client specifies all the metadata about a request (the path it's trying to reach, some HTTP headers, etc.) it can then provide a message body. The maximum size of a request body depends largely on the technologies involved (client, proxies, etc.) but is typically at least 2MB -- much larger than a query string. This approach is most commonly seen with `PUT` and `POST` requests, though you could encounter it with other HTTP methods. 
+
+Plumber will attempt to parse the request body in one of two ways: if it appears that the message is JSON, then Plumber will parse the body as a JSON message; otherwise it will decode it as a standard query string. Any fields provided in the message body in either format will be passed through as parameters to the function.
+
+Unfortunately, crafting a request with a message body requires a bit more work than making a `GET` request with a query string from your web browser, but you can use tools like `curl` on the command line or the [httr R package](https://github.com/hadley/httr/). We'll use `curl` for the examples below.
+
+```{r, echo=FALSE, results='asis'}
+include_r("files/apis/03-04-body.R")
+```
+
+Running `curl --data "id=123&name=Jennifer" "http://localhost:8000/user"` will return:
+
+```{r, echo=FALSE, results='asis'}
+pr <- plumber::plumb("files/apis/03-04-body.R")
+e <- pr$endpoints[[1]][[1]]
+code_chunk(json_serialize(e$exec(req=list(postBody="id=123&name=Jennifer"), id=123, name="Jennifer")), "json")
+```
+
+Alternatively, `curl --data '{"id":123, "name": "Jennifer"}' "http://localhost:8000/user"` (formatting the body as JSON) will have the same effect.
+
+As demonstrated above, the raw request body is made available as `req$postBody`.
+
+### Cookies
+
+// TODO
+
+### Headers
+
+// TODO
 
 Conflicts between path, query string, body?
+
