@@ -1,6 +1,18 @@
 
 # Rendering Output {#rendering-and-output}
 
-  - Serializers & Content Types
-  - Error Handling
-  - Custom serializer
+## The Response Object
+
+// TODO
+
+## Serializers
+
+// TODO
+
+## Error Handling
+
+// TODO
+
+## Custom Serializers
+
+// TODO
