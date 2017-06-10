@@ -1,8 +1,7 @@
 
 # Tips & Tricks {#tips-tricks}
 
-## Setting Cookies {#setting-cookies}
-
+//TODO
    - Debugging
    - Testing
    - Managing State
@@ -11,3 +10,40 @@
      - Concurrent programming (if multiple proc's)
   - Organizing Large Applications
   - Swagger
+
+
+## Cookies
+
+//TODO - see https://plumber.trestletech.com/docs/sessions/ for a good start -- the last section on that page might be good here.
+
+### Setting Unencrypted Cookies {#setting-cookies}
+
+HTTP APIs don't implicitly contain a notion of a "session." Without some additional information, Plumber has no way of ascertaining whether or not two HTTP requests that come in are associated with the same user. Cookies offer a way to commission the client to store some state on your behalf so that selected data can outlive a single HTTP request.
+
+Plumber can both set and receive cookies. For details on setting cookies, see the [Setting Cookies section](#setting-cookies). The API below will send you a random letter, but it remembers your preferences on whether you like capitalized or lower-case letters. 
+
+```{r, echo=FALSE, results='asis'}
+include_r("files/apis/03-05-capitalize.R")
+```
+
+Since we need to craft a `PUT` request to test this API, we'll use `curl` on the command line to test it. We can start by visiting the `/letter` endpoint and we'll see that the API defaults to a lower-case alphabet. `curl http://localhost:8000/letter`
+
+```{r, echo=FALSE, results='asis'}
+pr <- plumber::plumb("files/apis/03-05-capitalize.R")
+e <- pr$endpoints[[1]][[2]]
+code_chunk(json_serialize(e$exec(req=list(cookies=list()))), "json")
+```
+
+If we send a `PUT` request and specify the `capital` parameter, a cookie will be set on the client which will allow the server to accommodate our preference in future requests. In `curl`, you need to specify a file in which you want to save these cookies using the `-c` option. This is a good reminder that clients handle cookies differently -- some won't support them at all -- so be sure that the clients you intend to support with your API play nicely with cookies if you want to use them.
+
+To send a `PUT` request, setting the parameter `capital` to `1`, we could invoke: `curl -c cookies.txt -X PUT --data 'capital=1' "http://localhost:8000/preferences"`. If you print out the `cookies.txt` file, you should now see that it contains a single cookie called `capitalize` with a value of `1`.
+
+We can make another `GET` request to `/letter` to see if it accommodates our preferences. But we'll need to tell `curl` to use the cookies file we just created when sending this request using the `-b` switch: `curl -b cookies.txt http://localhost:8000/letter`. You should now see that the API is returning a random capitalized letter.
+
+This is a simple example showing how to persist user preferences across HTTP requests using cookies. But be aware that the client has the ability to modify or fabricate the cookies that they send to your API. So storing preferences that the user themselves provided in a cookie is not a concern. Storing something with security implications like the level of permissions this client has on your API, however, would be; a malicious user would just need to modify the role saved in their cookie in order to trick your API into giving them more permissions than it should.
+
+There are two common work-arounds to this concern. You can simply store a long (cryptographically) random identifier in the user's cookie, and have some mapping on the server that allows you to lookup the session associated with that random ID. Alternatively, you could use signed/encrypted cookies, as detailed [below](#encrypted-cookies).
+
+### Setting Encrypted Cookies
+
+//TODO: See https://plumber.trestletech.com/docs/sessions/ -- it's got a pretty good start
