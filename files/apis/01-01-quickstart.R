@@ -1,18 +1,26 @@
 # plumber.R
 
 #' Echo the parameter that was sent in
+#' @param msg The message to echo back.
 #' @get /echo
-function(msg="Hi!"){
-  list(msg = paste("The message is: ", msg))
+function(msg=""){
+  list(msg = paste0("The message is: '", msg, "'"))
 }
 
-# Graph a straight line with a custom color
-#' @get /graph
+#' Plot out data from the iris dataset
+#' @param spec If provided, filter the data to only this species (e.g. 'setosa')
+#' @get /plot
 #' @png
-function(n=10, color="black"){
-  # Don't let the number get too big
-  if (n > 10000){ n <- 10000 }
+function(spec){
+  myData <- iris
+  title <- "All Species"
 
-  # Plot the line
-  plot(x=1:n, y=1:n, col=color, type="b")
+  # Filter if the species was specified
+  if (!missing(spec)){
+    title <- paste0("Only the '", spec, "' Species")
+    myData <- subset(iris, Species == spec)
+  }
+
+  plot(myData$Sepal.Length, myData$Petal.Length,
+       main=title, xlab="Sepal Length", ylab="Petal Length")
 }
