@@ -11,6 +11,7 @@ r_github_packages:
 deploy:
   provider: pages
   target_branch: netlify
+  local_dir: _book
   skip_cleanup: true
   github_token: $GITHUB_TOKEN
   on:
