@@ -1,0 +1,21 @@
+language: r
+cache: packages
+after_failure:
+  - ./travis-tool.sh dump_logs
+r_packages:
+  - rmarkdown
+  - bookdown 
+  - jsonlite
+r_github_packages:
+    - trestletech/plumber
+deploy:
+  provider: pages
+  target_branch: netlify
+  skip_cleanup: true
+  github_token: $GITHUB_TOKEN
+  on:
+    branch: master 
+before_script:
+  - chmod +x ./_build.sh
+script:
+  - ./_build.sh

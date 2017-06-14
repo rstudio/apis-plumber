@@ -58,13 +58,13 @@ HTTP APIs have become the predominant language by which software communicates. B
 
 Plumber is hosted on CRAN, so you can download and install the latest stable version and all of its dependencies by running:
 
-```
+```r
 install.packages("plumber")
 ```
 
 Alternatively, if you'd like to run the latest unstable development version of `plumber`, you can install it from [its GitHub repository](https://github.com/trestletech/plumber) using the `devtools` package.
 
-```
+```r
 install.packages("devtools")
 devtools::install_github("trestletech/plumber")
 ```
