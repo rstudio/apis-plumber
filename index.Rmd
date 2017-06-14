@@ -6,6 +6,7 @@ site: bookdown::bookdown_site
 output: bookdown::gitbook
 bibliography: [book.bib]
 biblio-style: apalike
+link-citations: yes
 documentclass: book
 github-repo: trestletech/apis-plumber
 description: "Use the plumber R package to create HTTP APIs in R."
