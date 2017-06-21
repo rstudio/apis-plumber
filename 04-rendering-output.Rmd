@@ -1,7 +1,7 @@
 
 # Rendering Output {#rendering-and-output}
 
-## The Response Object
+## The Response Object {#response-object}
 
 // TODO
 
@@ -21,6 +21,24 @@ Annotation | Content Type | Description/References
 `@png` | `image/png` | `png()`
 `@htmlwidget` | `text/html; charset=utf-8` | `htmlwidgets::saveWidget()`
 `@unboxedJSON` | `application/json` | `jsonlite::toJSON(unboxed=TRUE)`
+
+### Bypassing Serialization
+
+In some instances it may be desirable to return a value directly from R without serialization. You can bypass serialization by returning the [response object](#response-object) from an endpoint. For example, consider the following API.
+
+```{r, echo=FALSE, results='asis'}
+include_r("files/apis/04-01-response.R")
+```
+
+The response that is returned from this endpoint would contain the body `Literal text here!` with no `Content-Type` header and without any additional serialization.
+
+Similarly, you can leverage the `@serializer contentType` annotation which does no serialization of the response but specifies the contentType header. You can use this annotation when you want more control over the response that you send.
+
+```{r, echo=FALSE, results='asis'}
+include_r("files/apis/04-02-contenttype.R")
+```
+
+Running this API and visiting http://localhost:8000/pdf will download the PDF generated from R (or display the PDF natively, if your client supports it).
 
 ### Boxed vs Unboxed JSON
 
@@ -70,10 +88,6 @@ While R doesn't distinguish between scalars and vectors, API clients may respond
 For this reason, Plumber inherits the `jsonlite::toJSON` default of setting `auto_unbox=FALSE` which will result in all length-1 vectors still being rendered as JSON arrays. You can configure an endpoint to use the `unboxedJSON` serializer (as shown above) if you want to alter this behavior for a particular endpoint.
 
 There are a couple of functions to be aware of around this feature set. If using boxed JSON serialization, `jsonlite::unbox()` can be used to force a length-1 object in R to be presented in JSON as a scalar. If using unboxed JSON serialization, `I()` will cause a length-1 R object to present as a JSON array.
-
-### Customizing Content Types
-
-`@contentType`
 
 ## Error Handling
 
