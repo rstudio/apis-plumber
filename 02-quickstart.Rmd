@@ -33,7 +33,7 @@ e <- pr$endpoints[[1]][[1]]
 code_chunk(json_serialize(e$exec()), "json")
 ```
 
-The `/plot` endpoint will show you a simple plot of a linear sequence.
+The `/plot` endpoint will show you a simple plot of some data from the iris dataset.
 
 ```{r, echo=FALSE, results='asis'}
 e <- pr$endpoints[[1]][[2]]
@@ -44,7 +44,7 @@ res <- plumber:::PlumberResponse$new()
 do.call(e[['.__enclos_env__']]$private$func, list())
 ```
 
-If you see something like the above: congratulations! You've just created your first Plumber API! You've already tested your API from a web browser, but there's nothing stopping you from leveraging this API from third-party tools or a client developed in R or any other programming language.
+If you see something like the above: congratulations! You've just created your first Plumber API! You've already exercised your API from a web browser, but there's nothing stopping you from leveraging this API from third-party tools or a client developed in R or any other programming language.
 
 ## Specifying the Inputs
 
@@ -77,6 +77,6 @@ e <- pr$endpoints[[1]][[1]]
 code_chunk(e$exec(), "html")
 ```
 
-You can even provide your own custom serializers and define how to translate the R object produced by your endpoint into the bits that will be used to respond to the incoming HTTP request.
+You can even provide your own custom serializers and define how to translate the R object produced by your endpoint into the bits that will be produce Plumber's HTTP response.
 
 You can find more details in the [Rendering & Output chapter](#rendering-and-output).
