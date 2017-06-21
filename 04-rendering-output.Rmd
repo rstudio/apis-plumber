@@ -53,7 +53,7 @@ The value of the `a` element, though it's singular, is still rendered as an arra
 Consider the following API which returns all the letters lexicographically "higher" than the given letter.
 
 ```{r, echo=FALSE, results='asis'}
-include_r("files/apis/04-01-letters.R")
+include_r("files/apis/04-03-letters.R")
 ```
 
 This is an example of an API that, in some instance, produces a scalar, and in other instances produces a vector.
@@ -61,7 +61,7 @@ This is an example of an API that, in some instance, produces a scalar, and in o
 Visiting http://localhost:8000/boxed?letter=U or http://localhost:8000/unboxed?letter=U will return identical responses:
 
 ```{r, echo=FALSE, results='asis'}
-pr <- plumber::plumb("files/apis/04-01-letters.R")
+pr <- plumber::plumb("files/apis/04-03-letters.R")
 e <- pr$endpoints[[1]][[1]]
 code_chunk(json_serialize(e$exec(letter="U")), "json")
 ```
@@ -69,7 +69,7 @@ code_chunk(json_serialize(e$exec(letter="U")), "json")
 However, http://localhost:8000/boxed?letter=Y will produce:
 
 ```{r, echo=FALSE, results='asis'}
-pr <- plumber::plumb("files/apis/04-01-letters.R")
+pr <- plumber::plumb("files/apis/04-03-letters.R")
 e <- pr$endpoints[[1]][[1]]
 code_chunk(jsonlite::toJSON(e$exec(letter="Y"), auto_unbox = FALSE), "json")
 ```
@@ -81,7 +81,7 @@ e <- pr$endpoints[[1]][[2]]
 code_chunk(jsonlite::toJSON(e$exec(letter="Y"), auto_unbox = TRUE))
 ```
 
-The `/boxed` endpoint, as the name implies, produces "boxed" JSON output in which length-1 vectors are still rendered as an array. Converesely, the `/unboxed` endpoint sets `auto_unbox=TRUE` in its call to `jsonlite::toJSON`, causing length-1 R vectors to be rendered as JSON scalars.
+The `/boxed` endpoint, as the name implies, produces "boxed" JSON output in which length-1 vectors are still rendered as an array. Conversely, the `/unboxed` endpoint sets `auto_unbox=TRUE` in its call to `jsonlite::toJSON`, causing length-1 R vectors to be rendered as JSON scalars.
 
 While R doesn't distinguish between scalars and vectors, API clients may respond very differently when encountering a JSON array versus an atomic value. You may find that your API clients will not respond gracefully when an object that they expected to be a vector becomes a scalar in one call. 
 
@@ -91,7 +91,24 @@ There are a couple of functions to be aware of around this feature set. If using
 
 ## Error Handling
 
-// TODO
+Plumber wraps each endpoint invocation so that it can gracefully capture errors.
+
+```{r, echo=FALSE, results='asis'}
+include_r("files/apis/04-04-error.R")
+```
+
+If you run this API and visit http://localhost:8000/simple, you'll notice two things:
+
+1. An HTTP response with a status code of `500` ("internal server error") is sent to the client. You should see an error message resembling: `{"error":["500 - Internal server error"],"message":["Error in (function () : I'm an error!\n"]}`
+2. A similar error is printed in the terminal where you're running your Plumber API.
+
+This means that it is possible for you to intentionally `stop()` in an endpoint or a filter as a way to communicate a problem to your user. However, it may be preferable to render errors from your API in a consistent format with more helpful error messages.
+
+```{r, echo=FALSE, results='asis'}
+pr <- plumber::plumb("files/apis/04-04-error.R")
+e <- pr$endpoints[[1]][[2]]
+code_chunk(json_serialize(e$exec(res=list(status=1))), "json")
+```
 
 ## Custom Serializers
 
