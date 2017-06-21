@@ -7,7 +7,73 @@
 
 ## Serializers
 
-// TODO
+In order to send a response from R to an API client, the object must be "serialized" into some format that the client can understand. JavaScript Object Notation (JSON) is one standard which is commonly used by web APIs. JSON serialization translates R objects like `list(a=123, b="hi!")` to JSON text resembling `{a: 123, b: "hi!"}`.
+
+JSON is not appropriate for every situation, however. If you want your API to render an HTML page that might be viewed in a browser, for instance, you will need a different serializer. Likewise, if you want to return an image rendered in R, you likely want to use a standard image format like PNG or JPEG rather than JSON.
+
+By default, Plumber serializes objects into JSON via the `jsonlite` R package. However, there are a variety of other serializers that are built in to the package.
+
+Annotation | Content Type | Description/References
+---------- | ------------ | ---------------------
+`@json` | `application/json` | `jsonlite::toJSON()`
+`@html` | `text/html; charset=utf-8` | Passes response through without any additional serialization
+`@jpeg` | `image/jpeg` | `jpeg()`
+`@png` | `image/png` | `png()`
+`@htmlwidget` | `text/html; charset=utf-8` | `htmlwidgets::saveWidget()`
+`@unboxedJSON` | `application/json` | `jsonlite::toJSON(unboxed=TRUE)`
+
+### Boxed vs Unboxed JSON
+
+You may have noticed that API responses generated from Plumber render singular values (or "scalars") as arrays. For instance:
+
+```{r}
+jsonlite::toJSON(list(a=5))
+```
+
+The value of the `a` element, though it's singular, is still rendered as an array. This may surprise you initially, but this is done to keep the output consistent. While JSON differentiates scalar from vector objects, R does not. This creates ambiguity when serializing an R object to JSON since it is unclear whether a particular element should be rendered as an atomic value or a JSON array.
+
+Consider the following API which returns all the letters lexicographically "higher" than the given letter.
+
+```{r, echo=FALSE, results='asis'}
+include_r("files/apis/04-01-letters.R")
+```
+
+This is an example of an API that, in some instance, produces a scalar, and in other instances produces a vector.
+
+Visiting http://localhost:8000/boxed?letter=U or http://localhost:8000/unboxed?letter=U will return identical responses:
+
+```{r, echo=FALSE, results='asis'}
+pr <- plumber::plumb("files/apis/04-01-letters.R")
+e <- pr$endpoints[[1]][[1]]
+code_chunk(json_serialize(e$exec(letter="U")), "json")
+```
+
+However, http://localhost:8000/boxed?letter=Y will produce:
+
+```{r, echo=FALSE, results='asis'}
+pr <- plumber::plumb("files/apis/04-01-letters.R")
+e <- pr$endpoints[[1]][[1]]
+code_chunk(jsonlite::toJSON(e$exec(letter="Y"), auto_unbox = FALSE), "json")
+```
+
+while http://localhost:8000/unboxed?letter=Y will produce:
+
+```{r, echo=FALSE, results='asis'}
+e <- pr$endpoints[[1]][[2]]
+code_chunk(jsonlite::toJSON(e$exec(letter="Y"), auto_unbox = TRUE))
+```
+
+The `/boxed` endpoint, as the name implies, produces "boxed" JSON output in which length-1 vectors are still rendered as an array. Converesely, the `/unboxed` endpoint sets `auto_unbox=TRUE` in its call to `jsonlite::toJSON`, causing length-1 R vectors to be rendered as JSON scalars.
+
+While R doesn't distinguish between scalars and vectors, API clients may respond very differently when encountering a JSON array versus an atomic value. You may find that your API clients will not respond gracefully when an object that they expected to be a vector becomes a scalar in one call. 
+
+For this reason, Plumber inherits the `jsonlite::toJSON` default of setting `auto_unbox=FALSE` which will result in all length-1 vectors still being rendered as JSON arrays. You can configure an endpoint to use the `unboxedJSON` serializer (as shown above) if you want to alter this behavior for a particular endpoint.
+
+There are a couple of functions to be aware of around this feature set. If using boxed JSON serialization, `jsonlite::unbox()` can be used to force a length-1 object in R to be presented in JSON as a scalar. If using unboxed JSON serialization, `I()` will cause a length-1 R object to present as a JSON array.
+
+### Customizing Content Types
+
+`@contentType`
 
 ## Error Handling
 
