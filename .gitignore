@@ -6,3 +6,5 @@ _book
 _bookdown_files
 rsconnect
 apis-plumber.tex
+packrat/lib*/
+packrat/src/
