@@ -30,6 +30,12 @@ Getting everything connected the first time can be a bit of work, but once you h
 
 ## RStudio Connect {#rstudio-connect}
 
+[RStudio Connect](https://www.rstudio.com/products/connect/) is an enterprise publishing platform from RStudio. It supports push-button publishing from the RStudio IDE of a variety of R content types including Plumber APIs.
+
+RStudio Connect automatically manages the number of R processes necessary to handle the current load and balances incoming traffic across all available processes. It can also shut down idle processes when they're not in use. This allows you to run the appropriate number of R processes to scale your capacity to accommodate the current load.
+
+> Conflict of interest: the primary author of plumber and this book works for RStudio on RStudio Connect.
+
 ## Docker {#docker}
 
 ## pm2 {#pm2}
