@@ -1,11 +1,7 @@
 
-# Hosting & Security {#hosting-and-security}
+# Security {#security}
     
-  - Reasons why you shouldn't host on your desktop or RStudio IDE
-  - DO
-  - RSC
-  - Docker
-  - pm2
+  
   - Security
    - CORS
    - XSRF
