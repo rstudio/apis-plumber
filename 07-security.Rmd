@@ -1,6 +1,5 @@
 
 # Security {#security}
-    
   
   - Security
    - CORS
