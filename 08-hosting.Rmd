@@ -22,6 +22,7 @@ Plumber includes helper functions that enable you to automatically provision a P
 1. Setup an SSH key and deploy the public portion to DigitalOcean so you'll be able to login to your server.
 1. Install the `analogsea` R package and run a test command like `analogsea::droplets()` to confirm that it's able to connect to your DigitalOcean account.
 1. Run `mydrop <- plumber::do_provision()`. This will start a virtual machine (or "droplet", as DigitalOcean calls them) and install Plumber and all the necessary prerequisite software. Once the provisioning is complete, you should be able to access port `8000` on your server's IP and see a response from Plumber.
+1. Install any R packages on the server that your API requires using `analogsea::install_r_package()`.
 1. You can use `plumber::do_deploy_api()` to deploy or update your own custom APIs to a particular port on your server.
 1. (Optional) [Setup a domain name](http://tres.tl/dns) for your Plumber server so you can use www.myplumberserver.com instead of the server's IP address.
 1. (Optional) Configure SSL
@@ -30,7 +31,7 @@ Getting everything connected the first time can be a bit of work, but once you h
 
 ## RStudio Connect {#rstudio-connect}
 
-[RStudio Connect](https://www.rstudio.com/products/connect/) is an enterprise publishing platform from RStudio. It supports push-button publishing from the RStudio IDE of a variety of R content types including Plumber APIs.
+[RStudio Connect](https://www.rstudio.com/products/connect/) is an enterprise publishing platform from RStudio. It supports push-button publishing from the RStudio IDE of a variety of R content types including Plumber APIs. Unlike all the other options listed here, RStudio Connect automatically manages the dependent packages and files your API has and recreates an environment closely mimicking your local development environment on the server.
 
 RStudio Connect automatically manages the number of R processes necessary to handle the current load and balances incoming traffic across all available processes. It can also shut down idle processes when they're not in use. This allows you to run the appropriate number of R processes to scale your capacity to accommodate the current load.
 
@@ -38,5 +39,88 @@ RStudio Connect automatically manages the number of R processes necessary to han
 
 ## Docker {#docker}
 
+
+
 ## pm2 {#pm2}
 
+If you don't have the luxury of running your Plumber instance on a designated server (as is discussed in the [DigitalOcean section](#digitalocean)) and you're not comfortable hosting the API in [Docker](#docker), then you'll need to find a way to run and manage your Plumber APIs on your server directly.
+
+There are a variety of tools that were built to help manage web hosting in a single-threaded environment like R. Some of the most compelling tools were developed around Ruby (like [Phusion Passenger](https://www.phusionpassenger.com/)) or Node.js (like [Node Supervisor](https://github.com/petruisfan/node-supervisor), [forever](https://github.com/foreverjs/forever) or [pm2](http://pm2.keymetrics.io/)). Thankfully, many of these tools can be adapted to support managing an R process running a Plumber API.
+
+[pm2](http://pm2.keymetrics.io/) is a process manager initially targeting Node.js. Here we'll show the commands needed to do this in Ubuntu 14.04, but you can use any Operating System or distribution that is supported by pm2. At the end, you'll have a server that automatically starts your plumber services when booted, restarts them if they ever crash, and even centralizes the logs for your plumber services.
+
+### Server Deployment and Preparation
+
+The first thing you'll need to do, regardless of which process manager you choose, is to deploy the R files containing your plumber applications to the server where they'll be hosted. Keep in mind that you'll also need to include any supplemental R files that are `source()`d in your plumber file, and any other datasets or dependencies that your files have. 
+
+You'll also need to make sure that the R packages you need (and the appropriate versions) are available on the remote server. You can either do this manually by installing those packages or you can consider using a tool like [Packrat](https://rstudio.github.io/packrat/) to help with this.
+
+There are a myriad of features in pm2 that we won't cover here. It is a good idea to spend some time reading through their documentation to see which features might be of interest to you and to ensure that you understand all the implications of how pm2 hosts services (which user you want to run your processes as, etc.). Their [quick-start guide](http://pm2.keymetrics.io/docs/usage/quick-start/) may be especially relevant. For the sake of simplicity, we will do a basic installation here without customizing many of those options.
+
+### Install pm2
+
+Now you're ready to install pm2. pm2 is a package that's maintained in `npm` (Node.js's package management system); it also requires Node.js in order to run. So to start you'll want to install Node.js. On Ubuntu 14.04, the necessary commands are:
+
+```bash
+sudo apt-get update
+sudo apt-get install nodejs npm
+```
+
+Once you have npm and Node.js installed, you're ready to install pm2.
+
+```
+sudo npm install -g pm2
+```
+
+This will install pm2 globally (`-g`) on your server, meaning you should now be able to run `pm2 --version` and get the version number of pm2 that you've installed.
+
+In order to get pm2 to startup your services on boot, you should run `sudo pm2 startup` which will create the necessary files for your system to run pm2 when you boot your machine.
+
+### Wrap Your Plumber File
+
+Once you've deployed your Plumber files onto the server, you'll still need to tell the server *how* to run your server. You're probably used to running commands like
+
+```r
+pr <- plumb("myfile.R")
+pr$run(port=4500)
+```
+
+Unfortunately, pm2 doesn't understand R scripts natively; however, it is possible to specify a custom interpreter. We can use this feature to launch an R-based wrapper for our plumber file using the `Rscript` scripting front-end that comes with R. The following script will run the two commands listed above.
+
+```
+#!/usr/bin/env Rscript
+
+library(plumber)
+pr <- plumb('myfile.R')
+pr$run(port=4000)
+```
+
+Save this R script on your server as something like `run-myfile.R`. You should also make it executable by changing the permissions on the file using a command like `chmod 755 run-myfile.R`. You should now execute that file to make sure that it runs the service like you expect. You should be able to make requests to your server on the appropriate port and have the plumber service respond. You can kill the process using `Ctrl-c` when you're convinced that it's working. Make sure the shell script is in a permanent location so that it won't be erased or modified accidentally. You can consider creating a designated directory for all your plumber services in some directory like `/usr/local/plumber`, then put all services and their associated Rscript-runners in their own subdirectory like `/usr/local/plumber/myfile/`.
+
+## Introduce Our Service to pm2
+
+We'll now need to teach pm2 about our Plumber API so that we can put it to work. You can register and configure any number of services with pm2; let's start with our `myfile` Plumber service.
+
+You can use the `pm2 list` command to see which services pm2 is already running. If you run this command now, you'll see that pm2 doesn't have any services that it's in charge of. Once you have the scripts and code stored in the directory where you want them, use the following command to tell pm2 about your service.
+
+```bash
+pm2 start --interpreter="Rscript" /usr/local/plumber/myfile/run-myfile.R
+```
+
+You should see some output about pm2 starting an instance of your service, followed by some status information from pm2. If everything worked properly, you'll see that your new service has been registered and is running. You can see this same output by executing `pm2 list` again. 
+
+Once you're happy with the pm2 services you have defined, you can use `pm2 save` to tell pm2 to retain the set of services you have running next time you boot the machine. All of the services you have defined will be automatically restarted for you.
+
+At this point, you have a persistent pm2 service created for your Plumber application. This means that you can reboot your server, or find and kill the underlying R process that your plumber application is using and pm2 will automatically bring a new process in to replace it. This should help guarantee that you always have a Plumber process running on the port number you specified in the shell script. It is a good idea to reboot the server to ensure that everything comes back the way you expected.
+
+You can repeat this process with all the plumber applications you want to deploy, as long as you give each a unique port to run on. Remember that you can't have more than one service running on a single port. And be sure to `pm2 save` every time you add services that you want to survive a restart.
+
+### Logs and Management
+
+Now that you have your applications defined in pm2, you may want to drill down into them to manage or debug them. If you want to see more information, use the `pm2 show` command and specify the name of the application from `pm2 list`. This is usually the same as the name of the shell script you specified, so it may be something like `pm2 show run-myfile`. 
+
+You can peruse this information but keep an eye on the `restarts` count for your applications. If your application has had to restart many times, that implies that the process is crashing often, which is a sign that there's a problem in your code.
+
+Thankfully, pm2 automatically manages the log files from your underlying processes. If you ever need to check the log files of a service, you can just run `pm2 logs run-myfile`, where `myfile` is again the name of the service obtained from `pm2 list`. This command will show you the last few lines logged from your process, and then begin streaming any incoming log lines until you exit (`Ctrl-c`). 
+
+If you want a big-picture view of the health of your server and all the pm2 services, you can run `pm2 monit` which will show you a dashboard of the RAM and CPU usage of all your services.
