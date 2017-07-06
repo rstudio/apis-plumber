@@ -1,11 +1,74 @@
 
 # Security {#security}
-  
-  - Security
-   - CORS
-   - XSRF
-   - Injection
-   - DOS -- check numerical inputs.
- - 
- - Networking & Firewalls {#networking} 
-   - How to access an API running on a remote machine (referenced this in the quickstart)
+
+The majority of R programmers have not been trained to give much attention to the security of the code that they write. This is for good reason since running R code on your own machine with no external input gives little opportunity for attackers to leverage your R code to do anything malicious. However, as soon as you expose an API on a network, your concerns and thought process must adapt accordingly.
+
+There are a variety of factors and attacks that you must consider when developing your Plumber APIs outlined below.
+
+// TODO precautions should be in line with the audience you're serving. Internal only, maybe can get away with some slopiness. Publicly visible you need to deal with all of this.
+
+## Networking & Firewalls {#networking}
+
+- How to access an API running on a remote machine (referenced this in the quickstart)
+// TODO
+ 
+## Denial Of Service (DoS) {#dos}
+
+Denial of service (DoS) attacks are employed in order to temporarily shut down a server or service by overwhelming it with traffic. A DoS scenario could be caused by a single ignorant user unintentionally making a request that could ask the server to do some impossible task, or could be intentionally introduced by a malicious actor leveraging a vast number of machines to repeatedly make requests that are expensive for the server to respond to. The later form is often called a distributed denial of service attack (or DDoS) and typically requires special infrastructure and network capacity that is beyond the scope of what we'll discuss here.
+
+However, there are practices that you should employ when designing your Plumber API to put safety guards around the work that an API request might instigate.
+
+```{r, echo=FALSE, results='asis'}
+include_r("files/apis/07-01-plot-unsafe.R")
+```
+
+The expected output here is a harmless plot.
+
+```{r, echo=FALSE, results='asis'}
+pr <- plumber::plumb("files/apis/07-01-plot-unsafe.R")
+e <- pr$endpoints[[1]][[1]]
+res <- plumber:::PlumberResponse$new()
+
+# Reach in to the private func and generate the image.
+# Otherwise the processors route this into a file so we can't see it.
+t <- system.time(do.call(e[['.__enclos_env__']]$private$func, list()))
+```
+
+This plot takes a negligible amount of time to create.
+
+However, plots with more points will take more time to create.
+
+```{r, echo=FALSE, results='asis'}
+res <- plumber:::PlumberResponse$new()
+
+# Reach in to the private func and generate the image.
+# Otherwise the processors route this into a file so we can't see it.
+t <- system.time(do.call(e[['.__enclos_env__']]$private$func, list(pts=10000)))
+```
+
+This plot, with 10,000 points added took `r unname(t["elapsed"])` seconds to generate. While that doesn't sound like much, if we exposed this API publicly on the Internet, an attacker could easily generate enough traffic on this endpoint to overwhelm the Plumber process. Even worse, an attacker could make a request on this endpoint with millions or billions of points which might cause our server to run out of memory or consume so much CPU that it deprives other important system resources. Either case could result in our Plumber process crashing altogether.
+
+The solution, in this case, is to ensure that we have reasonable safety guards in place for any user input.
+
+```{r, echo=FALSE, results='asis'}
+include_r("files/apis/07-01-plot-safe.R")
+```
+
+Here you can see that we only allow the user to request a graph with up to 1,000 points. Any requests exceeding that limit will immediately be terminated without any further computation.
+
+You should be very attentive to the resources that could be consumed by any of your filters or endpoints. Consider the various values that a user could provide for each of your API endpoint's parameters and ensure that the behavior of the system is reasonable in those cases. For API endpoints that do require extensive computation, consider how you could protect those endpoints (perhaps only exposing them for authenticated users) to prevent a malicious user from abusing the system.
+
+## Sanitization & Injection {#sanitization}
+
+File references
+SQL
+
+// TODO
+
+## Cross-Origin Resource Sharing (CORS)
+
+// TODO
+
+## Cross-Site Request Forgery (CSRF, or XSRF)
+
+// TODO
