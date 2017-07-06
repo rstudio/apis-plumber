@@ -51,7 +51,7 @@ This plot, with 10,000 points added took `r unname(t["elapsed"])` seconds to gen
 The solution, in this case, is to ensure that we have reasonable safety guards in place for any user input.
 
 ```{r, echo=FALSE, results='asis'}
-include_r("files/apis/07-01-plot-safe.R")
+include_r("files/apis/07-02-plot-safe.R")
 ```
 
 Here you can see that we only allow the user to request a graph with up to 1,000 points. Any requests exceeding that limit will immediately be terminated without any further computation.
