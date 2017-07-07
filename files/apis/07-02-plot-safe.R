@@ -1,5 +1,5 @@
-# This is an example of an safe endpoint which
-# checks user input to avoid a DOS attack
+#' This is an example of an safe endpoint which
+#' checks user input to avoid a DOS attack
 #' @get /
 #' @png
 function(pts=10) {

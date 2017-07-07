@@ -66,10 +66,31 @@ You should be very attentive to the resources that could be consumed by any of y
 
 ## Sanitization & Injection {#sanitization}
 
-File references
-SQL
+Any time you accept input from a user in your code, you should plan for the worst-case scenario. If, for example, your API endpoint allows the user to specify the name of a file that should be read out of a particular directory and then returns its contents, you might naively implement it like so.
 
-// TODO
+```{r, echo=FALSE, results='asis'}
+include_r("files/apis/07-03-file-unsafe.R")
+```
+
+Unfortunately, this API endpoint does not properly sanitize the user input. The user could set the `file` parameter to `../plumber.R` and now the endpoint would return the source code of your Plumber API. Of course they could just as easy attempt to read other files that might contain API keys or other sensitive data.
+
+One solution in this case is to strip all special characters off of the user input which will prevent users from being able to escape into a different directory.
+
+```{r, echo=FALSE, results='asis'}
+include_r("files/apis/07-04-file-safe.R")
+```
+
+File paths are not the opportunity for malicious input to do damage to your system, however. Another way in which user input can be dangerous is an attack known as "cross site scripting," or "XSS." This attack can be leveraged whenever user input may be rendered in a user's browser. For instance if you had an endpoint which allows users to comment on a page and then later displays those comments to other users, an attacked could craft a comment such as: 
+
+```
+"This is a comment with JavaScript! <script>alert('I could do something bad here!');</script>
+```
+
+As you can see, the comment has JavaScript embedded within it, in this case used to popup a message to the user. Of course JavaScript could be used in other harmful way by redirecting your users to a malicious site, for instance, or uploading data that they have special access to on your server to some other destination. Any user input that might be included on an HTML page should be properly escaped (see `htmltools::html_escape` for help).
+
+Lastly, user input can be used in an "injection attack," in which the user injects malicious commands that might be sent to another system. The best known in this family are SQL injection attacks, in which user input that is meant to be included in a SQL query to be executed against a database might contain additional SQL commands that could leak data or do damage to your database. Further details about SQL injection attacks and mitigation strategies in R are available [here](http://db.rstudio.com/run-queries-safely/).
+
+In summary, be sure to separate "trusted" from "untrusted" objects in your API implementation. Anything which the user provides should be considered "untrusted" until it has been escaped or sanitized. At that point you can consider the object to be "trusted" and proceed to take further actions on it.
 
 ## Cross-Origin Resource Sharing (CORS)
 
