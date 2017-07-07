@@ -3,15 +3,21 @@
 
 The majority of R programmers have not been trained to give much attention to the security of the code that they write. This is for good reason since running R code on your own machine with no external input gives little opportunity for attackers to leverage your R code to do anything malicious. However, as soon as you expose an API on a network, your concerns and thought process must adapt accordingly.
 
-There are a variety of factors and attacks that you must consider when developing your Plumber APIs outlined below.
-
-// TODO precautions should be in line with the audience you're serving. Internal only, maybe can get away with some slopiness. Publicly visible you need to deal with all of this.
+There are a variety of factors and attacks that you should consider when developing your Plumber APIs, but the attention you give to each will vary based on the audience of your API. On one extreme, if your API is running on an internal server on your own network and uses authentication to restrict access to only a handful of trusted users, you may be justified in overlooking some of these attack vectors. On the other hand, if your Plumber API is available on the Internet with no authentication, then you should seriously consider each of these potential vulnerabilities and convince yourself that you have properly accounted for each.
 
 ## Networking & Firewalls {#networking}
 
-- How to access an API running on a remote machine (referenced this in the quickstart)
-// TODO
- 
+From a networking standpoint, there are two fundamentally different approaches for developing R code.
+
+1. You can develop locally using a tool like [RStudio Desktop](https://www.rstudio.com/products/rstudio/#Desktop). In this case, the R session (and any Plumber APIs that you `run()`) will be housed on your local machine.
+2. You can develop on a remote machine using a tool like [RStudio Server](https://www.rstudio.com/products/rstudio/#Server). Here, the R session is running on a remote server accessed across a network.
+
+In the first case, there's typically very little to consider from a networking perspective. Your APIs will be accessible at `http://127.0.0.1:8000` by default (`localhost` is synonymous with the local IP address `127.0.0.1`) and you likely won't need to concern yourself with firewalls or network proxies.
+
+In the second case, however, you may need to consider the network environment in between yourself and the server running the API. These are the same considerations you'll need to make when hosting an API on a server for production use. In particular, you should investigate whether or not there are any firewalls between the server hosting the Plumber API and the clients that you want to be able to connect.
+
+Firewalls are a way to block undesired network traffic. Most desktop computers and many servers come with firewalls enabled out-of-the-box. This means that if you want to expose your API running on port 8000, you will need to configure your firewall to accept incoming connections on that port. Firewalls can also be configured on other network intermediaries, so you may need to configure multiple firewalls to allow traffic through in order to expose the desired port to your API clients.
+
 ## Denial Of Service (DoS) {#dos}
 
 Denial of service (DoS) attacks are employed in order to temporarily shut down a server or service by overwhelming it with traffic. A DoS scenario could be caused by a single ignorant user unintentionally making a request that could ask the server to do some impossible task, or could be intentionally introduced by a malicious actor leveraging a vast number of machines to repeatedly make requests that are expensive for the server to respond to. The later form is often called a distributed denial of service attack (or DDoS) and typically requires special infrastructure and network capacity that is beyond the scope of what we'll discuss here.
