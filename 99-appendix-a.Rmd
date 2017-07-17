@@ -5,8 +5,6 @@
 	
 # Preprocessors
 
-# Programmatic Usage
-
 # Plumber 0.4.0 Migration Guide
 
 Plumber underwent a series of breaking changes as a part of the 0.4.0 release. These changes were made as an attempt to rectify some earlier mistakes and as an attempt to take care of all foreseeable breaking changes for the Plumber package.

@@ -40,6 +40,15 @@ Version: 1.17.1
 Hash: 97cb6f6293cd18d17df77a6383cc6763
 Requires: bitops
 
+Package: crayon
+Source: github
+Version: 1.3.2.9000
+Hash: 3539551f0cfdcf46a570631d0803dd18
+GithubRepo: crayon
+GithubUsername: r-lib
+GithubRef: master
+GithubSha1: 750190f0c51f08452151ac366d357b870ec2ecb0
+
 Package: curl
 Source: CRAN
 Version: 2.6
@@ -81,8 +90,8 @@ Requires: Rcpp, digest
 
 Package: httpuv
 Source: CRAN
-Version: 1.3.3
-Hash: 81cab0e82a62025f180863eb4ddeeb20
+Version: 1.3.5
+Hash: e2d5ec877601df43efe66e9096d0fc93
 Requires: Rcpp
 
 Package: httr
@@ -136,13 +145,13 @@ Hash: 6ad605ba7b4b476d84be6632393f5765
 
 Package: plumber
 Source: github
-Version: 0.3.3
-Hash: 1e9439cbc173b11d75a57881737a17ab
-Requires: R6, httpuv, jsonlite, stringi
+Version: 0.4.0
+Hash: adf241a7f2d5b4f510415465acc976e4
+Requires: R6, crayon, httpuv, jsonlite, stringi
 GithubRepo: plumber
 GithubUsername: trestletech
-GithubRef: master
-GithubSha1: d9f4acc163168ae179c55e781cfa43f03551f825
+GithubRef: redesign
+GithubSha1: 8e31cf82ce0fa6a3eaed9f52a6e0cf2ee08f58fe
 
 Package: rmarkdown
 Source: CRAN
