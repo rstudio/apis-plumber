@@ -34,7 +34,7 @@ The `handle()` method takes additional arguments that allow you to control nuanc
 pr <- plumber$new()
 pr$handle("GET", "/", function(){
   "<html><h1>Programmatic Plumber!</h1></html>"
-}, serializer=plumber::htmlSerializer())
+}, serializer=plumber::serializer_html())
 ```
 
 ## Defining Filters
