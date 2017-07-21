@@ -1,4 +1,3 @@
-
 # Global code; gets executed at plumb() time.
 counter <- 0
 

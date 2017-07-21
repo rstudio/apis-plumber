@@ -110,6 +110,8 @@ e <- pr$endpoints[[1]][[2]]
 code_chunk(json_serialize(e$exec(res=list(status=1))), "json")
 ```
 
+// TODO: example of setErrorHandler on router.
+
 ## Custom Serializers
 
 // TODO

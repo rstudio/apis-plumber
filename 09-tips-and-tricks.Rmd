@@ -40,6 +40,10 @@ If you run this API locally and then visit the API in a web browser, you'll see 
 
 // TODO
 
+## Performance
+
+Run some load tests and show the performance/overhead of running Plumber.
+
 ## Cookies
 
 //TODO - see https://plumber.trestletech.com/docs/sessions/ for a good start -- the last section on that page might be good here.
