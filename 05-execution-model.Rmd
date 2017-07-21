@@ -5,10 +5,25 @@ Rename this chapter. I don't know what to call it.
 
 ## Execution Model {#execution-model}
 
-Execution model
- - what gets run at plumb() and run() time.
+When you `plumb()` a file, Plumber calls `source()` on that file which will evaluate any top-level code that you have defined.
 
-Not sure if this really belongs here, but not sure where else to put it if not a new chapter.
+```{r, echo=FALSE, results='asis'}
+include_r("files/apis/05-01-scope.R")
+```
+
+If you call `plumb()` on this file, the `counter` variable will be created and will live in the environment created for this API. However, the endpoint defined will not be evaluated until it is invoked in response to an incoming request. Because the endpoint uses `<<-`, the "double-assignment" operator, it mutates the `counter` variable that was previously defined at plumbtime. This technique allows all endpoints and filters to share some data defined at the top-level of your API.
+
+## Environments
+
+By default, when you create a new Plumber router (which happens implicitly when you call `plumb()` on a file), a new environment is created especially for this router. It is in this environment that all expressions will be evaluated and all endpoints invoked.
+
+This can become important if you consider mounting routers onto one another. In that case, you may expect that they would be able to share state via their environment, but that will not work by default. If you're [creating your routers programmatically](#programmatic-usage), then you can specify an environment when initializing your Plumber router using the `envir` parameter. This is the environment in which:
+
+ - A decorated R script, if provided, will be `source()`d.
+ - All expressions will be evaluated.
+ - All endpoint and filter functions will be executed.
+ 
+ It is important to be aware that subrouters, by default, would each have their own environment. If you want multiple Plumber routers to share an environment, you will need to provide a single, shared environment when you create the routers.
 
 ## Managing State
 
