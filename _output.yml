@@ -7,7 +7,7 @@ bookdown::gitbook:
       after: |
         <li><a href="https://www.netlify.com" target="_blank">Site hosting from Netlify</a></li>
     edit: https://github.com/trestletech/apis-plumber/edit/master/%s
-    download: ["pdf", "epub"]
+    download: []
 bookdown::pdf_book:
   includes:
     in_header: preamble.tex
@@ -15,3 +15,4 @@ bookdown::pdf_book:
   citation_package: natbib
   keep_tex: yes
 bookdown::epub_book: default
+

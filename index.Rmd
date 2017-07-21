@@ -8,6 +8,9 @@ biblio-style: apalike
 documentclass: book
 github-repo: trestletech/apis-plumber
 description: "Use the plumber R package to create HTTP APIs in R."
+cover-image: ./files/images/cover.jpg
+favicon: ./files/images/favicon.png
+apple-touch-icon: ./files/images/apple-icon-152x152.png
 ---
 
 ```{r, echo=FALSE}
