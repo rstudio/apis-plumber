@@ -8,3 +8,4 @@ rsconnect
 apis-plumber.tex
 packrat/lib*/
 packrat/src/
+.DS_Store
