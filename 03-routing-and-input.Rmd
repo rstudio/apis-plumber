@@ -5,7 +5,7 @@ Plumber's first job is to execute R code in response to incoming HTTP requests, 
 
 An incoming HTTP request must be "routed" to one or more R functions. Plumber has two distinct families of functions that it handles: endpoints and filters. 
 
-Typically, when a request arrives to a Plumber router, Plumber begins by passing that request through its filters. Once the request has been processed by all the filters, the router will look for an endpoint that can satisfy the incoming request. If it finds one, it will invoke the endpoint and respond to the incoming request using the value the endpoint returned. If no endpoint matches the request, then a `404 Not Found` error will be returned (the behavior of which can be controlled the [`set404Handler`](customize-router) method).
+Typically, when a request arrives to a Plumber router, Plumber begins by passing that request through its filters. Once the request has been processed by all the filters, the router will look for an endpoint that can satisfy the incoming request. If it finds one, it will invoke the endpoint and respond to the incoming request using the value the endpoint returned. If no endpoint matches the request, then a `404 Not Found` error will be returned (the behavior of which can be controlled the [`set404Handler`](#customize-router) method).
 
 ## Endpoints {#endpoints}
 
@@ -178,6 +178,30 @@ logical |	`bool`, `logical`
 numeric	| `double`, `numeric`
 integer	| `int`
 
+## Static File Handler
+
+Plumber includes a static file server which can be used to host directories of static assets such as JavaScript, CSS, or HTML files. These servers are fairly simple to configure and integrate into your plumber application.
+
+```r
+#* @assets ./files/static
+list()
+```
+
+This example would expose the local directory `./files/static` at the default `/public` path on your server. So if you had a file `./files/static/branding.html`, it would be available on your Plumber server at `/public/branding.html`. 
+
+You can optionally provide an additional argument to configure the public path used for your server. For instance
+
+```r
+#* @assets ./files/static /static
+list()
+```
+
+would expose the directory not at `/public`, but at `/static`.
+
+The "implementation" of your server in the above examples is just an empty `list()`. You can also specify a `function()` like you do with the other plumber annotations. At this point, the implementation doesn't alter the behavior of your static server. Eventually, this list or function may provide an opportunity to configure the server by changing things like cache control settings.
+
+If you're configuring a Plumber router programmatically, you can instantiate a special static file router and mount it onto another router as discussed in the [static file router section](#mount-static).
+
 ## Input Handling {#input-handling}
 
 Plumber routes requests based exclusively on the path and method of the incoming HTTP request, but requests can contain much more information than just this. They might include additional HTTP headers, a query string, or a request body. All of these fields may be viewed as "inputs" to your Plumber API.
@@ -288,4 +312,5 @@ code_chunk(json_serialize(list(val="abc123")), "json")
 You can print out the names of all of the properties attached to the request by running `print(ls(req))` inside an endpoint.
 
 // TODO: Conflicts between path, query string, body?
+
 

@@ -96,7 +96,7 @@ pr$handle("GET", "/", function(){ 123 })
 
 Making a `GET` request to `/` will print out various information from the three events for which we registered hooks.
 
-## Mounting & Static File Routers
+## Mounting & Static File Routers {#mount-static}
 
 Plumber routers can be "nested" by mounting one into another using the `mount()` method. This allows you to compartmentalize your API by paths which is a great technique for decomposing large APIs into smaller files.
 
