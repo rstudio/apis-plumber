@@ -122,7 +122,7 @@ pr$mount("/assets", stat)
 
 This will make the files and directories stored in the `./myfiles` directory available on your API under the `/assets/` path.
 
-## Customizing a Router
+## Customizing a Router {#customize-router}
 
 There are a handful of useful methods to be aware of to modify the behavior of a router. [Using hooks to alter request processing](#router-hooks) has already been discussed, but additionally you can modify a router's behavior using any of the following:
 

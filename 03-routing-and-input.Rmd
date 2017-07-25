@@ -3,11 +3,11 @@
 
 Plumber's first job is to execute R code in response to incoming HTTP requests, so it's important to understand how incoming HTTP requests get translated into the execution of R functions.
 
-## Routing {#routing}
+An incoming HTTP request must be "routed" to one or more R functions. Plumber has two distinct families of functions that it handles: endpoints and filters. 
 
-An incoming HTTP request must be "routed" to one or more R functions. Plumber has two distinct families of functions that it handles: endpoints and filters. A typically HTTP request may be routed through some number of filters before ultimately being serviced by a single endpoint.
+Typically, when a request arrives to a Plumber router, Plumber begins by passing that request through its filters. Once the request has been processed by all the filters, the router will look for an endpoint that can satisfy the incoming request. If it finds one, it will invoke the endpoint and respond to the incoming request using the value the endpoint returned. If no endpoint matches the request, then a `404 Not Found` error will be returned (the behavior of which can be controlled the [`set404Handler`](customize-router) method).
 
-### Endpoints {#endpoints}
+## Endpoints {#endpoints}
 
 Endpoints are the terminal step in the process of serving a request. An endpoint can simply be viewed as the logic that is ultimately responsible for generating a response to a particular request. A request will be checked against each available endpoint until it finds an endpoint willing to serve it at which point it stops looking; i.e. a request will not ever be processed by more than one endpoint. You create an endpoint by annotating a function like so:
 
@@ -38,7 +38,79 @@ function(){
 }
 ```
 
-### Dynamic Routes {#dynamic-routes}
+## Filters {#filters}
+
+Plumber filters can be used to define a "pipeline" for handling incoming requests. This allows API authors to break down complex logic into a sequence of independent, understandable steps. Unlike endpoints, a request may go through multiple Plumber filters before a response is generated. 
+
+Typically, a Plumber router will pass a request through all the defined filters before it attempts to find an endpoint to satisfy the request. However, endpoints can "preempt" particular filters if they want to be considered for execution before some filter(s) registered in the router.
+
+// TODO: graphic
+
+Filters can do one of three things in handling a request:
+
+1. Forward control onto the next handler, potentially after mutating the request.
+2. Return a response itself and not forward to subsequent handlers
+3. Throw an error
+
+These three options, and why each might be desired, are discussed below.
+
+### Forward to Another Handler
+
+The most common behavior for a filter is to pass on the request to the next handler after mutating the incoming request or invoking some external side-effect. One common use case is to use a filter as a request logger:
+
+```r
+#* Log some information about the incoming request
+#* @filter logger
+function(req){
+  cat(as.character(Sys.time()), "-", 
+    req$REQUEST_METHOD, req$PATH_INFO, "-", 
+    req$HTTP_USER_AGENT, "@", req$REMOTE_ADDR, "\n")
+  plumber::forward()
+}
+```
+
+This filter is straightfoward: it invokes an external action (logging) and then calls `forward()` to pass control to the next handler in the pipeline (another filter or an endpoint).
+
+Because the `req` and `res` parameters in Plumber are based on R environments, they exhibit "pass-by-reference" behavior. This means that changes that are made in one filter on the `req` or `res` object will be visible to other filters or endpoints also touching this same request or response.
+
+A similar filter may mutate some state on the request or response object it's given.
+
+```r
+#* @filter setuser
+function(req){
+  un <- req$cookies$user
+  # Make req$username available to endpoints
+  req$username <- un
+
+  plumber::forward()
+}
+```
+
+In this case, the `req` object is going to be extended to have an additional property named `username` which represents a value looked up from a cookie. This `req$username` property would be available to all subsequent filters and endpoints processing this request. (Note that this example is not a secure system for authentication; see the [section on using cookies to store state](#state-cookies) for a longer discussion on why.) Once it has modified the request object, it passes control to the next handler using `forward()`.
+
+### Return a Response
+
+It is also possible for filters to return a response. You may want to check that the request satisfies some constraint (like authentication) and -- in certain cases -- return a response without invoking any additional handlers. For example, a filter could be used to check that a user has authenticated.
+
+```r
+#* @filter checkAuth
+function(req, res){
+  if (is.null(req$username)){
+    res$status <- 401 # Unauthorized
+    return(list(error="Authentication required"))
+  } else {
+    plumber::forward()
+  }
+}
+```
+
+A common cause of errors in Plumber APIs is forgetting to invoke `forward()` in your filters. In such a filter, the result of the last line will be silently returned as the response to the incoming request. This can cause your API to exhibit very odd behavior depending on what's being returned. When you're using filters, be sure to carefully audit all code paths to ensure that you're either calling `forward()`, causing an error, or intentionally returning a value.
+
+### Throw an Error
+
+Finally, a filter can throw an error. This can occur if a mistake is made in the code defining the filter or if the filter intentionally invokes `stop()` to trigger an error. In this case, the request will not be processed by any subsequent handlers and will immediately be sent to the router's error handler. See [router customization](#customize-router) for more details on how to customize this error handler.
+
+## Dynamic Routes {#dynamic-routes}
 
 In addition to having hard-coded routes like `/hello`, Plumber endpoints can have dynamic routes. Dynamic routes allow endpoints to define a more flexible set of paths against which they should match.
 
@@ -63,7 +135,7 @@ function(from, to){
 
 In both the hard-coded and dynamic examples given above, the parameters will be provided to the function as a character string.
 
-### Typed Dynamic Routes {#typed-dynamic-routes}
+## Typed Dynamic Routes {#typed-dynamic-routes}
 
 Unless otherwise instructed, all parameters passed into plumber endpoints from query strings or dynamic paths will be character strings. For example, consider the following API.
 
@@ -105,12 +177,6 @@ R Type  | Plumber Name
 logical |	`bool`, `logical`
 numeric	| `double`, `numeric`
 integer	| `int`
-
-### Filters {#filters}
-
-Unlike endpoints, a request may go through multiple Plumber filters before being served by an endpoint.
-
-//TODO
 
 ## Input Handling {#input-handling}
 
