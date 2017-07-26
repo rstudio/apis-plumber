@@ -5,21 +5,20 @@ after_failure:
 r_packages:
   - packrat
 deploy:
-  provider: pages
-  target_branch: netlify
-  local_dir: _book
-  skip_cleanup: true
-  github_token: $GITHUB_TOKEN
-  on:
-    branch: master
-deploy:
-  provider: pages
-  target_branch: netlify-plumber
-  local_dir: _toolbar_book
-  skip_cleanup: true
-  github_token: $GITHUB_TOKEN
-  on:
-    branch: master
+  - provider: pages
+    target_branch: netlify
+    local_dir: _book
+    skip_cleanup: true
+    github_token: $GITHUB_TOKEN
+    on:
+      branch: master
+  - provider: pages
+    target_branch: netlify-plumber
+    local_dir: _toolbar_book
+    skip_cleanup: true
+    github_token: $GITHUB_TOKEN
+    on:
+      branch: master
 before_script:
   - chmod +x ./_build.sh
 script:
