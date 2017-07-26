@@ -94,8 +94,16 @@ In summary, be sure to separate "trusted" from "untrusted" objects in your API i
 
 ## Cross-Origin Resource Sharing (CORS)
 
-// TODO
+// TODO CORS
 
 ## Cross-Site Request Forgery (CSRF, or XSRF)
 
-// TODO
+// TODO XSRF
+
+## Cookies {#security-cookies}
+
+// TODO: Encrypted cookies can't be invalidated server-side
+// TODO: HTTP-only cookies
+// TODO: Secure cookies
+// TODO: cookies with regards to XSRF
+// TODO: stolen cookies can be used to impersonate.
