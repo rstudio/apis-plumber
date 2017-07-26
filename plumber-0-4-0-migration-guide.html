@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html >
+
+<head>
+
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>Creating APIs in R with Plumber</title>
+  <meta name="description" content="Use the plumber R package to create HTTP APIs in R.">
+  <meta name="generator" content="bookdown 0.4 and GitBook 2.6.7">
+
+  <meta property="og:title" content="Creating APIs in R with Plumber" />
+  <meta property="og:type" content="book" />
+  
+  <meta property="og:image" content="./files/images/cover.jpg" />
+  <meta property="og:description" content="Use the plumber R package to create HTTP APIs in R." />
+  <meta name="github-repo" content="trestletech/apis-plumber" />
+
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="Creating APIs in R with Plumber" />
+  
+  <meta name="twitter:description" content="Use the plumber R package to create HTTP APIs in R." />
+  <meta name="twitter:image" content="./files/images/cover.jpg" />
+
+<meta name="author" content="Jeff Allen">
+
+
+
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <link rel="apple-touch-icon-precomposed" sizes="152x152" href="./files/images/apple-icon-152x152.png">
+  <link rel="shortcut icon" href="./files/images/favicon.png" type="image/x-icon">
+<link rel="prev" href="all-annotations.html">
+<link rel="next" href="citations.html">
+<script src="libs/jquery-2.2.3/jquery.min.js"></script>
+<link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-fontsettings.css" rel="stylesheet" />
+
+
+
+
+
+
+
+
+
+<style type="text/css">
+div.sourceCode { overflow-x: auto; }
+table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
+  margin: 0; padding: 0; vertical-align: baseline; border: none; }
+table.sourceCode { width: 100%; line-height: 100%; }
+td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
+td.sourceCode { padding-left: 5px; }
+code > span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code > span.dt { color: #902000; } /* DataType */
+code > span.dv { color: #40a070; } /* DecVal */
+code > span.bn { color: #40a070; } /* BaseN */
+code > span.fl { color: #40a070; } /* Float */
+code > span.ch { color: #4070a0; } /* Char */
+code > span.st { color: #4070a0; } /* String */
+code > span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code > span.ot { color: #007020; } /* Other */
+code > span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code > span.fu { color: #06287e; } /* Function */
+code > span.er { color: #ff0000; font-weight: bold; } /* Error */
+code > span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+code > span.cn { color: #880000; } /* Constant */
+code > span.sc { color: #4070a0; } /* SpecialChar */
+code > span.vs { color: #4070a0; } /* VerbatimString */
+code > span.ss { color: #bb6688; } /* SpecialString */
+code > span.im { } /* Import */
+code > span.va { color: #19177c; } /* Variable */
+code > span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code > span.op { color: #666666; } /* Operator */
+code > span.bu { } /* BuiltIn */
+code > span.ex { } /* Extension */
+code > span.pp { color: #bc7a00; } /* Preprocessor */
+code > span.at { color: #7d9029; } /* Attribute */
+code > span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code > span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code > span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+</style>
+
+<link rel="stylesheet" href="style.css" type="text/css" />
+</head>
+
+<body>
+
+
+
+  <div class="book without-animation with-summary font-size-2 font-family-1" data-basepath=".">
+
+    <div class="book-summary">
+      <nav role="navigation">
+
+<ul class="summary">
+<li class="chapter" data-level="1" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i><b>1</b> Introduction</a><ul>
+<li class="chapter" data-level="1.1" data-path="index.html"><a href="index.html#web-apis"><i class="fa fa-check"></i><b>1.1</b> Web APIs</a></li>
+<li class="chapter" data-level="1.2" data-path="index.html"><a href="index.html#installation"><i class="fa fa-check"></i><b>1.2</b> Installation</a></li>
+</ul></li>
+<li class="chapter" data-level="2" data-path="quickstart.html"><a href="quickstart.html"><i class="fa fa-check"></i><b>2</b> Quickstart</a><ul>
+<li class="chapter" data-level="2.1" data-path="quickstart.html"><a href="quickstart.html#specifying-the-inputs"><i class="fa fa-check"></i><b>2.1</b> Specifying the Inputs</a></li>
+<li class="chapter" data-level="2.2" data-path="quickstart.html"><a href="quickstart.html#customizing-the-output"><i class="fa fa-check"></i><b>2.2</b> Customizing The Output</a></li>
+</ul></li>
+<li class="chapter" data-level="3" data-path="routing-and-input.html"><a href="routing-and-input.html"><i class="fa fa-check"></i><b>3</b> Routing &amp; Input</a><ul>
+<li class="chapter" data-level="3.1" data-path="routing-and-input.html"><a href="routing-and-input.html#endpoints"><i class="fa fa-check"></i><b>3.1</b> Endpoints</a></li>
+<li class="chapter" data-level="3.2" data-path="routing-and-input.html"><a href="routing-and-input.html#filters"><i class="fa fa-check"></i><b>3.2</b> Filters</a><ul>
+<li class="chapter" data-level="3.2.1" data-path="routing-and-input.html"><a href="routing-and-input.html#forward-to-another-handler"><i class="fa fa-check"></i><b>3.2.1</b> Forward to Another Handler</a></li>
+<li class="chapter" data-level="3.2.2" data-path="routing-and-input.html"><a href="routing-and-input.html#return-a-response"><i class="fa fa-check"></i><b>3.2.2</b> Return a Response</a></li>
+<li class="chapter" data-level="3.2.3" data-path="routing-and-input.html"><a href="routing-and-input.html#throw-an-error"><i class="fa fa-check"></i><b>3.2.3</b> Throw an Error</a></li>
+</ul></li>
+<li class="chapter" data-level="3.3" data-path="routing-and-input.html"><a href="routing-and-input.html#dynamic-routes"><i class="fa fa-check"></i><b>3.3</b> Dynamic Routes</a></li>
+<li class="chapter" data-level="3.4" data-path="routing-and-input.html"><a href="routing-and-input.html#typed-dynamic-routes"><i class="fa fa-check"></i><b>3.4</b> Typed Dynamic Routes</a></li>
+<li class="chapter" data-level="3.5" data-path="routing-and-input.html"><a href="routing-and-input.html#static-file-handler"><i class="fa fa-check"></i><b>3.5</b> Static File Handler</a></li>
+<li class="chapter" data-level="3.6" data-path="routing-and-input.html"><a href="routing-and-input.html#input-handling"><i class="fa fa-check"></i><b>3.6</b> Input Handling</a><ul>
+<li class="chapter" data-level="3.6.1" data-path="routing-and-input.html"><a href="routing-and-input.html#the-request-object"><i class="fa fa-check"></i><b>3.6.1</b> The Request Object</a></li>
+<li class="chapter" data-level="3.6.2" data-path="routing-and-input.html"><a href="routing-and-input.html#query-strings"><i class="fa fa-check"></i><b>3.6.2</b> Query Strings</a></li>
+<li class="chapter" data-level="3.6.3" data-path="routing-and-input.html"><a href="routing-and-input.html#request-body"><i class="fa fa-check"></i><b>3.6.3</b> Request Body</a></li>
+<li class="chapter" data-level="3.6.4" data-path="routing-and-input.html"><a href="routing-and-input.html#read-cookies"><i class="fa fa-check"></i><b>3.6.4</b> Cookies</a></li>
+<li class="chapter" data-level="3.6.5" data-path="routing-and-input.html"><a href="routing-and-input.html#headers"><i class="fa fa-check"></i><b>3.6.5</b> Headers</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="4" data-path="rendering-and-output.html"><a href="rendering-and-output.html"><i class="fa fa-check"></i><b>4</b> Rendering Output</a><ul>
+<li class="chapter" data-level="4.1" data-path="rendering-and-output.html"><a href="rendering-and-output.html#response-object"><i class="fa fa-check"></i><b>4.1</b> The Response Object</a></li>
+<li class="chapter" data-level="4.2" data-path="rendering-and-output.html"><a href="rendering-and-output.html#serializers"><i class="fa fa-check"></i><b>4.2</b> Serializers</a><ul>
+<li class="chapter" data-level="4.2.1" data-path="rendering-and-output.html"><a href="rendering-and-output.html#bypassing-serialization"><i class="fa fa-check"></i><b>4.2.1</b> Bypassing Serialization</a></li>
+<li class="chapter" data-level="4.2.2" data-path="rendering-and-output.html"><a href="rendering-and-output.html#boxed-vs-unboxed-json"><i class="fa fa-check"></i><b>4.2.2</b> Boxed vs Unboxed JSON</a></li>
+</ul></li>
+<li class="chapter" data-level="4.3" data-path="rendering-and-output.html"><a href="rendering-and-output.html#error-handling"><i class="fa fa-check"></i><b>4.3</b> Error Handling</a></li>
+<li class="chapter" data-level="4.4" data-path="rendering-and-output.html"><a href="rendering-and-output.html#custom-serializers"><i class="fa fa-check"></i><b>4.4</b> Custom Serializers</a></li>
+</ul></li>
+<li class="chapter" data-level="5" data-path="runtime.html"><a href="runtime.html"><i class="fa fa-check"></i><b>5</b> Runtime</a><ul>
+<li class="chapter" data-level="5.1" data-path="runtime.html"><a href="runtime.html#execution-model"><i class="fa fa-check"></i><b>5.1</b> Execution Model</a></li>
+<li class="chapter" data-level="5.2" data-path="runtime.html"><a href="runtime.html#environments"><i class="fa fa-check"></i><b>5.2</b> Environments</a></li>
+<li class="chapter" data-level="5.3" data-path="runtime.html"><a href="runtime.html#performance-request-processing"><i class="fa fa-check"></i><b>5.3</b> Performance &amp; Request Processing</a></li>
+<li class="chapter" data-level="5.4" data-path="runtime.html"><a href="runtime.html#managing-state"><i class="fa fa-check"></i><b>5.4</b> Managing State</a><ul>
+<li class="chapter" data-level="5.4.1" data-path="runtime.html"><a href="runtime.html#in-memory"><i class="fa fa-check"></i><b>5.4.1</b> In-Memory</a></li>
+<li class="chapter" data-level="5.4.2" data-path="runtime.html"><a href="runtime.html#file-system"><i class="fa fa-check"></i><b>5.4.2</b> File System</a></li>
+<li class="chapter" data-level="5.4.3" data-path="runtime.html"><a href="runtime.html#state-cookies"><i class="fa fa-check"></i><b>5.4.3</b> Cookies</a></li>
+<li class="chapter" data-level="5.4.4" data-path="runtime.html"><a href="runtime.html#external-data-store"><i class="fa fa-check"></i><b>5.4.4</b> External Data Store</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="6" data-path="security.html"><a href="security.html"><i class="fa fa-check"></i><b>6</b> Security</a><ul>
+<li class="chapter" data-level="6.1" data-path="security.html"><a href="security.html#networking"><i class="fa fa-check"></i><b>6.1</b> Networking &amp; Firewalls</a></li>
+<li class="chapter" data-level="6.2" data-path="security.html"><a href="security.html#dos"><i class="fa fa-check"></i><b>6.2</b> Denial Of Service (DoS)</a></li>
+<li class="chapter" data-level="6.3" data-path="security.html"><a href="security.html#sanitization"><i class="fa fa-check"></i><b>6.3</b> Sanitization &amp; Injection</a></li>
+<li class="chapter" data-level="6.4" data-path="security.html"><a href="security.html#cross-origin-resource-sharing-cors"><i class="fa fa-check"></i><b>6.4</b> Cross-Origin Resource Sharing (CORS)</a></li>
+<li class="chapter" data-level="6.5" data-path="security.html"><a href="security.html#cross-site-request-forgery-csrf-or-xsrf"><i class="fa fa-check"></i><b>6.5</b> Cross-Site Request Forgery (CSRF, or XSRF)</a></li>
+</ul></li>
+<li class="chapter" data-level="7" data-path="hosting.html"><a href="hosting.html"><i class="fa fa-check"></i><b>7</b> Hosting</a><ul>
+<li class="chapter" data-level="7.1" data-path="hosting.html"><a href="hosting.html#digitalocean"><i class="fa fa-check"></i><b>7.1</b> DigitalOcean</a></li>
+<li class="chapter" data-level="7.2" data-path="hosting.html"><a href="hosting.html#rstudio-connect"><i class="fa fa-check"></i><b>7.2</b> RStudio Connect</a></li>
+<li class="chapter" data-level="7.3" data-path="hosting.html"><a href="hosting.html#docker"><i class="fa fa-check"></i><b>7.3</b> Docker (Basic)</a><ul>
+<li class="chapter" data-level="7.3.1" data-path="hosting.html"><a href="hosting.html#default-dockerfile"><i class="fa fa-check"></i><b>7.3.1</b> Default Dockerfile</a></li>
+<li class="chapter" data-level="7.3.2" data-path="hosting.html"><a href="hosting.html#custom-dockerfiles"><i class="fa fa-check"></i><b>7.3.2</b> Custom Dockerfiles</a></li>
+<li class="chapter" data-level="7.3.3" data-path="hosting.html"><a href="hosting.html#automatically-run-on-restart"><i class="fa fa-check"></i><b>7.3.3</b> Automatically Run on Restart</a></li>
+</ul></li>
+<li class="chapter" data-level="7.4" data-path="hosting.html"><a href="hosting.html#docker-advanced"><i class="fa fa-check"></i><b>7.4</b> Docker (Advanced)</a><ul>
+<li class="chapter" data-level="7.4.1" data-path="hosting.html"><a href="hosting.html#multiple-plumber-applications"><i class="fa fa-check"></i><b>7.4.1</b> Multiple Plumber Applications</a></li>
+<li class="chapter" data-level="7.4.2" data-path="hosting.html"><a href="hosting.html#multiple-applications-on-one-port"><i class="fa fa-check"></i><b>7.4.2</b> Multiple Applications on One Port</a></li>
+<li class="chapter" data-level="7.4.3" data-path="hosting.html"><a href="hosting.html#load-balancing"><i class="fa fa-check"></i><b>7.4.3</b> Load Balancing</a></li>
+</ul></li>
+<li class="chapter" data-level="7.5" data-path="hosting.html"><a href="hosting.html#pm2"><i class="fa fa-check"></i><b>7.5</b> pm2</a><ul>
+<li class="chapter" data-level="7.5.1" data-path="hosting.html"><a href="hosting.html#server-deployment-and-preparation"><i class="fa fa-check"></i><b>7.5.1</b> Server Deployment and Preparation</a></li>
+<li class="chapter" data-level="7.5.2" data-path="hosting.html"><a href="hosting.html#install-pm2"><i class="fa fa-check"></i><b>7.5.2</b> Install pm2</a></li>
+<li class="chapter" data-level="7.5.3" data-path="hosting.html"><a href="hosting.html#wrap-your-plumber-file"><i class="fa fa-check"></i><b>7.5.3</b> Wrap Your Plumber File</a></li>
+<li class="chapter" data-level="7.5.4" data-path="hosting.html"><a href="hosting.html#introduce-our-service-to-pm2"><i class="fa fa-check"></i><b>7.5.4</b> Introduce Our Service to pm2</a></li>
+<li class="chapter" data-level="7.5.5" data-path="hosting.html"><a href="hosting.html#logs-and-management"><i class="fa fa-check"></i><b>7.5.5</b> Logs and Management</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="8" data-path="programmatic-usage.html"><a href="programmatic-usage.html"><i class="fa fa-check"></i><b>8</b> Programmatic Usage</a><ul>
+<li class="chapter" data-level="8.1" data-path="programmatic-usage.html"><a href="programmatic-usage.html#creating-and-controlling-a-router"><i class="fa fa-check"></i><b>8.1</b> Creating and Controlling a Router</a></li>
+<li class="chapter" data-level="8.2" data-path="programmatic-usage.html"><a href="programmatic-usage.html#defining-endpoints"><i class="fa fa-check"></i><b>8.2</b> Defining Endpoints</a></li>
+<li class="chapter" data-level="8.3" data-path="programmatic-usage.html"><a href="programmatic-usage.html#defining-filters"><i class="fa fa-check"></i><b>8.3</b> Defining Filters</a></li>
+<li class="chapter" data-level="8.4" data-path="programmatic-usage.html"><a href="programmatic-usage.html#registering-hooks-on-a-router-router-hooks"><i class="fa fa-check"></i><b>8.4</b> Registering Hooks on a Router {router-hooks}</a></li>
+<li class="chapter" data-level="8.5" data-path="programmatic-usage.html"><a href="programmatic-usage.html#mount-static"><i class="fa fa-check"></i><b>8.5</b> Mounting &amp; Static File Routers</a></li>
+<li class="chapter" data-level="8.6" data-path="programmatic-usage.html"><a href="programmatic-usage.html#customize-router"><i class="fa fa-check"></i><b>8.6</b> Customizing a Router</a></li>
+</ul></li>
+<li class="chapter" data-level="9" data-path="tips-tricks.html"><a href="tips-tricks.html"><i class="fa fa-check"></i><b>9</b> Tips &amp; Tricks</a><ul>
+<li class="chapter" data-level="9.1" data-path="tips-tricks.html"><a href="tips-tricks.html#debugging"><i class="fa fa-check"></i><b>9.1</b> Debugging</a><ul>
+<li class="chapter" data-level="9.1.1" data-path="tips-tricks.html"><a href="tips-tricks.html#print-debugging"><i class="fa fa-check"></i><b>9.1.1</b> Print Debugging</a></li>
+<li class="chapter" data-level="9.1.2" data-path="tips-tricks.html"><a href="tips-tricks.html#interactive-debugging"><i class="fa fa-check"></i><b>9.1.2</b> Interactive Debugging</a></li>
+</ul></li>
+<li class="chapter" data-level="9.2" data-path="tips-tricks.html"><a href="tips-tricks.html#testing"><i class="fa fa-check"></i><b>9.2</b> Testing</a></li>
+<li class="chapter" data-level="9.3" data-path="tips-tricks.html"><a href="tips-tricks.html#organizing-large-applications"><i class="fa fa-check"></i><b>9.3</b> Organizing Large Applications</a></li>
+<li class="chapter" data-level="9.4" data-path="tips-tricks.html"><a href="tips-tricks.html#swagger"><i class="fa fa-check"></i><b>9.4</b> Swagger</a></li>
+<li class="chapter" data-level="9.5" data-path="tips-tricks.html"><a href="tips-tricks.html#performance"><i class="fa fa-check"></i><b>9.5</b> Performance</a></li>
+<li class="chapter" data-level="9.6" data-path="tips-tricks.html"><a href="tips-tricks.html#cookies"><i class="fa fa-check"></i><b>9.6</b> Cookies</a><ul>
+<li class="chapter" data-level="9.6.1" data-path="tips-tricks.html"><a href="tips-tricks.html#setting-cookies"><i class="fa fa-check"></i><b>9.6.1</b> Setting Unencrypted Cookies</a></li>
+<li class="chapter" data-level="9.6.2" data-path="tips-tricks.html"><a href="tips-tricks.html#encrypted-cookies"><i class="fa fa-check"></i><b>9.6.2</b> Setting Encrypted Cookies</a></li>
+</ul></li>
+</ul></li>
+<li class="appendix"><span><b>Appendix</b></span></li>
+<li class="chapter" data-level="A" data-path="all-annotations.html"><a href="all-annotations.html"><i class="fa fa-check"></i><b>A</b> All Annotations</a></li>
+<li class="chapter" data-level="B" data-path="plumber-0-4-0-migration-guide.html"><a href="plumber-0-4-0-migration-guide.html"><i class="fa fa-check"></i><b>B</b> Plumber 0.4.0 Migration Guide</a></li>
+<li class="chapter" data-level="C" data-path="citations.html"><a href="citations.html"><i class="fa fa-check"></i><b>C</b> Citations</a></li>
+<li class="divider"></li>
+<li><a href="https://www.netlify.com" target="_blank">Site hosting from Netlify</a></li>
+
+</ul>
+
+      </nav>
+    </div>
+
+    <div class="book-body">
+      <div class="body-inner">
+        <div class="book-header" role="navigation">
+          <h1>
+            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">Creating APIs in R with Plumber</a>
+          </h1>
+        </div>
+
+        <div class="page-wrapper" tabindex="-1" role="main">
+          <div class="page-inner">
+
+            <section class="normal" id="section-">
+<div id="plumber-0.4.0-migration-guide" class="section level1">
+<h1><span class="header-section-number">B</span> Plumber 0.4.0 Migration Guide</h1>
+<p>Plumber underwent a series of breaking changes as a part of the 0.4.0 release. These changes were made as an attempt to rectify some earlier mistakes and as an attempt to take care of all foreseeable breaking changes for the Plumber package.</p>
+<p>There are a number of changes that users should consider when preparing to upgrade to <code>plumber</code> 0.4.0.</p>
+<ol style="list-style-type: decimal">
+<li><strong>Plumber no longer accepts external connections by default</strong>. The <code>host</code> parameter for the <code>run()</code> method now defaults to <code>127.0.0.1</code>, meaning that Plumber will only listen for incoming requests from the local machine on which it’s running – not from any other machine on the network. This is done for security reasons so that you don’t accidentally expose a Plumber API that you’re developing to your entire network. To restore the old behavior in which Plumber listened for connections from any machine on the network, use <code>$run(host=&quot;0.0.0.0&quot;)</code>. Note that if you’re deploying to an environment that includes an HTTP proxy (such as the <a href="hosting.html#digitalocean">DigitalOcean</a> servers which use nginx), having Plumber listen only on <code>127.0.0.1</code> is likely the right default, as your proxy – not Plumber – is the one receiving external connections.</li>
+<li>Plumber no longer sets the <code>Access-Control-Allow-Origin</code> HTTP header to <code>*</code>. This was previously done for convenience but given the security implications we’re reversing this decision. The previous behavior would have allowed web browsers to make requests of your API from other domains using JavaScript if the request used only standard HTTP headers and were a <code>GET</code>, <code>HEAD</code>, or <code>POST</code> request. These requests will no longer work by default. If you wish to allow an endpoint to be accessible from other origins in a web browser, you can use <code>res$setHeader(&quot;Access-Control-Allow-Origin&quot;, &quot;*&quot;)</code> in an endpoint or filter.</li>
+<li>Rather than setting the default port to <code>8000</code>, <strong>the port is now randomly selected</strong>. This ensures that a shared server (like RStudio Server) will be able to support multiple people developing Plumber APIs concurrently without them having to manually identify an available port. This can be controlled by specifying the <code>port</code> parameter in the <code>run()</code> method or by setting the <code>plumber.port</code> option.</li>
+<li><strong>The object-oriented model for Plumber routers has changed</strong>. If you’re calling any of the following methods on your Plumber router, you will need to modify your code to use the newer alternatives: <code>addFilter</code>, <code>addEndpoint</code>, <code>addGlobalProcessor</code>, and <code>addAssets</code>. The code around these functions has undergone a major rewrite and some breaking changes have been introduced. These four functions are still supported with a deprecation warning in 0.4.0, but support is only best-effort. Certain parameters on these methods are no longer supported, so you should thoroughly test any Plumber API that leverages any of these methods before deploying version 0.4.0. <a href="programmatic-usage.html#programmatic-usage">Updated documentation</a> for using Plumber programmatically is now available.</li>
+</ol>
+</div>
+            </section>
+
+          </div>
+        </div>
+      </div>
+<a href="all-annotations.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="citations.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+    </div>
+  </div>
+<script src="libs/gitbook-2.6.7/js/app.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/lunr.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-search.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-sharing.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-fontsettings.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-bookdown.js"></script>
+<script src="libs/gitbook-2.6.7/js/jquery.highlight.js"></script>
+<script>
+require(["gitbook"], function(gitbook) {
+gitbook.start({
+"sharing": {
+"github": false,
+"facebook": true,
+"twitter": true,
+"google": false,
+"weibo": false,
+"instapper": false,
+"vk": false,
+"all": ["facebook", "google", "twitter", "weibo", "instapaper"]
+},
+"fontsettings": {
+"theme": "white",
+"family": "sans",
+"size": 2
+},
+"edit": {
+"link": "https://github.com/trestletech/apis-plumber/edit/master/99-appendix-a.Rmd",
+"text": "Edit"
+},
+"download": {},
+"toc": {
+"collapse": "subsection"
+}
+});
+});
+</script>
+
+</body>
+
+</html>

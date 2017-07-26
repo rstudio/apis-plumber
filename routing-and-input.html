@@ -1,0 +1,614 @@
+<!DOCTYPE html>
+<html >
+
+<head>
+
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>Creating APIs in R with Plumber</title>
+  <meta name="description" content="Use the plumber R package to create HTTP APIs in R.">
+  <meta name="generator" content="bookdown 0.4 and GitBook 2.6.7">
+
+  <meta property="og:title" content="Creating APIs in R with Plumber" />
+  <meta property="og:type" content="book" />
+  
+  <meta property="og:image" content="./files/images/cover.jpg" />
+  <meta property="og:description" content="Use the plumber R package to create HTTP APIs in R." />
+  <meta name="github-repo" content="trestletech/apis-plumber" />
+
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="Creating APIs in R with Plumber" />
+  
+  <meta name="twitter:description" content="Use the plumber R package to create HTTP APIs in R." />
+  <meta name="twitter:image" content="./files/images/cover.jpg" />
+
+<meta name="author" content="Jeff Allen">
+
+
+
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <link rel="apple-touch-icon-precomposed" sizes="152x152" href="./files/images/apple-icon-152x152.png">
+  <link rel="shortcut icon" href="./files/images/favicon.png" type="image/x-icon">
+<link rel="prev" href="quickstart.html">
+<link rel="next" href="rendering-and-output.html">
+<script src="libs/jquery-2.2.3/jquery.min.js"></script>
+<link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-fontsettings.css" rel="stylesheet" />
+
+
+
+
+
+
+
+
+
+<style type="text/css">
+div.sourceCode { overflow-x: auto; }
+table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
+  margin: 0; padding: 0; vertical-align: baseline; border: none; }
+table.sourceCode { width: 100%; line-height: 100%; }
+td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
+td.sourceCode { padding-left: 5px; }
+code > span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code > span.dt { color: #902000; } /* DataType */
+code > span.dv { color: #40a070; } /* DecVal */
+code > span.bn { color: #40a070; } /* BaseN */
+code > span.fl { color: #40a070; } /* Float */
+code > span.ch { color: #4070a0; } /* Char */
+code > span.st { color: #4070a0; } /* String */
+code > span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code > span.ot { color: #007020; } /* Other */
+code > span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code > span.fu { color: #06287e; } /* Function */
+code > span.er { color: #ff0000; font-weight: bold; } /* Error */
+code > span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+code > span.cn { color: #880000; } /* Constant */
+code > span.sc { color: #4070a0; } /* SpecialChar */
+code > span.vs { color: #4070a0; } /* VerbatimString */
+code > span.ss { color: #bb6688; } /* SpecialString */
+code > span.im { } /* Import */
+code > span.va { color: #19177c; } /* Variable */
+code > span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code > span.op { color: #666666; } /* Operator */
+code > span.bu { } /* BuiltIn */
+code > span.ex { } /* Extension */
+code > span.pp { color: #bc7a00; } /* Preprocessor */
+code > span.at { color: #7d9029; } /* Attribute */
+code > span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code > span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code > span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+</style>
+
+<link rel="stylesheet" href="style.css" type="text/css" />
+</head>
+
+<body>
+
+
+
+  <div class="book without-animation with-summary font-size-2 font-family-1" data-basepath=".">
+
+    <div class="book-summary">
+      <nav role="navigation">
+
+<ul class="summary">
+<li class="chapter" data-level="1" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i><b>1</b> Introduction</a><ul>
+<li class="chapter" data-level="1.1" data-path="index.html"><a href="index.html#web-apis"><i class="fa fa-check"></i><b>1.1</b> Web APIs</a></li>
+<li class="chapter" data-level="1.2" data-path="index.html"><a href="index.html#installation"><i class="fa fa-check"></i><b>1.2</b> Installation</a></li>
+</ul></li>
+<li class="chapter" data-level="2" data-path="quickstart.html"><a href="quickstart.html"><i class="fa fa-check"></i><b>2</b> Quickstart</a><ul>
+<li class="chapter" data-level="2.1" data-path="quickstart.html"><a href="quickstart.html#specifying-the-inputs"><i class="fa fa-check"></i><b>2.1</b> Specifying the Inputs</a></li>
+<li class="chapter" data-level="2.2" data-path="quickstart.html"><a href="quickstart.html#customizing-the-output"><i class="fa fa-check"></i><b>2.2</b> Customizing The Output</a></li>
+</ul></li>
+<li class="chapter" data-level="3" data-path="routing-and-input.html"><a href="routing-and-input.html"><i class="fa fa-check"></i><b>3</b> Routing &amp; Input</a><ul>
+<li class="chapter" data-level="3.1" data-path="routing-and-input.html"><a href="routing-and-input.html#endpoints"><i class="fa fa-check"></i><b>3.1</b> Endpoints</a></li>
+<li class="chapter" data-level="3.2" data-path="routing-and-input.html"><a href="routing-and-input.html#filters"><i class="fa fa-check"></i><b>3.2</b> Filters</a><ul>
+<li class="chapter" data-level="3.2.1" data-path="routing-and-input.html"><a href="routing-and-input.html#forward-to-another-handler"><i class="fa fa-check"></i><b>3.2.1</b> Forward to Another Handler</a></li>
+<li class="chapter" data-level="3.2.2" data-path="routing-and-input.html"><a href="routing-and-input.html#return-a-response"><i class="fa fa-check"></i><b>3.2.2</b> Return a Response</a></li>
+<li class="chapter" data-level="3.2.3" data-path="routing-and-input.html"><a href="routing-and-input.html#throw-an-error"><i class="fa fa-check"></i><b>3.2.3</b> Throw an Error</a></li>
+</ul></li>
+<li class="chapter" data-level="3.3" data-path="routing-and-input.html"><a href="routing-and-input.html#dynamic-routes"><i class="fa fa-check"></i><b>3.3</b> Dynamic Routes</a></li>
+<li class="chapter" data-level="3.4" data-path="routing-and-input.html"><a href="routing-and-input.html#typed-dynamic-routes"><i class="fa fa-check"></i><b>3.4</b> Typed Dynamic Routes</a></li>
+<li class="chapter" data-level="3.5" data-path="routing-and-input.html"><a href="routing-and-input.html#static-file-handler"><i class="fa fa-check"></i><b>3.5</b> Static File Handler</a></li>
+<li class="chapter" data-level="3.6" data-path="routing-and-input.html"><a href="routing-and-input.html#input-handling"><i class="fa fa-check"></i><b>3.6</b> Input Handling</a><ul>
+<li class="chapter" data-level="3.6.1" data-path="routing-and-input.html"><a href="routing-and-input.html#the-request-object"><i class="fa fa-check"></i><b>3.6.1</b> The Request Object</a></li>
+<li class="chapter" data-level="3.6.2" data-path="routing-and-input.html"><a href="routing-and-input.html#query-strings"><i class="fa fa-check"></i><b>3.6.2</b> Query Strings</a></li>
+<li class="chapter" data-level="3.6.3" data-path="routing-and-input.html"><a href="routing-and-input.html#request-body"><i class="fa fa-check"></i><b>3.6.3</b> Request Body</a></li>
+<li class="chapter" data-level="3.6.4" data-path="routing-and-input.html"><a href="routing-and-input.html#read-cookies"><i class="fa fa-check"></i><b>3.6.4</b> Cookies</a></li>
+<li class="chapter" data-level="3.6.5" data-path="routing-and-input.html"><a href="routing-and-input.html#headers"><i class="fa fa-check"></i><b>3.6.5</b> Headers</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="4" data-path="rendering-and-output.html"><a href="rendering-and-output.html"><i class="fa fa-check"></i><b>4</b> Rendering Output</a><ul>
+<li class="chapter" data-level="4.1" data-path="rendering-and-output.html"><a href="rendering-and-output.html#response-object"><i class="fa fa-check"></i><b>4.1</b> The Response Object</a></li>
+<li class="chapter" data-level="4.2" data-path="rendering-and-output.html"><a href="rendering-and-output.html#serializers"><i class="fa fa-check"></i><b>4.2</b> Serializers</a><ul>
+<li class="chapter" data-level="4.2.1" data-path="rendering-and-output.html"><a href="rendering-and-output.html#bypassing-serialization"><i class="fa fa-check"></i><b>4.2.1</b> Bypassing Serialization</a></li>
+<li class="chapter" data-level="4.2.2" data-path="rendering-and-output.html"><a href="rendering-and-output.html#boxed-vs-unboxed-json"><i class="fa fa-check"></i><b>4.2.2</b> Boxed vs Unboxed JSON</a></li>
+</ul></li>
+<li class="chapter" data-level="4.3" data-path="rendering-and-output.html"><a href="rendering-and-output.html#error-handling"><i class="fa fa-check"></i><b>4.3</b> Error Handling</a></li>
+<li class="chapter" data-level="4.4" data-path="rendering-and-output.html"><a href="rendering-and-output.html#custom-serializers"><i class="fa fa-check"></i><b>4.4</b> Custom Serializers</a></li>
+</ul></li>
+<li class="chapter" data-level="5" data-path="runtime.html"><a href="runtime.html"><i class="fa fa-check"></i><b>5</b> Runtime</a><ul>
+<li class="chapter" data-level="5.1" data-path="runtime.html"><a href="runtime.html#execution-model"><i class="fa fa-check"></i><b>5.1</b> Execution Model</a></li>
+<li class="chapter" data-level="5.2" data-path="runtime.html"><a href="runtime.html#environments"><i class="fa fa-check"></i><b>5.2</b> Environments</a></li>
+<li class="chapter" data-level="5.3" data-path="runtime.html"><a href="runtime.html#performance-request-processing"><i class="fa fa-check"></i><b>5.3</b> Performance &amp; Request Processing</a></li>
+<li class="chapter" data-level="5.4" data-path="runtime.html"><a href="runtime.html#managing-state"><i class="fa fa-check"></i><b>5.4</b> Managing State</a><ul>
+<li class="chapter" data-level="5.4.1" data-path="runtime.html"><a href="runtime.html#in-memory"><i class="fa fa-check"></i><b>5.4.1</b> In-Memory</a></li>
+<li class="chapter" data-level="5.4.2" data-path="runtime.html"><a href="runtime.html#file-system"><i class="fa fa-check"></i><b>5.4.2</b> File System</a></li>
+<li class="chapter" data-level="5.4.3" data-path="runtime.html"><a href="runtime.html#state-cookies"><i class="fa fa-check"></i><b>5.4.3</b> Cookies</a></li>
+<li class="chapter" data-level="5.4.4" data-path="runtime.html"><a href="runtime.html#external-data-store"><i class="fa fa-check"></i><b>5.4.4</b> External Data Store</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="6" data-path="security.html"><a href="security.html"><i class="fa fa-check"></i><b>6</b> Security</a><ul>
+<li class="chapter" data-level="6.1" data-path="security.html"><a href="security.html#networking"><i class="fa fa-check"></i><b>6.1</b> Networking &amp; Firewalls</a></li>
+<li class="chapter" data-level="6.2" data-path="security.html"><a href="security.html#dos"><i class="fa fa-check"></i><b>6.2</b> Denial Of Service (DoS)</a></li>
+<li class="chapter" data-level="6.3" data-path="security.html"><a href="security.html#sanitization"><i class="fa fa-check"></i><b>6.3</b> Sanitization &amp; Injection</a></li>
+<li class="chapter" data-level="6.4" data-path="security.html"><a href="security.html#cross-origin-resource-sharing-cors"><i class="fa fa-check"></i><b>6.4</b> Cross-Origin Resource Sharing (CORS)</a></li>
+<li class="chapter" data-level="6.5" data-path="security.html"><a href="security.html#cross-site-request-forgery-csrf-or-xsrf"><i class="fa fa-check"></i><b>6.5</b> Cross-Site Request Forgery (CSRF, or XSRF)</a></li>
+</ul></li>
+<li class="chapter" data-level="7" data-path="hosting.html"><a href="hosting.html"><i class="fa fa-check"></i><b>7</b> Hosting</a><ul>
+<li class="chapter" data-level="7.1" data-path="hosting.html"><a href="hosting.html#digitalocean"><i class="fa fa-check"></i><b>7.1</b> DigitalOcean</a></li>
+<li class="chapter" data-level="7.2" data-path="hosting.html"><a href="hosting.html#rstudio-connect"><i class="fa fa-check"></i><b>7.2</b> RStudio Connect</a></li>
+<li class="chapter" data-level="7.3" data-path="hosting.html"><a href="hosting.html#docker"><i class="fa fa-check"></i><b>7.3</b> Docker (Basic)</a><ul>
+<li class="chapter" data-level="7.3.1" data-path="hosting.html"><a href="hosting.html#default-dockerfile"><i class="fa fa-check"></i><b>7.3.1</b> Default Dockerfile</a></li>
+<li class="chapter" data-level="7.3.2" data-path="hosting.html"><a href="hosting.html#custom-dockerfiles"><i class="fa fa-check"></i><b>7.3.2</b> Custom Dockerfiles</a></li>
+<li class="chapter" data-level="7.3.3" data-path="hosting.html"><a href="hosting.html#automatically-run-on-restart"><i class="fa fa-check"></i><b>7.3.3</b> Automatically Run on Restart</a></li>
+</ul></li>
+<li class="chapter" data-level="7.4" data-path="hosting.html"><a href="hosting.html#docker-advanced"><i class="fa fa-check"></i><b>7.4</b> Docker (Advanced)</a><ul>
+<li class="chapter" data-level="7.4.1" data-path="hosting.html"><a href="hosting.html#multiple-plumber-applications"><i class="fa fa-check"></i><b>7.4.1</b> Multiple Plumber Applications</a></li>
+<li class="chapter" data-level="7.4.2" data-path="hosting.html"><a href="hosting.html#multiple-applications-on-one-port"><i class="fa fa-check"></i><b>7.4.2</b> Multiple Applications on One Port</a></li>
+<li class="chapter" data-level="7.4.3" data-path="hosting.html"><a href="hosting.html#load-balancing"><i class="fa fa-check"></i><b>7.4.3</b> Load Balancing</a></li>
+</ul></li>
+<li class="chapter" data-level="7.5" data-path="hosting.html"><a href="hosting.html#pm2"><i class="fa fa-check"></i><b>7.5</b> pm2</a><ul>
+<li class="chapter" data-level="7.5.1" data-path="hosting.html"><a href="hosting.html#server-deployment-and-preparation"><i class="fa fa-check"></i><b>7.5.1</b> Server Deployment and Preparation</a></li>
+<li class="chapter" data-level="7.5.2" data-path="hosting.html"><a href="hosting.html#install-pm2"><i class="fa fa-check"></i><b>7.5.2</b> Install pm2</a></li>
+<li class="chapter" data-level="7.5.3" data-path="hosting.html"><a href="hosting.html#wrap-your-plumber-file"><i class="fa fa-check"></i><b>7.5.3</b> Wrap Your Plumber File</a></li>
+<li class="chapter" data-level="7.5.4" data-path="hosting.html"><a href="hosting.html#introduce-our-service-to-pm2"><i class="fa fa-check"></i><b>7.5.4</b> Introduce Our Service to pm2</a></li>
+<li class="chapter" data-level="7.5.5" data-path="hosting.html"><a href="hosting.html#logs-and-management"><i class="fa fa-check"></i><b>7.5.5</b> Logs and Management</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="8" data-path="programmatic-usage.html"><a href="programmatic-usage.html"><i class="fa fa-check"></i><b>8</b> Programmatic Usage</a><ul>
+<li class="chapter" data-level="8.1" data-path="programmatic-usage.html"><a href="programmatic-usage.html#creating-and-controlling-a-router"><i class="fa fa-check"></i><b>8.1</b> Creating and Controlling a Router</a></li>
+<li class="chapter" data-level="8.2" data-path="programmatic-usage.html"><a href="programmatic-usage.html#defining-endpoints"><i class="fa fa-check"></i><b>8.2</b> Defining Endpoints</a></li>
+<li class="chapter" data-level="8.3" data-path="programmatic-usage.html"><a href="programmatic-usage.html#defining-filters"><i class="fa fa-check"></i><b>8.3</b> Defining Filters</a></li>
+<li class="chapter" data-level="8.4" data-path="programmatic-usage.html"><a href="programmatic-usage.html#registering-hooks-on-a-router-router-hooks"><i class="fa fa-check"></i><b>8.4</b> Registering Hooks on a Router {router-hooks}</a></li>
+<li class="chapter" data-level="8.5" data-path="programmatic-usage.html"><a href="programmatic-usage.html#mount-static"><i class="fa fa-check"></i><b>8.5</b> Mounting &amp; Static File Routers</a></li>
+<li class="chapter" data-level="8.6" data-path="programmatic-usage.html"><a href="programmatic-usage.html#customize-router"><i class="fa fa-check"></i><b>8.6</b> Customizing a Router</a></li>
+</ul></li>
+<li class="chapter" data-level="9" data-path="tips-tricks.html"><a href="tips-tricks.html"><i class="fa fa-check"></i><b>9</b> Tips &amp; Tricks</a><ul>
+<li class="chapter" data-level="9.1" data-path="tips-tricks.html"><a href="tips-tricks.html#debugging"><i class="fa fa-check"></i><b>9.1</b> Debugging</a><ul>
+<li class="chapter" data-level="9.1.1" data-path="tips-tricks.html"><a href="tips-tricks.html#print-debugging"><i class="fa fa-check"></i><b>9.1.1</b> Print Debugging</a></li>
+<li class="chapter" data-level="9.1.2" data-path="tips-tricks.html"><a href="tips-tricks.html#interactive-debugging"><i class="fa fa-check"></i><b>9.1.2</b> Interactive Debugging</a></li>
+</ul></li>
+<li class="chapter" data-level="9.2" data-path="tips-tricks.html"><a href="tips-tricks.html#testing"><i class="fa fa-check"></i><b>9.2</b> Testing</a></li>
+<li class="chapter" data-level="9.3" data-path="tips-tricks.html"><a href="tips-tricks.html#organizing-large-applications"><i class="fa fa-check"></i><b>9.3</b> Organizing Large Applications</a></li>
+<li class="chapter" data-level="9.4" data-path="tips-tricks.html"><a href="tips-tricks.html#swagger"><i class="fa fa-check"></i><b>9.4</b> Swagger</a></li>
+<li class="chapter" data-level="9.5" data-path="tips-tricks.html"><a href="tips-tricks.html#performance"><i class="fa fa-check"></i><b>9.5</b> Performance</a></li>
+<li class="chapter" data-level="9.6" data-path="tips-tricks.html"><a href="tips-tricks.html#cookies"><i class="fa fa-check"></i><b>9.6</b> Cookies</a><ul>
+<li class="chapter" data-level="9.6.1" data-path="tips-tricks.html"><a href="tips-tricks.html#setting-cookies"><i class="fa fa-check"></i><b>9.6.1</b> Setting Unencrypted Cookies</a></li>
+<li class="chapter" data-level="9.6.2" data-path="tips-tricks.html"><a href="tips-tricks.html#encrypted-cookies"><i class="fa fa-check"></i><b>9.6.2</b> Setting Encrypted Cookies</a></li>
+</ul></li>
+</ul></li>
+<li class="appendix"><span><b>Appendix</b></span></li>
+<li class="chapter" data-level="A" data-path="all-annotations.html"><a href="all-annotations.html"><i class="fa fa-check"></i><b>A</b> All Annotations</a></li>
+<li class="chapter" data-level="B" data-path="plumber-0-4-0-migration-guide.html"><a href="plumber-0-4-0-migration-guide.html"><i class="fa fa-check"></i><b>B</b> Plumber 0.4.0 Migration Guide</a></li>
+<li class="chapter" data-level="C" data-path="citations.html"><a href="citations.html"><i class="fa fa-check"></i><b>C</b> Citations</a></li>
+<li class="divider"></li>
+<li><a href="https://www.netlify.com" target="_blank">Site hosting from Netlify</a></li>
+
+</ul>
+
+      </nav>
+    </div>
+
+    <div class="book-body">
+      <div class="body-inner">
+        <div class="book-header" role="navigation">
+          <h1>
+            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">Creating APIs in R with Plumber</a>
+          </h1>
+        </div>
+
+        <div class="page-wrapper" tabindex="-1" role="main">
+          <div class="page-inner">
+
+            <section class="normal" id="section-">
+<div id="routing-and-input" class="section level1">
+<h1><span class="header-section-number">Chapter 3</span> Routing &amp; Input</h1>
+<p>Plumber’s first job is to execute R code in response to incoming HTTP requests, so it’s important to understand how incoming HTTP requests get translated into the execution of R functions.</p>
+<p>An incoming HTTP request must be “routed” to one or more R functions. Plumber has two distinct families of functions that it handles: endpoints and filters.</p>
+<p>Typically, when a request arrives to a Plumber router, Plumber begins by passing that request through its filters. Once the request has been processed by all the filters, the router will look for an endpoint that can satisfy the incoming request. If it finds one, it will invoke the endpoint and respond to the incoming request using the value the endpoint returned. If no endpoint matches the request, then a <code>404 Not Found</code> error will be returned (the behavior of which can be controlled the <a href="programmatic-usage.html#customize-router"><code>set404Handler</code></a> method).</p>
+<div id="endpoints" class="section level2">
+<h2><span class="header-section-number">3.1</span> Endpoints</h2>
+<p>Endpoints are the terminal step in the process of serving a request. An endpoint can simply be viewed as the logic that is ultimately responsible for generating a response to a particular request. A request will be checked against each available endpoint until it finds an endpoint willing to serve it at which point it stops looking; i.e. a request will not ever be processed by more than one endpoint. You create an endpoint by annotating a function like so:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co">#&#39; Echo the parameter that was sent in</span>
+<span class="co">#&#39; @get /echo</span>
+function(<span class="dt">msg=</span><span class="st">&quot;Hi!&quot;</span>){
+  <span class="kw">list</span>(<span class="dt">msg =</span> <span class="kw">paste</span>(<span class="st">&quot;The message is: &quot;</span>, msg))
+}</code></pre></div>
+<p>This annotation specifies that this function is responsible for generating the response to any <code>GET</code> request to <code>/hello</code>. The value returned from the function will be used as the response to the request (after being run through a serializer to e.g. convert the response into JSON). In this case, a <code>GET</code> response to <code>/hello</code> would return the content <code>[&quot;hello world&quot;]</code> with a <code>JSON</code> <code>Content-Type</code>.</p>
+<p>The annotations that generate an endpoint include:</p>
+<ul>
+<li><code>@get</code></li>
+<li><code>@post</code></li>
+<li><code>@put</code></li>
+<li><code>@delete</code></li>
+<li><code>@head</code></li>
+</ul>
+<p>These map to the HTTP methods that an API client might send along with a request. By default when you open a page in a web browser, that sends a <code>GET</code> request to the API. But you can use other API clients (or even JavaScript inside of a web browser) to form HTTP requests using the other methods listed here. There are conventions around when each of these methods should be used which you can read more about <a href="http://www.restapitutorial.com/lessons/httpmethods.html">here</a>. Note that some of these conventions carry with them security implications, so it’s a good idea to follow the recommended uses for each method until you fully understand why you might deviate from them.</p>
+<p>Note that a single endpoint can support multiple verbs. The following function would be used to service any incoming <code>GET</code>, <code>POST</code>, or <code>PUT</code> request to <code>/cars</code>.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co">#&#39; @get /cars</span>
+<span class="co">#&#39; @post /cars</span>
+<span class="co">#&#39; @put /cars</span>
+function(){
+  ...
+}</code></pre></div>
+</div>
+<div id="filters" class="section level2">
+<h2><span class="header-section-number">3.2</span> Filters</h2>
+<p>Plumber filters can be used to define a “pipeline” for handling incoming requests. This allows API authors to break down complex logic into a sequence of independent, understandable steps. Unlike endpoints, a request may go through multiple Plumber filters before a response is generated.</p>
+<p>Typically, a Plumber router will pass a request through all the defined filters before it attempts to find an endpoint to satisfy the request. However, endpoints can “preempt” particular filters if they want to be considered for execution before some filter(s) registered in the router.</p>
+<p>// TODO: graphic</p>
+<p>Filters can do one of three things in handling a request:</p>
+<ol style="list-style-type: decimal">
+<li>Forward control onto the next handler, potentially after mutating the request.</li>
+<li>Return a response itself and not forward to subsequent handlers</li>
+<li>Throw an error</li>
+</ol>
+<p>These three options, and why each might be desired, are discussed below.</p>
+<div id="forward-to-another-handler" class="section level3">
+<h3><span class="header-section-number">3.2.1</span> Forward to Another Handler</h3>
+<p>The most common behavior for a filter is to pass on the request to the next handler after mutating the incoming request or invoking some external side-effect. One common use case is to use a filter as a request logger:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co">#* Log some information about the incoming request</span>
+<span class="co">#* @filter logger</span>
+function(req){
+  <span class="kw">cat</span>(<span class="kw">as.character</span>(<span class="kw">Sys.time</span>()), <span class="st">&quot;-&quot;</span>, 
+    req$REQUEST_METHOD, req$PATH_INFO, <span class="st">&quot;-&quot;</span>, 
+    req$HTTP_USER_AGENT, <span class="st">&quot;@&quot;</span>, req$REMOTE_ADDR, <span class="st">&quot;</span><span class="ch">\n</span><span class="st">&quot;</span>)
+  plumber::<span class="kw">forward</span>()
+}</code></pre></div>
+<p>This filter is straightfoward: it invokes an external action (logging) and then calls <code>forward()</code> to pass control to the next handler in the pipeline (another filter or an endpoint).</p>
+<p>Because the <code>req</code> and <code>res</code> parameters in Plumber are based on R environments, they exhibit “pass-by-reference” behavior. This means that changes that are made in one filter on the <code>req</code> or <code>res</code> object will be visible to other filters or endpoints also touching this same request or response.</p>
+<p>A similar filter may mutate some state on the request or response object it’s given.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co">#* @filter setuser</span>
+function(req){
+  un &lt;-<span class="st"> </span>req$cookies$user
+  <span class="co"># Make req$username available to endpoints</span>
+  req$username &lt;-<span class="st"> </span>un
+
+  plumber::<span class="kw">forward</span>()
+}</code></pre></div>
+<p>In this case, the <code>req</code> object is going to be extended to have an additional property named <code>username</code> which represents a value looked up from a cookie. This <code>req$username</code> property would be available to all subsequent filters and endpoints processing this request. (Note that this example is not a secure system for authentication; see the <a href="runtime.html#state-cookies">section on using cookies to store state</a> for a longer discussion on why.) Once it has modified the request object, it passes control to the next handler using <code>forward()</code>.</p>
+</div>
+<div id="return-a-response" class="section level3">
+<h3><span class="header-section-number">3.2.2</span> Return a Response</h3>
+<p>It is also possible for filters to return a response. You may want to check that the request satisfies some constraint (like authentication) and – in certain cases – return a response without invoking any additional handlers. For example, a filter could be used to check that a user has authenticated.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co">#* @filter checkAuth</span>
+function(req, res){
+  if (<span class="kw">is.null</span>(req$username)){
+    res$status &lt;-<span class="st"> </span><span class="dv">401</span> <span class="co"># Unauthorized</span>
+    <span class="kw">return</span>(<span class="kw">list</span>(<span class="dt">error=</span><span class="st">&quot;Authentication required&quot;</span>))
+  } else {
+    plumber::<span class="kw">forward</span>()
+  }
+}</code></pre></div>
+<p>A common cause of errors in Plumber APIs is forgetting to invoke <code>forward()</code> in your filters. In such a filter, the result of the last line will be silently returned as the response to the incoming request. This can cause your API to exhibit very odd behavior depending on what’s being returned. When you’re using filters, be sure to carefully audit all code paths to ensure that you’re either calling <code>forward()</code>, causing an error, or intentionally returning a value.</p>
+</div>
+<div id="throw-an-error" class="section level3">
+<h3><span class="header-section-number">3.2.3</span> Throw an Error</h3>
+<p>Finally, a filter can throw an error. This can occur if a mistake is made in the code defining the filter or if the filter intentionally invokes <code>stop()</code> to trigger an error. In this case, the request will not be processed by any subsequent handlers and will immediately be sent to the router’s error handler. See <a href="programmatic-usage.html#customize-router">router customization</a> for more details on how to customize this error handler.</p>
+</div>
+</div>
+<div id="dynamic-routes" class="section level2">
+<h2><span class="header-section-number">3.3</span> Dynamic Routes</h2>
+<p>In addition to having hard-coded routes like <code>/hello</code>, Plumber endpoints can have dynamic routes. Dynamic routes allow endpoints to define a more flexible set of paths against which they should match.</p>
+<p>A common REST convention is to include the identifier of an object in the API paths associated with it. So to lookup information about user #13, you might make a <code>GET</code> request to the path <code>/users/13</code>. Rather than having to register routes for every user your API might possible encounter, you can use a dynamic route to associate an endpoint with a variety of paths.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">users &lt;-<span class="st"> </span><span class="kw">data.frame</span>(
+  <span class="dt">uid=</span><span class="kw">c</span>(<span class="dv">12</span>,<span class="dv">13</span>),
+  <span class="dt">username=</span><span class="kw">c</span>(<span class="st">&quot;kim&quot;</span>, <span class="st">&quot;john&quot;</span>)
+)
+
+<span class="co">#&#39; Lookup a user</span>
+<span class="co">#&#39; @get /users/&lt;id&gt;</span>
+function(id){
+  <span class="kw">subset</span>(users, uid==id)
+}</code></pre></div>
+<p>This API uses the dynamic path <code>/users/&lt;id&gt;</code> to match any request that is of the form <code>/users/</code> followed by some path element like a number or letters. In this case, it will return information about the user if a user with the associated ID was found, or an empty object if not.</p>
+<p>You can name these dynamic path elements however you’d like, but note that the name used in the dynamic path must match the name of the parameter for the function (in this case, both <code>id</code>).</p>
+<p>You can even do more complex dynamic routes like:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co">#&#39; @get /user/&lt;from&gt;/connect/&lt;to&gt;</span>
+function(from, to){
+  <span class="co"># Do something with the `from` and `to` variables...</span>
+}</code></pre></div>
+<p>In both the hard-coded and dynamic examples given above, the parameters will be provided to the function as a character string.</p>
+</div>
+<div id="typed-dynamic-routes" class="section level2">
+<h2><span class="header-section-number">3.4</span> Typed Dynamic Routes</h2>
+<p>Unless otherwise instructed, all parameters passed into plumber endpoints from query strings or dynamic paths will be character strings. For example, consider the following API.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co">#&#39; @get /type/&lt;id&gt;</span>
+function(id){
+  <span class="kw">list</span>(
+    <span class="dt">id =</span> id,
+    <span class="dt">type =</span> <span class="kw">typeof</span>(id)
+  )
+}</code></pre></div>
+<p>Visiting <a href="http://localhost:8000/types/14" class="uri">http://localhost:8000/types/14</a> will return:</p>
+<div class="sourceCode"><pre class="sourceCode json"><code class="sourceCode json"><span class="fu">{</span>
+  <span class="dt">&quot;id&quot;</span><span class="fu">:</span> <span class="ot">[</span><span class="st">&quot;14&quot;</span><span class="ot">]</span><span class="fu">,</span>
+  <span class="dt">&quot;type&quot;</span><span class="fu">:</span> <span class="ot">[</span><span class="st">&quot;character&quot;</span><span class="ot">]</span>
+<span class="fu">}</span></code></pre></div>
+<p>If you only intend to support a particular data type for a particular parameter in your dynamic route, you can specify the desired type in the route itself.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co">#* @get /user/&lt;id:int&gt;</span>
+function(id){
+  next &lt;-<span class="st"> </span>id +<span class="st"> </span><span class="dv">1</span>
+  <span class="co"># ...</span>
+}
+
+<span class="co">#* @post /user/activated/&lt;active:bool&gt;</span>
+function(active){
+  if (!active){
+    <span class="co"># ...</span>
+  }
+}</code></pre></div>
+<p>Specifying the type of a dynamic path element will also narrow the paths that will match the endpoint. For instance, the path <code>/users/123</code> will match the first endpoint, but <code>/users/8e3k</code> will not, since <code>8e3k</code> is not an integer.</p>
+<p>The following details the mapping of the type names that you can use in your dynamic types and how they map to R data types.</p>
+<table>
+<thead>
+<tr class="header">
+<th align="left">R Type</th>
+<th align="left">Plumber Name</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">logical</td>
+<td align="left"><code>bool</code>, <code>logical</code></td>
+</tr>
+<tr class="even">
+<td align="left">numeric</td>
+<td align="left"><code>double</code>, <code>numeric</code></td>
+</tr>
+<tr class="odd">
+<td align="left">integer</td>
+<td align="left"><code>int</code></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div id="static-file-handler" class="section level2">
+<h2><span class="header-section-number">3.5</span> Static File Handler</h2>
+<p>Plumber includes a static file server which can be used to host directories of static assets such as JavaScript, CSS, or HTML files. These servers are fairly simple to configure and integrate into your plumber application.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co">#* @assets ./files/static</span>
+<span class="kw">list</span>()</code></pre></div>
+<p>This example would expose the local directory <code>./files/static</code> at the default <code>/public</code> path on your server. So if you had a file <code>./files/static/branding.html</code>, it would be available on your Plumber server at <code>/public/branding.html</code>.</p>
+<p>You can optionally provide an additional argument to configure the public path used for your server. For instance</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co">#* @assets ./files/static /static</span>
+<span class="kw">list</span>()</code></pre></div>
+<p>would expose the directory not at <code>/public</code>, but at <code>/static</code>.</p>
+<p>The “implementation” of your server in the above examples is just an empty <code>list()</code>. You can also specify a <code>function()</code> like you do with the other plumber annotations. At this point, the implementation doesn’t alter the behavior of your static server. Eventually, this list or function may provide an opportunity to configure the server by changing things like cache control settings.</p>
+<p>If you’re configuring a Plumber router programmatically, you can instantiate a special static file router and mount it onto another router as discussed in the <a href="programmatic-usage.html#mount-static">static file router section</a>.</p>
+</div>
+<div id="input-handling" class="section level2">
+<h2><span class="header-section-number">3.6</span> Input Handling</h2>
+<p>Plumber routes requests based exclusively on the path and method of the incoming HTTP request, but requests can contain much more information than just this. They might include additional HTTP headers, a query string, or a request body. All of these fields may be viewed as “inputs” to your Plumber API.</p>
+<div id="the-request-object" class="section level3">
+<h3><span class="header-section-number">3.6.1</span> The Request Object</h3>
+<p>HTTP requests in Plumber are stored as environments and satisfy the <a href="https://github.com/jeffreyhorner/Rook/blob/a5e45f751/README.md#the-environment">Rook interface</a>. The expected objects for all HTTP requests are the following.</p>
+<table style="width:51%;">
+<colgroup>
+<col width="6%" />
+<col width="11%" />
+<col width="33%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="left">Name</th>
+<th align="left">Example</th>
+<th align="left">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left"><code>cookies</code></td>
+<td align="left"><code>list(cook=&quot;abc&quot;)</code></td>
+<td align="left">A list of the cookies as described in <a href="routing-and-input.html#read-cookies">Cookies</a></td>
+</tr>
+<tr class="even">
+<td align="left"><code>httpuv.version</code></td>
+<td align="left"><code>&quot;1.3.3&quot;</code></td>
+<td align="left">The version of the underlying <a href="https://github.com/rstudio/httpuv"><code>httpuv</code> package</a></td>
+</tr>
+<tr class="odd">
+<td align="left"><code>PATH_INFO</code></td>
+<td align="left"><code>&quot;/&quot;</code></td>
+<td align="left">The path of the incoming HTTP request</td>
+</tr>
+<tr class="even">
+<td align="left"><code>postBody</code></td>
+<td align="left"><code>&quot;a=1&amp;b=2&quot;</code></td>
+<td align="left">The contents of the body of the request. Despite the name, it is available for any HTTP method.</td>
+</tr>
+<tr class="odd">
+<td align="left"><code>QUERY_STRING</code></td>
+<td align="left"><code>&quot;?a=123&amp;b=abc&quot;</code></td>
+<td align="left">The query-string portion of the HTTP request</td>
+</tr>
+<tr class="even">
+<td align="left"><code>REMOTE_ADDR</code></td>
+<td align="left"><code>&quot;1.2.3.4&quot;</code></td>
+<td align="left">The IP address of the client making the request</td>
+</tr>
+<tr class="odd">
+<td align="left"><code>REMOTE_PORT</code></td>
+<td align="left"><code>&quot;62108&quot;</code></td>
+<td align="left">The client port from which the request originated</td>
+</tr>
+<tr class="even">
+<td align="left"><code>REQUEST_METHOD</code></td>
+<td align="left"><code>&quot;GET&quot;</code></td>
+<td align="left">The method used for this HTTP request</td>
+</tr>
+<tr class="odd">
+<td align="left"><code>rook.errors</code></td>
+<td align="left">N/A</td>
+<td align="left">See <a href="https://github.com/jeffreyhorner/Rook/blob/a5e45f751/README.md#the-input-stream">Rook docs</a></td>
+</tr>
+<tr class="even">
+<td align="left"><code>rook.input</code></td>
+<td align="left">N/A</td>
+<td align="left">See <a href="https://github.com/jeffreyhorner/Rook/blob/a5e45f751/README.md#the-error-stream">Rook docs</a></td>
+</tr>
+<tr class="odd">
+<td align="left"><code>rook.url_scheme</code></td>
+<td align="left"><code>&quot;http&quot;</code></td>
+<td align="left">The “scheme” (typically <code>http</code> or <code>https</code>).</td>
+</tr>
+<tr class="even">
+<td align="left"><code>rook.version</code></td>
+<td align="left"><code>&quot;1.1-0&quot;</code></td>
+<td align="left">The version of the rook specification which this environment satisfies</td>
+</tr>
+<tr class="odd">
+<td align="left"><code>SCRIPT_NAME</code></td>
+<td align="left"><code>&quot;&quot;</code></td>
+<td align="left">Unused</td>
+</tr>
+<tr class="even">
+<td align="left"><code>SERVER_NAME</code></td>
+<td align="left"><code>&quot;127.0.0.1&quot;</code></td>
+<td align="left">The host portion of the incoming request. You may favor <code>HTTP_HOST</code>, if available.</td>
+</tr>
+<tr class="odd">
+<td align="left"><code>SERVER_PORT</code></td>
+<td align="left"><code>&quot;8000&quot;</code></td>
+<td align="left">The target port for the request</td>
+</tr>
+<tr class="even">
+<td align="left"><code>HTTP_*</code></td>
+<td align="left"><code>&quot;HTTP_USER_AGENT&quot;</code></td>
+<td align="left">Entries for all of the HTTP headers sent with this request.</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div id="query-strings" class="section level3">
+<h3><span class="header-section-number">3.6.2</span> Query Strings</h3>
+<p>A query string may be appended to a URL in order to convey additional information beyond just the request route. Query strings allow for the encoding of character string keys and values. For example, in the URL <code>https://duckduckgo.com/?q=bread&amp;pretty=1</code>, everything following the <code>?</code> constitutes the query string. In this case, two variables (<code>q</code> and <code>pretty</code>) have been set (to <code>bread</code> and <code>1</code>, respectively).</p>
+<p>Plumber will automatically forward information from the query string into the function being executed by aligning the name of the query string with the name of the function parameter. The following example defines a search API that mimics the example from <a href="https://duckduckgo.com">DuckDuckGo</a> above but merely prints out what it receives.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co">#&#39; @get /</span>
+search &lt;-<span class="st"> </span>function(<span class="dt">q=</span><span class="st">&quot;&quot;</span>, <span class="dt">pretty=</span><span class="dv">0</span>){
+  <span class="kw">paste0</span>(<span class="st">&quot;The q parameter is &#39;&quot;</span>, q, <span class="st">&quot;&#39;. &quot;</span>,
+         <span class="st">&quot;The pretty parameter is &#39;&quot;</span>, pretty, <span class="st">&quot;&#39;.&quot;</span>)
+}</code></pre></div>
+<p>Visiting <a href="http://localhost:8000/?q=bread&amp;pretty=1" class="uri">http://localhost:8000/?q=bread&amp;pretty=1</a> will print:</p>
+<div class="sourceCode"><pre class="sourceCode json"><code class="sourceCode json"><span class="ot">[</span><span class="st">&quot;The q parameter is &#39;bread&#39;. The pretty parameter is &#39;1&#39;.&quot;</span><span class="ot">]</span></code></pre></div>
+<p>This is equivalent to calling <code>search(q=&quot;bread&quot;, pretty=&quot;1&quot;)</code>. If a parameter were not specified in the query string, it would just be omitted from the invocation of the endpoint. For example <a href="http://localhost:8000/?q=cereal" class="uri">http://localhost:8000/?q=cereal</a> would be equivalent to <code>search(q=&quot;cereal&quot;)</code>. The function would fall back to the default value of the <code>pretty</code> parameter (<code>0</code>), since that was defined in the function signature.</p>
+<div class="sourceCode"><pre class="sourceCode json"><code class="sourceCode json"><span class="ot">[</span><span class="st">&quot;The q parameter is &#39;cereal&#39;. The pretty parameter is &#39;0&#39;.&quot;</span><span class="ot">]</span></code></pre></div>
+<p>Including additional query string arguments that do not map to a parameter of the function has no effect. For instance <a href="http://localhost:8000/?test=123" class="uri">http://localhost:8000/?test=123</a> will return the same results as calling <code>search()</code>.</p>
+<div class="sourceCode"><pre class="sourceCode json"><code class="sourceCode json"><span class="ot">[</span><span class="st">&quot;The q parameter is &#39;&#39;. The pretty parameter is &#39;0&#39;.&quot;</span><span class="ot">]</span></code></pre></div>
+<p>(Note that the raw query string is available as <code>req$QUERY_STRING</code>.)</p>
+<p>Some web browsers impose limitations on the length of a URL. Internet Explorer, in particular, caps the query string at 2,048 characters. If you need to send large amounts of data from a client to your API, it would likely be a better idea to send it in a <a href="routing-and-input.html#request-body">request body</a>.</p>
+<p>//TODO: Redundant keys?</p>
+</div>
+<div id="request-body" class="section level3">
+<h3><span class="header-section-number">3.6.3</span> Request Body</h3>
+<p>Another way to provide additional information inside an HTTP request is using the message body. Effectively, once a client specifies all the metadata about a request (the path it’s trying to reach, some HTTP headers, etc.) it can then provide a message body. The maximum size of a request body depends largely on the technologies involved (client, proxies, etc.) but is typically at least 2MB – much larger than a query string. This approach is most commonly seen with <code>PUT</code> and <code>POST</code> requests, though you could encounter it with other HTTP methods.</p>
+<p>Plumber will attempt to parse the request body in one of two ways: if it appears that the message is JSON, then Plumber will parse the body as a JSON message; otherwise it will decode it as a standard query string. Any fields provided in the message body in either format will be passed through as parameters to the function.</p>
+<p>Unfortunately, crafting a request with a message body requires a bit more work than making a <code>GET</code> request with a query string from your web browser, but you can use tools like <code>curl</code> on the command line or the <a href="https://github.com/hadley/httr/">httr R package</a>. We’ll use <code>curl</code> for the examples below.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co">#&#39; @post /user</span>
+function(req, id, name){
+  <span class="kw">list</span>(
+    <span class="dt">id =</span> id,
+    <span class="dt">name =</span> name,
+    <span class="dt">raw =</span> req$postBody
+  )
+}</code></pre></div>
+<p>Running <code>curl --data &quot;id=123&amp;name=Jennifer&quot; &quot;http://localhost:8000/user&quot;</code> will return:</p>
+<div class="sourceCode"><pre class="sourceCode json"><code class="sourceCode json"><span class="fu">{</span>
+  <span class="dt">&quot;id&quot;</span><span class="fu">:</span> <span class="ot">[</span><span class="dv">123</span><span class="ot">]</span><span class="fu">,</span>
+  <span class="dt">&quot;name&quot;</span><span class="fu">:</span> <span class="ot">[</span><span class="st">&quot;Jennifer&quot;</span><span class="ot">]</span><span class="fu">,</span>
+  <span class="dt">&quot;raw&quot;</span><span class="fu">:</span> <span class="ot">[</span><span class="st">&quot;id=123&amp;name=Jennifer&quot;</span><span class="ot">]</span>
+<span class="fu">}</span></code></pre></div>
+<p>Alternatively, <code>curl --data '{&quot;id&quot;:123, &quot;name&quot;: &quot;Jennifer&quot;}' &quot;http://localhost:8000/user&quot;</code> (formatting the body as JSON) will have the same effect.</p>
+<p>As demonstrated above, the raw request body is made available as <code>req$postBody</code>.</p>
+</div>
+<div id="read-cookies" class="section level3">
+<h3><span class="header-section-number">3.6.4</span> Cookies</h3>
+<p>If cookies are attached to the incoming request, they’ll be made available via <code>req$cookies</code>. This will contain a list of all the cookies that were included with the request. The names of the list correspond to the names of the cookies and the value for each element will be a character string. See the <a href="tips-tricks.html#setting-cookies">Setting Cookies section</a> for details on how to set cookies from Plumber.</p>
+<p>If you’ve set encrypted cookies (as discussed in the <a href="tips-tricks.html#encrypted-cookies">Encrypted Cookies section</a>), that session will be decrypted and made available at <code>req$session</code>.</p>
+</div>
+<div id="headers" class="section level3">
+<h3><span class="header-section-number">3.6.5</span> Headers</h3>
+<p>HTTP headers attached to the incoming request are attached to the request object. They are prefixed with <code>HTTP_</code>, the name of the header is capitalized, and hyphens are substituted for underscores. e.g. the <code>Content-Type</code> HTTP header can be found as <code>req$HTTP_CONTENT_TYPE</code>.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co">#&#39; Return the value of a custom header</span>
+<span class="co">#&#39; @get /</span>
+function(req){
+  <span class="kw">list</span>(
+    <span class="dt">val =</span> req$HTTP_CUSTOMHEADER
+  )
+}</code></pre></div>
+<p>Running <code>curl --header &quot;customheader: abc123&quot; http://localhost:8000</code> will return:</p>
+<div class="sourceCode"><pre class="sourceCode json"><code class="sourceCode json"><span class="fu">{</span>
+  <span class="dt">&quot;val&quot;</span><span class="fu">:</span> <span class="ot">[</span><span class="st">&quot;abc123&quot;</span><span class="ot">]</span>
+<span class="fu">}</span></code></pre></div>
+<p>You can print out the names of all of the properties attached to the request by running <code>print(ls(req))</code> inside an endpoint.</p>
+<p>// TODO: Conflicts between path, query string, body?</p>
+
+</div>
+</div>
+</div>
+            </section>
+
+          </div>
+        </div>
+      </div>
+<a href="quickstart.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="rendering-and-output.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+    </div>
+  </div>
+<script src="libs/gitbook-2.6.7/js/app.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/lunr.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-search.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-sharing.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-fontsettings.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-bookdown.js"></script>
+<script src="libs/gitbook-2.6.7/js/jquery.highlight.js"></script>
+<script>
+require(["gitbook"], function(gitbook) {
+gitbook.start({
+"sharing": {
+"github": false,
+"facebook": true,
+"twitter": true,
+"google": false,
+"weibo": false,
+"instapper": false,
+"vk": false,
+"all": ["facebook", "google", "twitter", "weibo", "instapaper"]
+},
+"fontsettings": {
+"theme": "white",
+"family": "sans",
+"size": 2
+},
+"edit": {
+"link": "https://github.com/trestletech/apis-plumber/edit/master/03-routing-and-input.Rmd",
+"text": "Edit"
+},
+"download": {},
+"toc": {
+"collapse": "subsection"
+}
+});
+});
+</script>
+
+</body>
+
+</html>
