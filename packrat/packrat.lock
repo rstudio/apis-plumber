@@ -145,13 +145,13 @@ Hash: 6ad605ba7b4b476d84be6632393f5765
 
 Package: plumber
 Source: github
-Version: 0.4.0
-Hash: adf241a7f2d5b4f510415465acc976e4
+Version: 0.4.3
+Hash: 9caa8f943beddeb951e085528fb00cad
 Requires: R6, crayon, httpuv, jsonlite, stringi
 GithubRepo: plumber
 GithubUsername: trestletech
-GithubRef: redesign
-GithubSha1: 8e31cf82ce0fa6a3eaed9f52a6e0cf2ee08f58fe
+GithubRef: master
+GithubSha1: 84c754b601b6f4ba7854dfcc3896ad88670700b5
 
 Package: rmarkdown
 Source: CRAN

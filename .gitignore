@@ -3,6 +3,7 @@
 .RData
 _publish.R
 _book
+_toolbar_book
 _bookdown_files
 rsconnect
 apis-plumber.tex

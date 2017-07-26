@@ -3,11 +3,7 @@ cache: packages
 after_failure:
   - ./travis-tool.sh dump_logs
 r_packages:
-  - rmarkdown
-  - bookdown 
-  - jsonlite
-r_github_packages:
-    - trestletech/plumber
+  - packrat
 deploy:
   provider: pages
   target_branch: netlify
@@ -15,7 +11,15 @@ deploy:
   skip_cleanup: true
   github_token: $GITHUB_TOKEN
   on:
-    branch: master 
+    branch: master
+deploy:
+  provider: pages
+  target_branch: netlify-plumber
+  local_dir: _toolbar_book
+  skip_cleanup: true
+  github_token: $GITHUB_TOKEN
+  on:
+    branch: master
 before_script:
   - chmod +x ./_build.sh
 script:

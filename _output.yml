@@ -2,8 +2,6 @@ bookdown::gitbook:
   css: style.css
   config:
     toc:
-      before: |
-        <li><a href="./">Creating APIs in R with Plumber</a></li>
       after: |
         <li><a href="https://www.netlify.com" target="_blank">Site hosting from Netlify</a></li>
     edit: https://github.com/trestletech/apis-plumber/edit/master/%s
