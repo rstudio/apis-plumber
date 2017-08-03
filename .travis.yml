@@ -1,5 +1,9 @@
 language: r
-cache: packages
+cache:
+  directories:
+    - $TRAVIS_BUILD_DIR/packrat/src
+    - $TRAVIS_BUILD_DIR/packrat/lib
+  packages: true
 after_failure:
   - ./travis-tool.sh dump_logs
 r_packages:
