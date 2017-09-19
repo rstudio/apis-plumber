@@ -15,7 +15,7 @@ Endpoints are the terminal step in the process of serving a request. An endpoint
 include_r("files/apis/03-01-endpoint.R")
 ```
 
-This annotation specifies that this function is responsible for generating the response to any `GET` request to `/hello`. The value returned from the function will be used as the response to the request (after being run through a serializer to e.g. convert the response into JSON). In this case, a `GET` response to `/hello` would return the content `["hello world"]` with a `JSON` `Content-Type`.
+This annotation specifies that this function is responsible for generating the response to any `GET` request to `/echo`. The value returned from the function will be used as the response to the request (after being run through a serializer to e.g. convert the response into JSON). In this case, a `GET` response to `/echo` would return the content `["hello world"]` with a `JSON` `Content-Type`.
 
 The annotations that generate an endpoint include:
 
