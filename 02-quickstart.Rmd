@@ -77,6 +77,6 @@ e <- pr$endpoints[[1]][[1]]
 code_chunk(e$exec(), "html")
 ```
 
-You can even provide your own custom serializers and define how to translate the R object produced by your endpoint into the bits that will be produce Plumber's HTTP response.
+You can even provide your own custom serializers and define how to translate the R object produced by your endpoint into the bits that will produce Plumber's HTTP response.
 
 You can find more details in the [Rendering & Output chapter](#rendering-and-output).
