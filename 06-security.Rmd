@@ -5,6 +5,8 @@ The majority of R programmers have not been trained to give much attention to th
 
 There are a variety of factors and attacks that you should consider when developing your Plumber APIs, but the attention you give to each will vary based on the audience of your API. On one extreme, if your API is running on an internal server on your own network and uses authentication to restrict access to only a handful of trusted users, you may be justified in overlooking some of these attack vectors. On the other hand, if your Plumber API is available on the Internet with no authentication, then you should seriously consider each of these potential vulnerabilities and convince yourself that you have properly accounted for each.
 
+// TODO: HTTPS
+
 ## Networking & Firewalls {#networking}
 
 From a networking standpoint, there are two fundamentally different approaches for developing R code.
@@ -102,8 +104,22 @@ In summary, be sure to separate "trusted" from "untrusted" objects in your API i
 
 ## Cookies {#security-cookies}
 
-// TODO: Encrypted cookies can't be invalidated server-side
-// TODO: HTTP-only cookies
-// TODO: Secure cookies
-// TODO: cookies with regards to XSRF
-// TODO: stolen cookies can be used to impersonate.
+In the [section on setting cookies](#setting-cookies), we discussed the mechanics of setting cookies. However, if you intend to use cookies for any security-sensitive purpose, you should be aware of some ways that cookies can be exploited.
+
+First and foremost, recognize that that the client has the ability to modify or fabricate the cookies that they send to your API. So storing preferences that the user themselves provided in a cookie is not a concern. Storing something with security implications -- like the identity of the user making requests -- however, would be; a malicious user would just need to modify the user ID saved in their cookie in order to trick your API into thinking that they were someone they're not.
+
+There are two common work-arounds to this concern. You can store all session information on the server using long, cryptographically random IDs and only rely on the cookie to store the ID. Or you can use signed/encrypted cookies, as detailed in the [section on setting encrypted cookies](#encrypted-cookies).
+
+// TODO: demo of an API that uses cryptographically secure session IDs
+
+You should also be aware of how cookies will be handled and managed by clients. You can manage these properties by providing different parameters to the `setCookie()` call.
+
+ - **expiration** - When the cookie should expire. Can either be a `POSIXt` object that gives the time explicitly, or a raw integer which will be interpreted as the number of seconds in the future when this cookie should expire. If no value is provided, the cookie will be a `session` cookie, meaning that it will persist until the user closes the tab/browser. Remember, however, that a client may accidentally or maliciously retain this cookie beyond its assigned expiration time. From a security standpoint, you cannot rely on a client to be well-behaved and delete this cookie at the assigned time.
+ - **http** - The `HttpOnly` property on a cookie determines whether or not the cookie should be accessible to JavaScript running on your domain. If you were using a cookie to persist user settings and host some JavaScript that may also leverage the preferences stored in that cookie, then you would want `http` parameter to be `FALSE`, indicating that the cookie should *not* be `HttpOnly`, and *should* be available to Javascript. If you were storing a session ID in the cookie that is only interpretable by the server, then you should set `http` to `TRUE`. There are a variety of attacks (such as "cross-site scripting") that would enable an attacker to run malicious JavaScript on your clients' machines, so it's wise to limit the amount of information accessible from JavaScript.
+ - **secure** - If `TRUE`, instructs clients to only send the cookie when connecting to your server over HTTPS. HTTPS is a mechanism by which clients can gain more assurance that the server they're connected to is indeed the server that they intended to be communicating with.  If your API uses HTTPS, using secure cookies protects against a use case in which an attacker tricks one of your clients into connecting to an HTTP server impersonating your API. In that scenario, a client may send their cookies to this malicious server, at which point the attacker could use those cookies on your server to impersonate the actual user. Note that you shouldn't enable this until you have your API stably running HTTPS. // TODO: HSTS, link to that Troy Hunt article on TLS management
+
+Additionally, bear in mind that if an attacker gets physical access to a client who has a valid cookie, the attacker could copy that cookie off to a different machine and begin using it themselves. Unfortunately, you can't perfectly protect against such attacks, but you can minimize the impact by 1.) using shorter session lifetimes (perhaps a few hours instead of days), 2.) invalidating sessions after a period of user inactivity, or 3.) rotating the sesion ID periodically; this way you'd be able to detect that multiple clients were trying to use the same session and could take action. You can also consider adding an additional layer of security around very security-sensitive endpoints (like changing a user's password).
+
+Lastly, if using encrypted cookies to store sensitive information, you should remember that expiring a cookie is an instruction that you're sending to the client that may or may not be honored. Thus if you were to set an encrypted cookie on a client to authenticate the user and that user wishes to log out, all you can do is instruct the client that they should delete that cookie. If the cookie had been stolen or if a misbehaving client doesn't delete the cookie, it's possible that that cookie could still be used to continue making authenticated requests to your API.
+
+// TODO: cookies with regards to XSRF, or nest XSRF under this section?

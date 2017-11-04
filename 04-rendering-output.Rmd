@@ -158,9 +158,11 @@ To send a `PUT` request, setting the parameter `capital` to `1`, we could invoke
 
 We can make another `GET` request to `/letter` to see if it accommodates our preferences. But we'll need to tell `curl` to use the cookies file we just created when sending this request using the `-b` switch: `curl -b cookies.txt http://localhost:8000/letter`. You should now see that the API is returning a random capitalized letter.
 
-This is a simple example showing how to persist user preferences across HTTP requests using cookies. But be aware that the client has the ability to modify or fabricate the cookies that they send to your API. So storing preferences that the user themselves provided in a cookie is not a concern. Storing something with security implications like the level of permissions this client has on your API, however, would be; a malicious user would just need to modify the role saved in their cookie in order to trick your API into giving them more permissions than it should.
+The `setCookie` method accepts a variety of additional options to customize how the cookie should be handled by the client. By default, cookies are set with a `session` lifetime, meaning that the cookie will persist in the user's browser until the client closes the tab at which point the cookie will be deleted. You can customize this by setting the `expiration` parameter in `setCookie` using either a number of seconds in the future in which this cookie should expire. Alternatively, you can provide an object of class `POSIXt`, in which case that will be interpreted as the time at which the cookie should expire.
 
-There are two common work-arounds to this concern. You can simply store a long (cryptographically) random identifier in the user's cookie, and have some mapping on the server that allows you to lookup the session associated with that random ID. Alternatively, you could use signed/encrypted cookies, as detailed in the [next section](#encrypted-cookies).
+Other options that can be set on the cookie include `path` (the path on your domain at which the cookie should be installed on the client); `http` (controls whether or not the cookie should be accessible to JavaScript running on this domain -- where `TRUE` means that the cookie is HTTP-only, and not accessible from JavaScript); and `secure` (if `TRUE`, instructs the browser to only send the cookie over HTTPS, not insecure HTTP.
+
+If you're using cookies to infer any security-sensitive properties (such as to identify a user, or determine what resources this client should have access to), be sure to see the [Security chapter](#security) -- in particular [the section on the security implications of cookies](#security-cookies).
 
 ### Setting Encrypted Cookies {#encrypted-cookies}
 
