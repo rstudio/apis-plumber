@@ -89,12 +89,26 @@ For this reason, Plumber inherits the `jsonlite::toJSON` default of setting `aut
 
 There are a couple of functions to be aware of around this feature set. If using boxed JSON serialization, `jsonlite::unbox()` can be used to force a length-1 object in R to be presented in JSON as a scalar. If using unboxed JSON serialization, `I()` will cause a length-1 R object to present as a JSON array.
 
+### Customizing Image Serializers
+
+The `@jpeg` and `@png` annotations cause the graphical output of an endpoint to be written to a file then returned to the client using the `jpeg()` or `png()` functions, respectively. These functions both accept a variety of additional options that customize the output including `width`, `height`, and `bg` among others. 
+
+As of version 0.4.3 of plumber, these annotations now accept additional arguments that will be passed into these functions. This enables the creation of endpoints like: 
+
+```{r, echo=FALSE, results='asis'}
+include_r("files/apis/04-04-image.R")
+```
+
+At a lower level, the arguments inside the parentheses will be used as the arguments to a `list()` call. Meaning that any R code that can be prefixed by `list` to form a valid R expression can be used. For example, `#' @png (width=2^10 + 1)` would be a valid annotation. This code is evaluated once when your API is `plumb()`d.
+
+While this approach can be used to statically define the size of an image, it will not work for dynamic sizing of an image. If you wish to dynamically size images, you will need render and capture the graphical output yourself and return the contents with the appropriate `Content-Type` header. See the existing image renderers as a model of how to do this.
+
 ## Error Handling
 
 Plumber wraps each endpoint invocation so that it can gracefully capture errors.
 
 ```{r, echo=FALSE, results='asis'}
-include_r("files/apis/04-04-error.R")
+include_r("files/apis/04-05-error.R")
 ```
 
 If you run this API and visit http://localhost:8000/simple, you'll notice two things:
@@ -105,7 +119,7 @@ If you run this API and visit http://localhost:8000/simple, you'll notice two th
 This means that it is possible for you to intentionally `stop()` in an endpoint or a filter as a way to communicate a problem to your user. However, it may be preferable to render errors from your API in a consistent format with more helpful error messages.
 
 ```{r, echo=FALSE, results='asis'}
-pr <- plumber::plumb("files/apis/04-04-error.R")
+pr <- plumber::plumb("files/apis/04-05-error.R")
 e <- pr$endpoints[[1]][[2]]
 code_chunk(json_serialize(e$exec(res=list(status=1))), "json")
 ```
