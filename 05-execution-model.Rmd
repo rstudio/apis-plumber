@@ -77,3 +77,17 @@ If you'd like to use cookies to store information with guarantees that the user 
 The final option to consider when coordinating state for an API is leveraging an external data store. This could be a relational database (like MySQL or Amazon RedShift), a non-relational database (like MongoDB), or an transactional data store like Redis.
 
 One important consideration for any of these options is to ensure that they are "transactional," meaning that two Plumber processes trying to write at the same time won't overwrite one another. If you're interested in pursuing this option you should see [db.rstudio.com](http://db.rstudio.com/) or looks at [some](http://shiny.rstudio.com/articles/overview.html) of the [resources](http://shiny.rstudio.com/articles/sql-injections.html) [put together](http://shiny.rstudio.com/articles/pool-basics.html) for Shiny as pertains to dealing with databases in a web-accessible R platform.
+
+## Exit Handlers
+
+It may be useful to define a function that you want to run as your API is closing -- for instance, if you have a pool of database connections that need to be cleaned up when your Plumber process is being terminated. You can use the `exit` hook to define such a handler.
+
+```r
+pr <- plumb("plumber.R")
+pr$registerHook("exit", function(){
+  print("Bye bye!")
+})
+pr$run()
+```
+
+When you interrupt the API (for instance by pressing the `Escape` key or `Ctrl+C`) you'll see `Bye bye!` printed to the console. You can even register multiple `exit` hooks and they'll be run in the order in which they were registered.
