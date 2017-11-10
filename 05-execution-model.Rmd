@@ -42,7 +42,7 @@ The key to building a horizontally scalable API is to ensure that each Plumber p
 
 ### In-Memory
 
-As shown previous in the [Exetution Model section](#execution-model), it is possible to share state using the environment associated with the Plumber router.
+As shown previous in the [Execution Model section](#execution-model), it is possible to share state using the environment associated with the Plumber router.
 
 ```{r, echo=FALSE, results='asis'}
 include_r("files/apis/05-01-scope.R")
