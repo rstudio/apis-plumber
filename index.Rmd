@@ -1,18 +1,22 @@
 --- 
 title: "Creating APIs in R with Plumber"
 author: "Jeff Allen"
-date: "`r Sys.Date()`"
 site: bookdown::bookdown_site
 output: bookdown::gitbook
 bibliography: [book.bib]
 biblio-style: apalike
-link-citations: yes
 documentclass: book
 github-repo: trestletech/apis-plumber
 description: "Use the plumber R package to create HTTP APIs in R."
+cover-image: ./files/images/cover.jpg
+favicon: ./files/images/favicon.png
+apple-touch-icon: ./files/images/apple-icon-152x152.png
 ---
 
 ```{r, echo=FALSE}
+library(plumber)
+library(jsonlite)
+
 code_chunk <- function(output, language=""){
   cat(paste0("```",language,"\n"))
   cat(output)

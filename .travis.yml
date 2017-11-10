@@ -1,21 +1,21 @@
 language: r
-cache: packages
+cache:
+  directories:
+    - $TRAVIS_BUILD_DIR/packrat/src
+    - $TRAVIS_BUILD_DIR/packrat/lib
+  packages: true
 after_failure:
   - ./travis-tool.sh dump_logs
 r_packages:
-  - rmarkdown
-  - bookdown 
-  - jsonlite
-r_github_packages:
-    - trestletech/plumber
+  - packrat
 deploy:
-  provider: pages
-  target_branch: netlify
-  local_dir: _book
-  skip_cleanup: true
-  github_token: $GITHUB_TOKEN
-  on:
-    branch: master 
+  - provider: pages
+    target_branch: netlify-plumber
+    local_dir: _toolbar_book
+    skip_cleanup: true
+    github_token: $GITHUB_TOKEN
+    on:
+      branch: master
 before_script:
   - chmod +x ./_build.sh
 script:
