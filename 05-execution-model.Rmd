@@ -9,7 +9,7 @@ When you `plumb()` a file, Plumber calls `source()` on that file which will eval
 include_r("files/apis/05-01-scope.R")
 ```
 
-If you call `plumb()` on this file, the `counter` variable will be created and will live in the environment created for this API. However, the endpoint defined will not be evaluated until it is invoked in response to an incoming request. Because the endpoint uses `<<-`, the "double-assignment" operator, it mutates the `counter` variable that was previously defined at plumbtime. This technique allows all endpoints and filters to share some data defined at the top-level of your API.
+If you call `plumb()` on this file, the `counter` variable will be created and will live in the environment created for this API. However, the endpoint defined will not be evaluated until it is invoked in response to an incoming request. Because the endpoint uses `<<-`, the "double-assignment" operator, it mutates the `counter` variable that was previously defined when the file was `plumb()`d. This technique allows all endpoints and filters to share some data defined at the top-level of your API.
 
 ## Environments
 
