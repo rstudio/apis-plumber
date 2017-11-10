@@ -114,7 +114,7 @@ Finally, a filter can throw an error. This can occur if a mistake is made in the
 
 In addition to having hard-coded routes like `/hello`, Plumber endpoints can have dynamic routes. Dynamic routes allow endpoints to define a more flexible set of paths against which they should match.
 
-A common REST convention is to include the identifier of an object in the API paths associated with it. So to lookup information about user #13, you might make a `GET` request to the path `/users/13`. Rather than having to register routes for every user your API might possible encounter, you can use a dynamic route to associate an endpoint with a variety of paths.
+A common REST convention is to include the identifier of an object in the API paths associated with it. So to lookup information about user #13, you might make a `GET` request to the path `/users/13`. Rather than having to register routes for every user your API might possibly encounter, you can use a dynamic route to associate an endpoint with a variety of paths.
 
 ```{r, echo=FALSE, results='asis'}
 include_r("files/apis/03-01-dynamic.R")
@@ -259,7 +259,7 @@ Including additional query string arguments that do not map to a parameter of th
 code_chunk(json_serialize(e$exec()), "json")
 ```
 
-(Note that the raw query string is available as `req$QUERY_STRING`.)
+(Note that the raw query string is available as `req$QUERY_STRING`)
 
 Some web browsers impose limitations on the length of a URL. Internet Explorer, in particular, caps the query string at 2,048 characters. If you need to send large amounts of data from a client to your API, it would likely be a better idea to send it in a [request body](#request-body).
 
