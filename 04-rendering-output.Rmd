@@ -19,8 +19,8 @@ Annotation | Content Type | Description/References
 `@html` | `text/html; charset=utf-8` | Passes response through without any additional serialization
 `@jpeg` | `image/jpeg` | `jpeg()`
 `@png` | `image/png` | `png()`
-`@htmlwidget` | `text/html; charset=utf-8` | `htmlwidgets::saveWidget()`
-`@unboxedJSON` | `application/json` | `jsonlite::toJSON(unboxed=TRUE)`
+`@serializer htmlwidget` | `text/html; charset=utf-8` | `htmlwidgets::saveWidget()`
+`@serializer unboxedJSON` | `application/json` | `jsonlite::toJSON(unboxed=TRUE)`
 
 ### Bypassing Serialization
 
