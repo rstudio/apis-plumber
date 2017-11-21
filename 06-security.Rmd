@@ -96,7 +96,27 @@ In summary, be sure to separate "trusted" from "untrusted" objects in your API i
 
 ## Cross-Origin Resource Sharing (CORS)
 
-// TODO CORS
+Cross-origin resource sharing (CORS) is a mechanism that allows restricted resources (e.g. fonts) on a web page to be requested from another domain outside the domain from which the first resource was served. A web page may freely embed cross-origin images, stylesheets, scripts, iframes, and videos. Certain "cross-domain" requests, notably Ajax requests, are forbidden by default by the same-origin security policy.
+
+By default, the API endpoint forbids "cross-domain" requests, but it's possible with a workaround to override this behavior creating a custom function that'll forwards the right headers to API using a filter such as the following snippet.
+
+``` R
+#* @filter cors
+cors <- function(res) {
+    res$setHeader("Access-Control-Allow-Origin", "*")
+    plumber::forward()
+}
+```
+Once this filter defined, each endpoint will allow "cross-domain" requests. It's possible to disable it for some, by appending the line `#* @preempt cors` before the declaration of a function like this :
+``` R
+#* @preempt cors
+#* @get /sub
+cors_disabled <- function(a, b){
+  as.numeric(a) - as.numeric(b)
+}
+```
+Understand that, this is a temporary workaround and can constitute critical security issues in case of some endpoints that shouldn't be exposed through `CORS` and have been enabled by default.
+
 
 ## Cross-Site Request Forgery (CSRF, or XSRF)
 
