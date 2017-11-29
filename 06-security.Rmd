@@ -94,9 +94,30 @@ Lastly, user input can be used in an "injection attack," in which the user injec
 
 In summary, be sure to separate "trusted" from "untrusted" objects in your API implementation. Anything which the user provides should be considered "untrusted" until it has been escaped or sanitized. At that point you can consider the object to be "trusted" and proceed to take further actions on it.
 
+// TODO: revisit this when CORS is properly implemented in plumber
 ## Cross-Origin Resource Sharing (CORS)
 
-// TODO CORS
+//TODO {introduction on CORS principles}
+
+By default, the API endpoint forbids "cross-domain" requests, but it's possible with a workaround to override this behavior creating a custom function that will forward the right headers to the API using a filter such as the following snippet.
+
+```r
+#* @filter cors
+cors <- function(res) {
+    res$setHeader("Access-Control-Allow-Origin", "*")
+    plumber::forward()
+}
+```
+Once this filter is defined, each endpoint will allow "cross-domain" requests. It's possible to disable it for some, by appending the line `#* @preempt cors` before the declaration of a function like this :
+```r
+#* @preempt cors
+#* @get /sub
+cors_disabled <- function(a, b){
+  as.numeric(a) - as.numeric(b)
+}
+```
+Understand that, this is a temporary workaround and can constitute critical security issues if some endpoints that shouldn't be exposed through `CORS` and have been enabled by default.
+
 
 ## Cross-Site Request Forgery (CSRF, or XSRF)
 
