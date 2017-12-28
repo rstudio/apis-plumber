@@ -29,7 +29,7 @@ Plumber includes helper functions that enable you to automatically provision a P
 1. (Optional) [Setup a domain name](http://tres.tl/dns) for your Plumber server so you can use www.myplumberserver.com instead of the server's IP address.
 1. (Optional) Configure SSL
 
-Getting everything connected the first time can be a bit of work, but once you have `analogsea` connected to your DigitalOcean account, you're not able to spin up new Plumber servers in DigitalOcean hosting your APIs with just a couple of R commands. You can even write [scripts that provision an entire Plumber server](https://github.com/trestletech/plumber/blob/d9f4acc163168ae179c55e781cfa43f03551f825/inst/hosted-new.R) with multiple APIs associated.
+Getting everything connected the first time can be a bit of work, but once you have `analogsea` connected to your DigitalOcean account, you're now able to spin up new Plumber servers in DigitalOcean hosting your APIs with just a couple of R commands. You can even write [scripts that provision an entire Plumber server](https://github.com/trestletech/plumber/blob/d9f4acc163168ae179c55e781cfa43f03551f825/inst/hosted-new.R) with multiple APIs associated.
 
 ## RStudio Connect {#rstudio-connect}
 
