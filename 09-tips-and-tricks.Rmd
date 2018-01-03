@@ -13,14 +13,14 @@ This approach is equally viable with Plumber. When developing your Plumber API i
 
 ### Interactive Debugging
 
-Print debugging is an obvious starting point, but most developers eventually wish for something more powerful. In R, this capacity is built in to the `debug()` function. If you're unfamiliar, `debug()` pauses the execution of some function and gives you an interactive session in which you can inspect the current value of internal variables or even proceed through your function one statement at a time.
+Print debugging is an obvious starting point, but most developers eventually wish for something more powerful. In R, this capacity is built in to the `browser()` function. If you're unfamiliar, `browser()` pauses the execution of some function and gives you an interactive session in which you can inspect the current value of internal variables or even proceed through your function one statement at a time.
 
-You can leverage `debug()` when developing your APIs locally by adding a `debug()` call in one of your filters or endpoints and then visiting your API in a client. This offers a powerful technique to use when you want to inspect multiple different variables or interact with the current state of things inside of your function. This is also a good way to get your hands dirty with Plumber and get better acquainted with how things behave at a low level. Consider the following API endpoint:
+You can leverage `browser()` when developing your APIs locally by adding a `browser()` call in one of your filters or endpoints and then visiting your API in a client. This offers a powerful technique to use when you want to inspect multiple different variables or interact with the current state of things inside of your function. This is also a good way to get your hands dirty with Plumber and get better acquainted with how things behave at a low level. Consider the following API endpoint:
 
 ```r
 #' @get /
 function(req, res){
-  debug()
+  browser()
   
   list(a=123)
 }
