@@ -1,6 +1,10 @@
 
 # Rendering Output {#rendering-and-output}
 
+```{r, echo=FALSE,  out.width="45%", out.extra = 'style="float:right;"'}
+knitr::include_graphics("files/images/plumber_output.png")
+```
+
 ## The Response Object {#response-object}
 
 // TODO

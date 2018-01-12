@@ -38,6 +38,10 @@ json_serialize <- function(obj){
 
 # Introduction {#intro}
 
+```{r, echo=FALSE, out.width="45%", out.extra = 'style="float:right;"'}
+knitr::include_graphics("files/images/plumber_pipe.png")
+```
+
 The R Programming Language [@R-base] has become one of the most dominant programming languages for data analysis and visualization in recent years. At the same time, web services have become a common language for allowing various systems to interact with one another. The `plumber` R package [@plumber] allows users to expose existing R code as a service available to others on the Web. Plumber is best illustrated with an example:
 
 ```{r, echo=FALSE, results='asis'}
