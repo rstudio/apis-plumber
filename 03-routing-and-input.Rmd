@@ -1,6 +1,10 @@
 
 # Routing & Input {#routing-and-input}
 
+```{r, echo=FALSE,  out.width="45%", out.extra = 'style="float:right;"'}
+knitr::include_graphics("files/images/plumber_input.png")
+```
+
 Plumber's first job is to execute R code in response to incoming HTTP requests, so it's important to understand how incoming HTTP requests get translated into the execution of R functions.
 
 An incoming HTTP request must be "routed" to one or more R functions. Plumber has two distinct families of functions that it handles: endpoints and filters. 
