@@ -56,7 +56,7 @@ pr$handle("GET", "/", function(req){
 
 You can specify other options such as the serializer to use if the filter returns a value in the `filter()` method, as well.
 
-## Registering Hooks on a Router {router-hooks}
+## Registering Hooks on a Router {#router-hooks}
 
 Plumber routers support the notion of "hooks" that can be registered to execute some code at a particular point in the lifecycle of a request. Plumber routers currently support four hooks:
 
