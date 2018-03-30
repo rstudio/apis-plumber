@@ -1,4 +1,5 @@
 language: r
+pandoc_version: 1.17.2
 cache:
   directories:
     - $TRAVIS_BUILD_DIR/packrat/src
