@@ -94,8 +94,9 @@ Lastly, user input can be used in an "injection attack," in which the user injec
 
 In summary, be sure to separate "trusted" from "untrusted" objects in your API implementation. Anything which the user provides should be considered "untrusted" until it has been escaped or sanitized. At that point you can consider the object to be "trusted" and proceed to take further actions on it.
 
-// TODO: revisit this when CORS is properly implemented in plumber
 ## Cross-Origin Resource Sharing (CORS)
+
+// TODO: revisit this when CORS is properly implemented in plumber
 
 //TODO {introduction on CORS principles}
 
