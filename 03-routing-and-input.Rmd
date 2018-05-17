@@ -200,7 +200,13 @@ You can optionally provide an additional argument to configure the public path u
 list()
 ```
 
-would expose the directory not at `/public`, but at `/static`.
+would expose the local directory `files/static` not at `/public`, but at `/static`. Likewise, to serve a main `index.html`, you can also map `/files/static` to `/` by using
+
+```r
+#* @assets ./files/static /
+list()
+```
+That enables you to serve your `/files/static/index.html` under the http://localhost:8000/ root URL.
 
 The "implementation" of your server in the above examples is just an empty `list()`. You can also specify a `function()` like you do with the other plumber annotations. At this point, the implementation doesn't alter the behavior of your static server. Eventually, this list or function may provide an opportunity to configure the server by changing things like cache control settings.
 
