@@ -9,19 +9,19 @@ include_r("files/apis/01-01-quickstart.R")
 
 This file defines two Plumber "endpoints." One is hosted at the path `/echo` and simply echoes the message passed in; the other is hosted at the path `/plot` and returns an image showing a simple R plot.
 
-If you haven't installed `plumber` yet, see the [installation section](#installation). Once  you have `plumber` installed, you can use the `plumber::plumb` function to translate this R file into a Plumber API:
+If you haven't installed `plumber` yet, see the [installation section](#installation). Once  you have `plumber` installed, you can use the `plumber::plumb()` function to translate this R file into a Plumber API:
 
 ```r
 pr <- plumber::plumb("plumber.R")
 ```
 
-The `pr` object now encapsulates all the logic represented in your `plumber.R` file. The next step is to bring the API to life using the `run` method:
+The `pr` object now encapsulates all the logic represented in your `plumber.R` file. The next step is to bring the API to life using the `run()` method:
 
 ```r
 pr$run()
 ```
 
-You should see a message about your API running on your computer on port `8000`. The API will continue running in your R session until you press the `Esc` key. If you're running this code locally on your personal machine, you should be able to open http://localhost:8000/echo or http://localhost:8000/plot in a web browser to test your new API endpoints. 
+You should see a message about your API running on your computer on port `8000`. The API will continue running in your R session until you press the `Esc` key. If you're running this code locally on your personal machine, you should be able to open [http://localhost:8000/echo](http://localhost:8000/echo) or [http://localhost:8000/plot](http://localhost:8000/plot) in a web browser to test your new API endpoints. 
  
 > If you're using a tool like RStudio Server to run your R code on a remote machine, you should see the [networking section](#networking) for help with visiting your API.
 
@@ -48,7 +48,7 @@ If you see something like the above: congratulations! You've just created your f
 
 ## Specifying the Inputs
 
-You may have noticed that the functions that define our endpoints accept parameters. These parameters allow us to customize the behavior of our endpoints. One of the ways to do this is using "query strings" which are a way of passing variables into an HTTP API. If you visit http://localhost:8000/plot?spec=setosa, you should see a similar graph to the one you saw before, but now the dataset has been filtered to only include the "setosa" species in the iris dataset.
+You may have noticed that the functions that define our endpoints accept parameters. These parameters allow us to customize the behavior of our endpoints. One of the ways to do this is using "query strings" which are a way of passing parameters into an HTTP API. If you visit [http://localhost:8000/plot?spec=setosa](http://localhost:8000/plot?spec=setosa), you should see a similar graph to the one you saw before, but now the dataset has been filtered to only include the "setosa" species in the iris dataset.
 
 ```{r, echo=FALSE, results='asis'}
 e <- pr$endpoints[[1]][[2]]
