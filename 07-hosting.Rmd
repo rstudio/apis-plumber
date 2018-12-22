@@ -123,9 +123,9 @@ Then you'd be able to use `docker run --rm -v `pwd`:/app myCustomDocker` to run 
 
 ### Automatically Run on Restart
 
-If you want your container to start automatically when your machine is booted, you can use the `--restart` parameter for `docker run`.
-
-`docker run -p 1234:8000 -dit --restart unless-stopped myCustomDocker` would run the custom image you created above automatically every time your machine boots and expose the plumber service on port `1234` of your host machine, unless the container is explicitly stopped. You'll need to make sure that your firewall allows connections on port `1234` if you want others to be able to access your service.
+ If you want your container to start automatically when your machine is booted, you can use the `-d` switch for `docker run`.
+ 
+`docker run -p 1234:8000 -d myCustomDocker` would run the custom image you created above automatically every time your machine boots and expose the plumber service on port `1234` of your host machine. Like all other hosting options, you'll need to make sure that your firewall allows connections on port `1234` if you want others to be able to access your service.
 
 ## Docker (Advanced) {#docker-advanced}
 
@@ -376,13 +376,13 @@ If you want a big-picture view of the health of your server and all the pm2 serv
 
 ## systemd {#systemd}
 
-(These steps are tested on Ubuntu Server 18.04 LTS)
+Note: These steps are tested on Ubuntu Server 18.04 LTS. This is expected to work on most Linux systems such as Debian, Ubuntu, and others. Unfortunately, this option is not available for Windows. Windows users should refer to Docker or Digital Ocean sections.
 
 If you use a Linux server, both physical or virtual (e.g. Digital Ocean), you can use `systemd` to run Plumber as a service that can be accessed from your local network or even outside your network depending on your firewall rules.
 
 This option is a bit similar to using Docker. One of the main advantages of this procedure over using Docker is that `systemd` won't bypass firewall rules (Docker does!) and it can be less costly in terms of resources.
 
-Compared to `plumber::do_provision()` this option won't create a new droplet if you use Digital Ocean, and allows you to run your API on the same virtual machine where you have your databases and other materials. For example, you can write SQL queries from Plumber that point towards `localhost:5432` instead of going to a different IP from you API's server.
+Compared to `plumber::do_provision()` this option won't create a new droplet if you use Digital Ocean, it will run on your existing droplet instead.
 
 To implement this option you need three steps to be run from the command line:
 
@@ -395,7 +395,7 @@ q()
 EOF
 ```
 
-2. Run `sudo /etc/systemd/system/plumber-api.service`, paste and adapt these contents:
+2. Run `sudo nano /etc/systemd/system/plumber-api.service`, then paste and adapt this content:
 
 ```
 [Unit]
@@ -419,3 +419,4 @@ sudo systemctl activate plumber-api
 sudo systemctl start plumber-api
 ```
 
+To check if your API is running, type `systemctl | grep running` in the terminal and should display `plumber-api.service \ loaded active running   Plumber API`.
