@@ -332,14 +332,12 @@ One common way of developing API's is to submit a form with its inputs using a P
 <h2>Basic login form</h2>
 
 <pre>
-    <form action="/api/form">
-    <input type="text" placeholder="Enter Username" name="uname" required>
-
-    <label for="psw"><b>Password</b></label>
-    <input type="password" placeholder="Enter Password" name="psw" required>
-
-    <button type="submit">Login</button>
-    </div>
+    <form action="/login">
+      <input type="text" placeholder="Enter Username" name="uname" required>
+      <input type="password" placeholder="Enter Password" name="psw" required>
+  
+      <button type="submit">Login</button>
+    </form>
 </pre>
 ```
 
