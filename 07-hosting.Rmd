@@ -380,7 +380,7 @@ If you want a big-picture view of the health of your server and all the pm2 serv
 
 If you use a Linux server you can use `systemd` to run Plumber as a service that can be accessed from your local network or even outside your network depending on your firewall rules. This option is similar to using the [Docker method](#docker). One of the main advantages of using `systemd` over using Docker is that `systemd` won't bypass firewall rules (Docker does!) and avoids the overhead of running a container.
 
-Compared to `plumber::do_provision()` this option won't create a new droplet if you use Digital Ocean, it will run on your existing droplet instead.
+Compared to `plumber::do_provision()` this option won't create a new droplet if you use [Digital Ocean](#digitalocean); it will run on your existing droplet instead.
 
 To implement this option you'll complete the following three steps from the terminal:
 
