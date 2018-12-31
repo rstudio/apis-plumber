@@ -373,3 +373,45 @@ You can peruse this information but keep an eye on the `restarts` count for your
 Thankfully, pm2 automatically manages the log files from your underlying processes. If you ever need to check the log files of a service, you can just run `pm2 logs run-myfile`, where `myfile` is again the name of the service obtained from `pm2 list`. This command will show you the last few lines logged from your process, and then begin streaming any incoming log lines until you exit (`Ctrl-c`). 
 
 If you want a big-picture view of the health of your server and all the pm2 services, you can run `pm2 monit` which will show you a dashboard of the RAM and CPU usage of all your services.
+
+## systemd {#systemd}
+
+> `systemd` is the service manager used by certain Linux distributions including RedHat/CentOS 7, SUSE 12, and Ubuntu versions 16.04 and later. 
+
+If you use a Linux server you can use `systemd` to run Plumber as a service that can be accessed from your local network or even outside your network depending on your firewall rules. This option is similar to using the [Docker method](#docker). One of the main advantages of using `systemd` over using Docker is that `systemd` won't bypass firewall rules (Docker does!) and avoids the overhead of running a container.
+
+Compared to `plumber::do_provision()` this option won't create a new droplet if you use [Digital Ocean](#digitalocean); it will run on your existing droplet instead.
+
+To implement this option you'll complete the following three steps from the terminal:
+
+1. Verify that you have the `plumber` package available globally on the server:
+
+```
+R -e 'install.packages("plumber", repos = "https://cran.rstudio.com/")'
+```
+
+2. Run `sudo nano /etc/systemd/system/plumber-api.service`, then paste and adapt this content:
+
+```
+[Unit]
+Description=Plumber API
+# After=postgresql 
+# (or mariadb, mysql, etc if you use a DB with Plumber, otherwise leave this commented)
+
+[Service]
+ExecStart=/usr/bin/Rscript -e "api <- plumber::plumb('/your-dir/your-api-script.R'); api$run(port=8080, host='0.0.0.0')"
+Restart=on-abnormal
+WorkingDirectory=/your-dir/
+
+[Install]
+WantedBy=multi-user.target
+```
+
+3. Activate the service (for auto-start on power/reboot) and start it:
+
+```
+sudo systemctl activate plumber-api   # automatically start the service when the server boots
+sudo systemctl start plumber-api      # start the service right now
+```
+
+To check if your API is running, type `systemctl | grep running` in the terminal and should display `plumber-api.service \ loaded active running Plumber API`.
