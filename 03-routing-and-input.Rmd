@@ -324,7 +324,7 @@ You can print out the names of all of the properties attached to the request by 
 
 // TODO: Conflicts between path, query string, body?
 
-### Form submit
+### Form Submit
 
 One common way of developing API's is to submit a form with its inputs using a POST request. For example to handle a login form we would need: a form to send to the server such as:
 
@@ -347,5 +347,5 @@ and  a `/login` end-point as below:
 include_r("files/apis/03-06-args.R")
 ```
 
-It is easy to see that the `name` in the inputs would be used to generate the named vector `args` in the `req` object passed to `plumber` API functions/end-points.
+The `name` in the inputs correspond to the `names` of the `req$args` list passed to the Plumber endpoint.
 
