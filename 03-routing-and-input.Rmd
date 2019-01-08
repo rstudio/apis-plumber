@@ -330,18 +330,15 @@ One common way of developing API's is to submit a form with its inputs using a P
 
 ```html
 <h2>Basic submit form</h2>
-
-<pre>
-    <form action="http://localhost:8000/submit" method="post">
-      <input type="text" placeholder="Email" name="email" required>
-      <input type="checkbox" name="bike" value="Bike"> I have a bike
-      <input type="text" placeholder="Bike colour" name="color">
-      <button type="submit">Submit</button>
-    </form>
-</pre>
+<form action="http://localhost:8000/submit" method="post">
+  <input type="text" placeholder="Email" name="email" required>
+  <input type="checkbox" name="bike" value="bike"> I have a bike
+  <input type="text" placeholder="Bike color" name="color">
+  <button type="submit">Submit</button>
+</form>
 ```
 
-and  a `/submit` end-point as below:
+and  a `/submit` endpoint as below:
 
 ```{r, echo=FALSE, results='asis'}
 include_r("files/apis/03-06-args.R")
@@ -349,7 +346,7 @@ include_r("files/apis/03-06-args.R")
 
 The `name` in the inputs correspond to the `names` of the `req$args` list passed to the Plumber endpoint.
 
-To run/test the example above, just run the file in `files/apis/03-06-args.R` of the repo using `plumber` as follows:
+To run/test the example above, using `plumber`:
 
 ```{r, eval=FALSE}
 p = plumber::plumb("files/apis/03-06-args.R")
@@ -359,5 +356,3 @@ p$run(port = 8000)
 http://localhost:8000 # to see the form
 # http://localhost:8000/submit is the endpoint
 ```
-
-
