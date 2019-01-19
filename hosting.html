@@ -1,0 +1,633 @@
+<!DOCTYPE html>
+<html >
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>Creating APIs in R with Plumber</title>
+  <meta name="description" content="Use the plumber R package to create HTTP APIs in R.">
+  <meta name="generator" content="bookdown 0.7.4 and GitBook 2.6.7">
+
+  <meta property="og:title" content="Creating APIs in R with Plumber" />
+  <meta property="og:type" content="book" />
+  
+  <meta property="og:image" content="./files/images/cover.jpg" />
+  <meta property="og:description" content="Use the plumber R package to create HTTP APIs in R." />
+  <meta name="github-repo" content="trestletech/apis-plumber" />
+
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="Creating APIs in R with Plumber" />
+  
+  <meta name="twitter:description" content="Use the plumber R package to create HTTP APIs in R." />
+  <meta name="twitter:image" content="./files/images/cover.jpg" />
+
+<meta name="author" content="Jeff Allen">
+
+
+
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <link rel="apple-touch-icon-precomposed" sizes="152x152" href="./files/images/apple-icon-152x152.png">
+  <link rel="shortcut icon" href="./files/images/favicon.png" type="image/x-icon">
+<link rel="prev" href="security.html">
+<link rel="next" href="programmatic-usage.html">
+<script src="libs/jquery-2.2.3/jquery.min.js"></script>
+<link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-fontsettings.css" rel="stylesheet" />
+
+
+
+
+
+
+
+<link href="libs/bootstrap-0.0.0/bootstrap.min.css" rel="stylesheet" />
+<script src="libs/bootstrap-0.0.0/bootstrap.min.js"></script>
+
+
+<style type="text/css">
+div.sourceCode { overflow-x: auto; }
+table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
+  margin: 0; padding: 0; vertical-align: baseline; border: none; }
+table.sourceCode { width: 100%; line-height: 100%; }
+td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
+td.sourceCode { padding-left: 5px; }
+code > span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code > span.dt { color: #902000; } /* DataType */
+code > span.dv { color: #40a070; } /* DecVal */
+code > span.bn { color: #40a070; } /* BaseN */
+code > span.fl { color: #40a070; } /* Float */
+code > span.ch { color: #4070a0; } /* Char */
+code > span.st { color: #4070a0; } /* String */
+code > span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code > span.ot { color: #007020; } /* Other */
+code > span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code > span.fu { color: #06287e; } /* Function */
+code > span.er { color: #ff0000; font-weight: bold; } /* Error */
+code > span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+code > span.cn { color: #880000; } /* Constant */
+code > span.sc { color: #4070a0; } /* SpecialChar */
+code > span.vs { color: #4070a0; } /* VerbatimString */
+code > span.ss { color: #bb6688; } /* SpecialString */
+code > span.im { } /* Import */
+code > span.va { color: #19177c; } /* Variable */
+code > span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code > span.op { color: #666666; } /* Operator */
+code > span.bu { } /* BuiltIn */
+code > span.ex { } /* Extension */
+code > span.pp { color: #bc7a00; } /* Preprocessor */
+code > span.at { color: #7d9029; } /* Attribute */
+code > span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code > span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code > span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+</style>
+
+<link rel="stylesheet" href="style.css" type="text/css" />
+
+<style>
+
+/**
+ * Icons
+ */
+.icon > svg {
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  vertical-align: middle; }
+  .icon > svg path {
+    fill: #828282; }
+
+.book-header, .book-summary, .body-inner {
+  margin-top: 50px;
+}
+
+.navbar {
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-size: 16px !important;
+  line-height: 1.5 !important;
+  font-weight: 300;
+  color: #111;
+  -webkit-text-size-adjust: 100%;
+}
+
+</style>
+
+</head>
+
+<body>
+<nav class="navbar navbar-inverse navbar-fixed-top">
+    <div class="container">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar"> <span class="sr-only">Toggle navigation</span> <span class="icon-bar"></span> <span class="icon-bar"></span> <span class="icon-bar"></span> </button> <a class="navbar-brand" href="/">plumber</a> </div>
+        <div id="navbar" class="navbar-collapse collapse">
+            <ul class="nav navbar-nav">
+                <li> <a href="/docs/">Docs</a></li>
+                <li class="dropdown"> <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Examples <span class="caret"></span></a>
+                    <ul class="dropdown-menu" role="menu">
+                        <li><a href="/examples/github">GitHub Webhook</a></li>
+                        <li><a href="/examples/mailgun">Receive Emails (mailgun)</a></li>
+                    </ul>
+                </li>
+            </ul>
+            <ul class="nav navbar-nav navbar-right">
+                <li>
+                    <a href="https://github.com/trestletech/plumber"> <span class="icon icon--github"> <svg viewBox="0 0 16 16"> <path fill="#828282" d="M7.999,0.431c-4.285,0-7.76,3.474-7.76,7.761 c0,3.428,2.223,6.337,5.307,7.363c0.388,0.071,0.53-0.168,0.53-0.374c0-0.184-0.007-0.672-0.01-1.32 c-2.159,0.469-2.614-1.04-2.614-1.04c-0.353-0.896-0.862-1.135-0.862-1.135c-0.705-0.481,0.053-0.472,0.053-0.472 c0.779,0.055,1.189,0.8,1.189,0.8c0.692,1.186,1.816,0.843,2.258,0.645c0.071-0.502,0.271-0.843,0.493-1.037 C4.86,11.425,3.049,10.76,3.049,7.786c0-0.847,0.302-1.54,0.799-2.082C3.768,5.507,3.501,4.718,3.924,3.65 c0,0,0.652-0.209,2.134,0.796C6.677,4.273,7.34,4.187,8,4.184c0.659,0.003,1.323,0.089,1.943,0.261 c1.482-1.004,2.132-0.796,2.132-0.796c0.423,1.068,0.157,1.857,0.077,2.054c0.497,0.542,0.798,1.235,0.798,2.082 c0,2.981-1.814,3.637-3.543,3.829c0.279,0.24,0.527,0.713,0.527,1.437c0,1.037-0.01,1.874-0.01,2.129 c0,0.208,0.14,0.449,0.534,0.373c3.081-1.028,5.302-3.935,5.302-7.362C15.76,3.906,12.285,0.431,7.999,0.431z"></path> </svg> </span> See code on GitHub </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+
+  <div class="book without-animation with-summary font-size-2 font-family-1" data-basepath=".">
+
+    <div class="book-summary">
+      <nav role="navigation">
+
+<ul class="summary">
+<li class="chapter" data-level="1" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i><b>1</b> Introduction</a><ul>
+<li class="chapter" data-level="1.1" data-path="index.html"><a href="index.html#web-apis"><i class="fa fa-check"></i><b>1.1</b> Web APIs</a></li>
+<li class="chapter" data-level="1.2" data-path="index.html"><a href="index.html#installation"><i class="fa fa-check"></i><b>1.2</b> Installation</a></li>
+</ul></li>
+<li class="chapter" data-level="2" data-path="quickstart.html"><a href="quickstart.html"><i class="fa fa-check"></i><b>2</b> Quickstart</a><ul>
+<li class="chapter" data-level="2.1" data-path="quickstart.html"><a href="quickstart.html#specifying-the-inputs"><i class="fa fa-check"></i><b>2.1</b> Specifying the Inputs</a></li>
+<li class="chapter" data-level="2.2" data-path="quickstart.html"><a href="quickstart.html#customizing-the-output"><i class="fa fa-check"></i><b>2.2</b> Customizing The Output</a></li>
+</ul></li>
+<li class="chapter" data-level="3" data-path="routing-and-input.html"><a href="routing-and-input.html"><i class="fa fa-check"></i><b>3</b> Routing &amp; Input</a><ul>
+<li class="chapter" data-level="3.1" data-path="routing-and-input.html"><a href="routing-and-input.html#endpoints"><i class="fa fa-check"></i><b>3.1</b> Endpoints</a></li>
+<li class="chapter" data-level="3.2" data-path="routing-and-input.html"><a href="routing-and-input.html#filters"><i class="fa fa-check"></i><b>3.2</b> Filters</a><ul>
+<li class="chapter" data-level="3.2.1" data-path="routing-and-input.html"><a href="routing-and-input.html#forward-to-another-handler"><i class="fa fa-check"></i><b>3.2.1</b> Forward to Another Handler</a></li>
+<li class="chapter" data-level="3.2.2" data-path="routing-and-input.html"><a href="routing-and-input.html#return-a-response"><i class="fa fa-check"></i><b>3.2.2</b> Return a Response</a></li>
+<li class="chapter" data-level="3.2.3" data-path="routing-and-input.html"><a href="routing-and-input.html#throw-an-error"><i class="fa fa-check"></i><b>3.2.3</b> Throw an Error</a></li>
+</ul></li>
+<li class="chapter" data-level="3.3" data-path="routing-and-input.html"><a href="routing-and-input.html#dynamic-routes"><i class="fa fa-check"></i><b>3.3</b> Dynamic Routes</a></li>
+<li class="chapter" data-level="3.4" data-path="routing-and-input.html"><a href="routing-and-input.html#typed-dynamic-routes"><i class="fa fa-check"></i><b>3.4</b> Typed Dynamic Routes</a></li>
+<li class="chapter" data-level="3.5" data-path="routing-and-input.html"><a href="routing-and-input.html#static-file-handler"><i class="fa fa-check"></i><b>3.5</b> Static File Handler</a></li>
+<li class="chapter" data-level="3.6" data-path="routing-and-input.html"><a href="routing-and-input.html#input-handling"><i class="fa fa-check"></i><b>3.6</b> Input Handling</a><ul>
+<li class="chapter" data-level="3.6.1" data-path="routing-and-input.html"><a href="routing-and-input.html#the-request-object"><i class="fa fa-check"></i><b>3.6.1</b> The Request Object</a></li>
+<li class="chapter" data-level="3.6.2" data-path="routing-and-input.html"><a href="routing-and-input.html#query-strings"><i class="fa fa-check"></i><b>3.6.2</b> Query Strings</a></li>
+<li class="chapter" data-level="3.6.3" data-path="routing-and-input.html"><a href="routing-and-input.html#request-body"><i class="fa fa-check"></i><b>3.6.3</b> Request Body</a></li>
+<li class="chapter" data-level="3.6.4" data-path="routing-and-input.html"><a href="routing-and-input.html#read-cookies"><i class="fa fa-check"></i><b>3.6.4</b> Cookies</a></li>
+<li class="chapter" data-level="3.6.5" data-path="routing-and-input.html"><a href="routing-and-input.html#headers"><i class="fa fa-check"></i><b>3.6.5</b> Headers</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="4" data-path="rendering-and-output.html"><a href="rendering-and-output.html"><i class="fa fa-check"></i><b>4</b> Rendering Output</a><ul>
+<li class="chapter" data-level="4.1" data-path="rendering-and-output.html"><a href="rendering-and-output.html#response-object"><i class="fa fa-check"></i><b>4.1</b> The Response Object</a></li>
+<li class="chapter" data-level="4.2" data-path="rendering-and-output.html"><a href="rendering-and-output.html#serializers"><i class="fa fa-check"></i><b>4.2</b> Serializers</a><ul>
+<li class="chapter" data-level="4.2.1" data-path="rendering-and-output.html"><a href="rendering-and-output.html#bypassing-serialization"><i class="fa fa-check"></i><b>4.2.1</b> Bypassing Serialization</a></li>
+<li class="chapter" data-level="4.2.2" data-path="rendering-and-output.html"><a href="rendering-and-output.html#boxed-vs-unboxed-json"><i class="fa fa-check"></i><b>4.2.2</b> Boxed vs Unboxed JSON</a></li>
+<li class="chapter" data-level="4.2.3" data-path="rendering-and-output.html"><a href="rendering-and-output.html#customizing-image-serializers"><i class="fa fa-check"></i><b>4.2.3</b> Customizing Image Serializers</a></li>
+</ul></li>
+<li class="chapter" data-level="4.3" data-path="rendering-and-output.html"><a href="rendering-and-output.html#error-handling"><i class="fa fa-check"></i><b>4.3</b> Error Handling</a></li>
+<li class="chapter" data-level="4.4" data-path="rendering-and-output.html"><a href="rendering-and-output.html#custom-serializers"><i class="fa fa-check"></i><b>4.4</b> Custom Serializers</a></li>
+<li class="chapter" data-level="4.5" data-path="rendering-and-output.html"><a href="rendering-and-output.html#setting-cookies"><i class="fa fa-check"></i><b>4.5</b> Setting Cookies</a><ul>
+<li class="chapter" data-level="4.5.1" data-path="rendering-and-output.html"><a href="rendering-and-output.html#setting-unencrypted-cookies"><i class="fa fa-check"></i><b>4.5.1</b> Setting Unencrypted Cookies</a></li>
+<li class="chapter" data-level="4.5.2" data-path="rendering-and-output.html"><a href="rendering-and-output.html#encrypted-cookies"><i class="fa fa-check"></i><b>4.5.2</b> Setting Encrypted Cookies</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="5" data-path="runtime.html"><a href="runtime.html"><i class="fa fa-check"></i><b>5</b> Runtime</a><ul>
+<li class="chapter" data-level="5.1" data-path="runtime.html"><a href="runtime.html#execution-model"><i class="fa fa-check"></i><b>5.1</b> Execution Model</a></li>
+<li class="chapter" data-level="5.2" data-path="runtime.html"><a href="runtime.html#environments"><i class="fa fa-check"></i><b>5.2</b> Environments</a></li>
+<li class="chapter" data-level="5.3" data-path="runtime.html"><a href="runtime.html#performance-request-processing"><i class="fa fa-check"></i><b>5.3</b> Performance &amp; Request Processing</a></li>
+<li class="chapter" data-level="5.4" data-path="runtime.html"><a href="runtime.html#managing-state"><i class="fa fa-check"></i><b>5.4</b> Managing State</a><ul>
+<li class="chapter" data-level="5.4.1" data-path="runtime.html"><a href="runtime.html#in-memory"><i class="fa fa-check"></i><b>5.4.1</b> In-Memory</a></li>
+<li class="chapter" data-level="5.4.2" data-path="runtime.html"><a href="runtime.html#file-system"><i class="fa fa-check"></i><b>5.4.2</b> File System</a></li>
+<li class="chapter" data-level="5.4.3" data-path="runtime.html"><a href="runtime.html#state-cookies"><i class="fa fa-check"></i><b>5.4.3</b> Cookies</a></li>
+<li class="chapter" data-level="5.4.4" data-path="runtime.html"><a href="runtime.html#external-data-store"><i class="fa fa-check"></i><b>5.4.4</b> External Data Store</a></li>
+</ul></li>
+<li class="chapter" data-level="5.5" data-path="runtime.html"><a href="runtime.html#exit-handlers"><i class="fa fa-check"></i><b>5.5</b> Exit Handlers</a></li>
+</ul></li>
+<li class="chapter" data-level="6" data-path="security.html"><a href="security.html"><i class="fa fa-check"></i><b>6</b> Security</a><ul>
+<li class="chapter" data-level="6.1" data-path="security.html"><a href="security.html#networking"><i class="fa fa-check"></i><b>6.1</b> Networking &amp; Firewalls</a></li>
+<li class="chapter" data-level="6.2" data-path="security.html"><a href="security.html#https"><i class="fa fa-check"></i><b>6.2</b> HTTPS</a></li>
+<li class="chapter" data-level="6.3" data-path="security.html"><a href="security.html#dos"><i class="fa fa-check"></i><b>6.3</b> Denial Of Service (DoS)</a></li>
+<li class="chapter" data-level="6.4" data-path="security.html"><a href="security.html#sanitization"><i class="fa fa-check"></i><b>6.4</b> Sanitization &amp; Injection</a></li>
+<li class="chapter" data-level="6.5" data-path="security.html"><a href="security.html#cross-origin-resource-sharing-cors"><i class="fa fa-check"></i><b>6.5</b> Cross-Origin Resource Sharing (CORS)</a></li>
+<li class="chapter" data-level="6.6" data-path="security.html"><a href="security.html#cross-site-request-forgery-csrf-or-xsrf"><i class="fa fa-check"></i><b>6.6</b> Cross-Site Request Forgery (CSRF, or XSRF)</a></li>
+<li class="chapter" data-level="6.7" data-path="security.html"><a href="security.html#security-cookies"><i class="fa fa-check"></i><b>6.7</b> Cookies</a></li>
+</ul></li>
+<li class="chapter" data-level="7" data-path="hosting.html"><a href="hosting.html"><i class="fa fa-check"></i><b>7</b> Hosting</a><ul>
+<li class="chapter" data-level="7.1" data-path="hosting.html"><a href="hosting.html#digitalocean"><i class="fa fa-check"></i><b>7.1</b> DigitalOcean</a></li>
+<li class="chapter" data-level="7.2" data-path="hosting.html"><a href="hosting.html#rstudio-connect"><i class="fa fa-check"></i><b>7.2</b> RStudio Connect</a></li>
+<li class="chapter" data-level="7.3" data-path="hosting.html"><a href="hosting.html#docker"><i class="fa fa-check"></i><b>7.3</b> Docker (Basic)</a><ul>
+<li class="chapter" data-level="7.3.1" data-path="hosting.html"><a href="hosting.html#default-dockerfile"><i class="fa fa-check"></i><b>7.3.1</b> Default Dockerfile</a></li>
+<li class="chapter" data-level="7.3.2" data-path="hosting.html"><a href="hosting.html#custom-dockerfiles"><i class="fa fa-check"></i><b>7.3.2</b> Custom Dockerfiles</a></li>
+<li class="chapter" data-level="7.3.3" data-path="hosting.html"><a href="hosting.html#automatically-run-on-restart"><i class="fa fa-check"></i><b>7.3.3</b> Automatically Run on Restart</a></li>
+</ul></li>
+<li class="chapter" data-level="7.4" data-path="hosting.html"><a href="hosting.html#docker-advanced"><i class="fa fa-check"></i><b>7.4</b> Docker (Advanced)</a><ul>
+<li class="chapter" data-level="7.4.1" data-path="hosting.html"><a href="hosting.html#multiple-plumber-applications"><i class="fa fa-check"></i><b>7.4.1</b> Multiple Plumber Applications</a></li>
+<li class="chapter" data-level="7.4.2" data-path="hosting.html"><a href="hosting.html#multiple-applications-on-one-port"><i class="fa fa-check"></i><b>7.4.2</b> Multiple Applications on One Port</a></li>
+<li class="chapter" data-level="7.4.3" data-path="hosting.html"><a href="hosting.html#load-balancing"><i class="fa fa-check"></i><b>7.4.3</b> Load Balancing</a></li>
+</ul></li>
+<li class="chapter" data-level="7.5" data-path="hosting.html"><a href="hosting.html#pm2"><i class="fa fa-check"></i><b>7.5</b> pm2</a><ul>
+<li class="chapter" data-level="7.5.1" data-path="hosting.html"><a href="hosting.html#server-deployment-and-preparation"><i class="fa fa-check"></i><b>7.5.1</b> Server Deployment and Preparation</a></li>
+<li class="chapter" data-level="7.5.2" data-path="hosting.html"><a href="hosting.html#install-pm2"><i class="fa fa-check"></i><b>7.5.2</b> Install pm2</a></li>
+<li class="chapter" data-level="7.5.3" data-path="hosting.html"><a href="hosting.html#wrap-your-plumber-file"><i class="fa fa-check"></i><b>7.5.3</b> Wrap Your Plumber File</a></li>
+<li class="chapter" data-level="7.5.4" data-path="hosting.html"><a href="hosting.html#introduce-our-service-to-pm2"><i class="fa fa-check"></i><b>7.5.4</b> Introduce Our Service to pm2</a></li>
+<li class="chapter" data-level="7.5.5" data-path="hosting.html"><a href="hosting.html#logs-and-management"><i class="fa fa-check"></i><b>7.5.5</b> Logs and Management</a></li>
+</ul></li>
+<li class="chapter" data-level="7.6" data-path="hosting.html"><a href="hosting.html#systemd"><i class="fa fa-check"></i><b>7.6</b> systemd</a></li>
+</ul></li>
+<li class="chapter" data-level="8" data-path="programmatic-usage.html"><a href="programmatic-usage.html"><i class="fa fa-check"></i><b>8</b> Programmatic Usage</a><ul>
+<li class="chapter" data-level="8.1" data-path="programmatic-usage.html"><a href="programmatic-usage.html#creating-and-controlling-a-router"><i class="fa fa-check"></i><b>8.1</b> Creating and Controlling a Router</a></li>
+<li class="chapter" data-level="8.2" data-path="programmatic-usage.html"><a href="programmatic-usage.html#defining-endpoints"><i class="fa fa-check"></i><b>8.2</b> Defining Endpoints</a></li>
+<li class="chapter" data-level="8.3" data-path="programmatic-usage.html"><a href="programmatic-usage.html#defining-filters"><i class="fa fa-check"></i><b>8.3</b> Defining Filters</a></li>
+<li class="chapter" data-level="8.4" data-path="programmatic-usage.html"><a href="programmatic-usage.html#router-hooks"><i class="fa fa-check"></i><b>8.4</b> Registering Hooks on a Router</a></li>
+<li class="chapter" data-level="8.5" data-path="programmatic-usage.html"><a href="programmatic-usage.html#mount-static"><i class="fa fa-check"></i><b>8.5</b> Mounting &amp; Static File Routers</a></li>
+<li class="chapter" data-level="8.6" data-path="programmatic-usage.html"><a href="programmatic-usage.html#customize-router"><i class="fa fa-check"></i><b>8.6</b> Customizing a Router</a></li>
+</ul></li>
+<li class="chapter" data-level="9" data-path="tips-tricks.html"><a href="tips-tricks.html"><i class="fa fa-check"></i><b>9</b> Tips &amp; Tricks</a><ul>
+<li class="chapter" data-level="9.1" data-path="tips-tricks.html"><a href="tips-tricks.html#debugging"><i class="fa fa-check"></i><b>9.1</b> Debugging</a><ul>
+<li class="chapter" data-level="9.1.1" data-path="tips-tricks.html"><a href="tips-tricks.html#print-debugging"><i class="fa fa-check"></i><b>9.1.1</b> Print Debugging</a></li>
+<li class="chapter" data-level="9.1.2" data-path="tips-tricks.html"><a href="tips-tricks.html#interactive-debugging"><i class="fa fa-check"></i><b>9.1.2</b> Interactive Debugging</a></li>
+</ul></li>
+<li class="chapter" data-level="9.2" data-path="tips-tricks.html"><a href="tips-tricks.html#testing"><i class="fa fa-check"></i><b>9.2</b> Testing</a></li>
+<li class="chapter" data-level="9.3" data-path="tips-tricks.html"><a href="tips-tricks.html#organizing-large-applications"><i class="fa fa-check"></i><b>9.3</b> Organizing Large Applications</a></li>
+<li class="chapter" data-level="9.4" data-path="tips-tricks.html"><a href="tips-tricks.html#swagger"><i class="fa fa-check"></i><b>9.4</b> Swagger</a></li>
+<li class="chapter" data-level="9.5" data-path="tips-tricks.html"><a href="tips-tricks.html#performance"><i class="fa fa-check"></i><b>9.5</b> Performance</a></li>
+</ul></li>
+<li class="appendix"><span><b>Appendix</b></span></li>
+<li class="chapter" data-level="A" data-path="all-annotations.html"><a href="all-annotations.html"><i class="fa fa-check"></i><b>A</b> All Annotations</a></li>
+<li class="chapter" data-level="B" data-path="plumber-0-4-0-migration-guide.html"><a href="plumber-0-4-0-migration-guide.html"><i class="fa fa-check"></i><b>B</b> Plumber 0.4.0 Migration Guide</a></li>
+<li class="chapter" data-level="C" data-path="citations.html"><a href="citations.html"><i class="fa fa-check"></i><b>C</b> Citations</a></li>
+<li class="divider"></li>
+<li><a href="https://www.netlify.com" target="_blank">Site hosting from Netlify</a></li>
+<script> (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){ (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o), m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m) })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');  ga('create', 'UA-43159940-7', 'auto'); ga('send', 'pageview');</script>
+
+</ul>
+
+      </nav>
+    </div>
+
+    <div class="book-body">
+      <div class="body-inner">
+        <div class="book-header" role="navigation">
+          <h1>
+            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">Creating APIs in R with Plumber</a>
+          </h1>
+        </div>
+
+        <div class="page-wrapper" tabindex="-1" role="main">
+          <div class="page-inner">
+
+            <section class="normal" id="section-">
+<div id="hosting" class="section level1">
+<h1><span class="header-section-number">Chapter 7</span> Hosting</h1>
+<p>Once you have developed your Plumber API, the next step is to find a way to host it. If you haven’t dealt with hosting an application on a server before, you may be tempted to run the <code>run()</code> command from an interactive session on your development machine (either your personal desktop or an RStudio Server instance) and direct traffic there. This is a dangerous idea for a number of reasons:</p>
+<ol style="list-style-type: decimal">
+<li>Your development machine likely has a dynamic IP address. This means that clients may be able to reach you at that address today, but it will likely break on you in the coming weeks/months.</li>
+<li>Networks may leverage firewalls to block incoming traffic to certain networks and machines. Again, it may appear that everything is working for you locally, but other users elsewhere in the network or external clients may not be able to connect to your development machine.</li>
+<li>If your Plumber process crashes (for instance, due to your server running out of memory), the method of running Plumber will not automatically restart the crashed service for you. This means that your API will be offline until you manually login and restart it. Likewise if your development machine gets rebooted, your API will not automatically be started when the machine comes back online.</li>
+<li>This technique relies on having your clients specify a port number manually. Non-technical users may be tripped up by this; some of the other techniques do not require clients specifying the port for an API.</li>
+<li>This approach will eternally run one R process for your API. Some of the other approaches will allow you to load-balance traffic between multiple R processes to handle more requests. <a href="hosting.html#rstudio-connect">RStudio Connect</a> will even dynamically scale the number of running processes for you so that your API isn’t consuming more system resources than is necessary.</li>
+<li>Plumber uses the <code>interactive()</code> function as a heuristic for whether it should behave in a more convenient mode or in a more robust, secure mode. This function is used as the default for some parameters on <code>run()</code> which could pose a security hazard if enabled on a public server.</li>
+<li>Most importantly, serving public requests from your development environment can be a security hazard. Ideally, you should separate your development instances from the servers that are accessible by others.</li>
+</ol>
+<p>For these reasons and more, you should consider setting up a separate server on which you can host your Plumber APIs. There are a variety of options that you can consider.</p>
+<div id="digitalocean" class="section level2">
+<h2><span class="header-section-number">7.1</span> DigitalOcean</h2>
+<p><a href="https://m.do.co/c/add0b50f54c4">DigitalOcean</a> is an easy-to-use Cloud Computing provider. They offer a simple way to spin up a Linux virtual machine and access it remotely. You can choose what size machine you want to run – with options ranging from small machines with 512MB of RAM for a few dollars a month up to large machines with dozens of GB of RAM – and only pay for it while it’s online.</p>
+<p>Plumber includes helper functions that enable you to automatically provision a Plumber server and deploy your APIs to it. So in order to setup a Plumber server running on DigitalOcean, you’ll follow these steps:</p>
+<ol style="list-style-type: decimal">
+<li><a href="https://m.do.co/c/add0b50f54c4">Create a DigitalOcean account</a>.</li>
+<li>Setup an SSH key and deploy the public portion to DigitalOcean so you’ll be able to login to your server.</li>
+<li>Install the <code>analogsea</code> R package and run a test command like <code>analogsea::droplets()</code> to confirm that it’s able to connect to your DigitalOcean account.</li>
+<li>Run <code>mydrop &lt;- plumber::do_provision()</code>. This will start a virtual machine (or “droplet”, as DigitalOcean calls them) and install Plumber and all the necessary prerequisite software. Once the provisioning is complete, you should be able to access port <code>8000</code> on your server’s IP and see a response from Plumber.</li>
+<li>Install any R packages on the server that your API requires using <code>analogsea::install_r_package()</code>.</li>
+<li>You can use <code>plumber::do_deploy_api()</code> to deploy or update your own custom APIs to a particular port on your server.</li>
+<li>(Optional) <a href="http://tres.tl/dns">Setup a domain name</a> for your Plumber server so you can use www.myplumberserver.com instead of the server’s IP address.</li>
+<li>(Optional) Configure SSL</li>
+</ol>
+<p>Getting everything connected the first time can be a bit of work, but once you have <code>analogsea</code> connected to your DigitalOcean account, you’re now able to spin up new Plumber servers in DigitalOcean hosting your APIs with just a couple of R commands. You can even write <a href="https://github.com/trestletech/plumber/blob/d9f4acc163168ae179c55e781cfa43f03551f825/inst/hosted-new.R">scripts that provision an entire Plumber server</a> with multiple APIs associated.</p>
+</div>
+<div id="rstudio-connect" class="section level2">
+<h2><span class="header-section-number">7.2</span> RStudio Connect</h2>
+<p><a href="https://www.rstudio.com/products/connect/">RStudio Connect</a> is an enterprise publishing platform from RStudio. It supports push-button publishing from the RStudio IDE of a variety of R content types including Plumber APIs. Unlike all the other options listed here, RStudio Connect automatically manages the dependent packages and files your API has and recreates an environment closely mimicking your local development environment on the server.</p>
+<p>RStudio Connect automatically manages the number of R processes necessary to handle the current load and balances incoming traffic across all available processes. It can also shut down idle processes when they’re not in use. This allows you to run the appropriate number of R processes to scale your capacity to accommodate the current load.</p>
+<blockquote>
+<p>Conflict of interest: the primary author of plumber and this book works for RStudio on RStudio Connect.</p>
+</blockquote>
+</div>
+<div id="docker" class="section level2">
+<h2><span class="header-section-number">7.3</span> Docker (Basic)</h2>
+<p><a href="https://docker.io">Docker</a> is a platform built on top of Linux Containers that allow you to run processes in an isolated environment; that environment might have certain resources/software pre-configured or may emulate a particular Linux environment like Ubuntu 14.04 or CentOS 7.3.</p>
+<p>We won’t delve into the details of Docker or how to setup or install everything on your system. Docker provides some <a href="https://docs.docker.com/">great resources</a> for those who are looking to get started. Here we’ll assume that you have Docker installed and you’re familiar with the basic commands required to spin up a container.</p>
+<p>In this article, we’ll take advantage of the <a href="https://hub.docker.com/r/trestletech/plumber/">trestletech/plumber</a> Docker image that bundles a recent version of R with the most recent version of plumber pre-installed (the underlying R image is courtesy of the <a href="https://github.com/rocker-org/rocker">rocker</a> project). You can get this image with a</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="ex">docker</span> pull trestletech/plumber</code></pre></div>
+<p>Remember that this will get you the current snapshot of Plumber and will continue to use that image until you run <code>pull</code> again.</p>
+<div id="default-dockerfile" class="section level3">
+<h3><span class="header-section-number">7.3.1</span> Default Dockerfile</h3>
+<p>We’ll start by just running a single Plumber application in Docker just to see things at work. By default, the <code>trestletech/plumber</code> image will take the first argument after the image name as the name of the file that you want to <code>plumb()</code> and serve on port <code>8000</code>. So right away you can run one of the examples that’s included in plumber as it is already installed on the image.</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="ex">docker</span> run --rm -p 8000:8000 trestletech/plumber</code></pre></div>
+<p>which is the same as:</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="ex">docker</span> run --rm -p 8000:8000 trestletech/plumber \
+  /usr/local/lib/R/site-library/plumber/examples/04-mean-sum/plumber.R</code></pre></div>
+<ul>
+<li><code>docker run</code> tells Docker to run a new container</li>
+<li><code>--rm</code> tells Docker to clean-up after the container when it’s done</li>
+<li><code>-p 8000:8000</code> says to map port 8000 from the plumber container (which is where we’ll run the server) to port 8000 of your local machine</li>
+<li><code>trestletech/plumber</code> is the name of the image we want to run</li>
+<li><code>/usr/local/lib/R/site-library/plumber/examples/03-mean-sum/plumber.R</code> is the path <strong>inside of the Docker container</strong> to the Plumber file you want to host. You’ll note that you do not need plumber installed on your host machine for this to work, nor does the path <code>/usr/local/...</code> need to exist on your host machine. This references the path inside of the docker container where the R file you want to <code>plumb()</code> can be found. This <code>mean-sum</code> path is the default path that the image uses if you don’t specify one yourself.</li>
+</ul>
+<p>This will ask Plumber to <code>plumb</code> and <code>run</code> the file you specified on port 8000 of that new container. Because you used the <code>-p</code> argument, port 8000 of your local machine will be forwarded into your container. You can test this by running this on the machine where Docker is running: <code>curl localhost:8000/mean</code>, or if you know the IP address of the machine where Docker is running, you could visit it in a web browser. The <code>/mean</code> path is one that’s defined in the plumber file we just specified – you should get an single number in an array back (<code>[-0.1993]</code>).</p>
+<p>If that works, you can try using one of your own plumber files in this arrangement. Keep in mind that the file you want to run <strong>must</strong> be available inside of the container and you must specify the path to that file as it exists inside of the container. Keep it simple for now – use a plumber file that doesn’t require any additional R packages or depend on any other files outside of the plumber definition.</p>
+<p>For instance if you have a plumber file saved in your current directory called <code>api.R</code>, you could use the following command</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="ex">docker</span> run --rm -p 8000:8000 -v <span class="kw">`</span><span class="bu">pwd</span><span class="kw">`</span>/api.R:/plumber.R trestletech/plumber /plumber.R</code></pre></div>
+<p>You’ll notice that we used the <code>-v</code> argument to specify a “volume” that should be mapped from our host machine into the Docker container. We defined that the location of that file should be at <code>/plumber.R</code>, so that’s the argument we give last to tell the container where to look for the plumber definition. You can use this same technique to share a whole directory instead of just passing in a single R file; this approach is useful if your Plumber API depends on other files.</p>
+<p>You can also use the <code>trestletech/plumber</code> image just like you use any other. For example, if you want to start a container based on this image and poke around in a bash shell:</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="ex">docker</span> run -it --rm --entrypoint /bin/bash trestletech/plumber</code></pre></div>
+<p>This can be a handy way to debug problems. Prepare the command that you think should work then add <code>--entrypoint /bin/bash</code> before <code>trestletech/plumber</code> and explore a bit. Alternatively, you can try to run the R process and spawn the plumber application yourself and see where things go wrong (often a missing package or missing file).</p>
+</div>
+<div id="custom-dockerfiles" class="section level3">
+<h3><span class="header-section-number">7.3.2</span> Custom Dockerfiles</h3>
+<p>You can build upon the <code>trestletech/plumber</code> image and build your own Docker image by writing your own Dockerfile. Dockerfiles have a vast array of options and possible configurations, so <a href="https://docs.docker.com/engine/reference/builder/">see the official docs</a> if you want to learn more about any of these options.</p>
+<p>A couple of commands that are relevant here:</p>
+<ul>
+<li><code>RUN</code> runs a command and persists the side-effects in the Docker image you’re building. So if you want to build a new image that has the <code>broom</code> package, you could add a line in your Dockerfile that says <code>RUN R -e &quot;install.packages('broom')&quot;</code> which would make the <code>broom</code> package available in your new Docker image.</li>
+<li><code>ENTRYPOINT</code> is the command to run when starting the image. <code>trestletech/plumber</code> specifies an entrypoint that starts R, <code>plumb()</code>s a file, then <code>run()</code>s the router. If you want to change how plumber starts, or run some extra commands (like add a global processor) before you run the router, you’ll need to provide a custom <code>ENTRYPOINT</code>.</li>
+<li><code>CMD</code> these are the default arguments to provide to <code>ENTRYPOINT</code>. <code>trestletech/plumber</code> uses only the first argument as the name of the file that you want to <code>plumb()</code>.</li>
+</ul>
+<p>So your custom Dockerfile could be as simple as:</p>
+<pre><code>FROM trestletech/plumber
+MAINTAINER Docker User &lt;docker@user.org&gt;
+
+RUN R -e &quot;install.packages(&#39;broom&#39;)&quot;
+
+CMD [&quot;/app/plumber.R&quot;]</code></pre>
+<p>This Dockerfile would just extend the <code>trestletech/plumber</code> image in two ways. First, it <code>RUN</code>s one additional command to install the <code>broom</code> package. Second, it customizes the default <code>CMD</code> argument that will be used when running the image. In this case, you would be expected to mount a Plumber application into the container at <code>/app/plumber.R</code></p>
+<p>You could then build your custom Docker image from this Dockerfile using the command <code>docker build -t myCustomDocker .</code> (where <code>.</code> – the current directory – is the directory where that Dockerfile is stored).</p>
+<p>Then you’d be able to use <code>docker run --rm -v</code>pwd<code>:/app myCustomDocker</code> to run your custom image, passing in your application’s directory as a volume mounted at <code>/app</code>.</p>
+</div>
+<div id="automatically-run-on-restart" class="section level3">
+<h3><span class="header-section-number">7.3.3</span> Automatically Run on Restart</h3>
+<p>If you want your container to start automatically when your machine is booted, you can use the <code>-d</code> switch for <code>docker run</code>.</p>
+<p><code>docker run -p 1234:8000 -d myCustomDocker</code> would run the custom image you created above automatically every time your machine boots and expose the plumber service on port <code>1234</code> of your host machine. Like all other hosting options, you’ll need to make sure that your firewall allows connections on port <code>1234</code> if you want others to be able to access your service.</p>
+</div>
+</div>
+<div id="docker-advanced" class="section level2">
+<h2><span class="header-section-number">7.4</span> Docker (Advanced)</h2>
+<p>If you already have a <a href="hosting.html#docker">basic Docker instance</a> running, you may be interested in more advanced configurations capable of hosting multiple plumber applications on a single server and even load-balancing across multiple plumber processes.</p>
+<p>In order to coordinate and run multiple Plumber processes on one server, <strong>you should install <code>docker-compose</code> on your system.</strong> This is not included with some installations of Docker, so you will need to <a href="https://docs.docker.com/compose/install/">follow these instructions</a> if you are not currently able to run <code>docker-compose</code> on the command-line. Docker Compose helps orchestrate multiple Docker containers. If you’re planning to run more than one Plumber process, you’ll want to use Docker Compose to keep them all alive and route traffic between them.</p>
+<div id="multiple-plumber-applications" class="section level3">
+<h3><span class="header-section-number">7.4.1</span> Multiple Plumber Applications</h3>
+<p>We’ll use Docker Compose to help us organize multiple Plumber processes. We won’t go into detail about how to use Docker Compose, so if you’re new you should familiarize yourself using the <a href="https://docs.docker.com/compose">official docs</a>.</p>
+<p>You should define a Docker Compose configuration that defines the behavior of every Plumber application that you want to run. You’ll first want to setup a Dockerfile that defines the desired behavior for each of your applications (as <a href="hosting.html#custom-dockerfiles">we outlined previously</a>. You could use a <code>docker-compose.yml</code> configuration like the following:</p>
+<div class="sourceCode"><pre class="sourceCode yaml"><code class="sourceCode yaml"><span class="fu">version:</span><span class="at"> </span><span class="st">&#39;2&#39;</span>
+<span class="fu">services:</span>
+  <span class="fu">app1:</span>
+    <span class="fu">build:</span><span class="at"> ./app1/</span>
+    <span class="fu">volumes:</span>
+     <span class="kw">-</span> <span class="fu">./data:</span><span class="at">/data</span>
+     <span class="kw">-</span> <span class="fu">./app1:</span><span class="at">/app</span>
+    <span class="fu">restart:</span><span class="at"> always</span>
+    <span class="fu">ports:</span>
+     <span class="kw">-</span> <span class="st">&quot;7000:8000&quot;</span>
+  <span class="fu">app2:</span>
+    <span class="fu">image:</span><span class="at"> trestletech/plumber</span>
+    <span class="fu">command:</span><span class="at"> /app/plumber.R</span>
+    <span class="fu">volumes:</span>
+     <span class="kw">-</span> <span class="fu">../app2:</span><span class="at">/app</span>
+    <span class="fu">restart:</span><span class="at"> always</span>
+    <span class="fu">ports:</span>
+     <span class="kw">-</span> <span class="st">&quot;7001:8000&quot;</span></code></pre></div>
+<p>More detail on what each of these options does and what other options exist can be found <a href="https://docs.docker.com/compose/compose-file/">here</a>. This configuration defines two Docker containers that should run <code>app1</code> and <code>app2</code>. The associated files in this case are layed out on disk as follows:</p>
+<pre><code>docker-compose.yml
+app1
+├── Dockerfile
+├── api.R
+app2
+├── plumber.R
+data
+├── data.csv</code></pre>
+<p>You can see that app2 is the simpler of the two apps; it just has the plumber definition that should be run through <code>plumb()</code>. So we merely use the default plumber Docker image as its <code>image</code>, and then customize the <code>command</code> to specify where the Plumber API definition can be found in the container. Since we’re mapping our host’s <code>./app2</code> to <code>/app</code> inside of the container, the definition would be found in <code>/app/plumber.R</code>. We specify that it should <code>always</code> restart if anything ever happens to the container, and we export port <code>8000</code> from the container to port <code>7001</code> on the host.</p>
+<p><code>app1</code> is our more complicated app. It has some extra data in another directory that needs to be loaded, and it has a custom Dockerfile. This could be because it has additional R packages or system dependencies that it requires.</p>
+<p>If you now run <code>docker-compose up</code>, Docker Compose will build the referenced images in your config file and then run them. You’ll find that <code>app1</code> is available on port <code>7000</code> of the machine running Docker Compose, and <code>app2</code> is available on port <code>7001</code>. If you want these APIs to run in the background and survive restarts of your server, you can use the <code>-d</code> switch just like with <code>docker run</code>.</p>
+</div>
+<div id="multiple-applications-on-one-port" class="section level3">
+<h3><span class="header-section-number">7.4.2</span> Multiple Applications on One Port</h3>
+<p>It may desirable to run all of your Plumber services on a standard port like <code>80</code> (for HTTP) or <code>443</code> (for HTTPS). In that case, you’d prefer to have a router running on port <code>80</code> that can send traffic to the appropriate Plumber API by distinguishing based on a path prefix. Requests for <code>myserver.com/app1/</code> could be sent to the <code>app1</code> container, and <code>myserver.org/app2/</code> could target the <code>app2</code> container, but both paths would be available on port 80 on your server.</p>
+<p>In order to do this, we can use another Docker container running <a href="https://www.nginx.com/">nginx</a> which is configured to route traffic between the two Plumber containers. We’d add the following entry to our <code>docker-compose.yml</code> below the app containers we already have defined.</p>
+<div class="sourceCode"><pre class="sourceCode yaml"><code class="sourceCode yaml">  <span class="fu">nginx:</span>
+    <span class="fu">image:</span><span class="at"> nginx:1.9</span>
+    <span class="fu">ports:</span>
+     <span class="kw">-</span> <span class="st">&quot;80:80&quot;</span>
+    <span class="fu">volumes:</span>
+     <span class="kw">-</span> <span class="fu">./nginx.conf:</span><span class="at">/etc/nginx/nginx.conf:ro</span>
+    <span class="fu">restart:</span><span class="at"> always</span>
+    <span class="fu">depends_on:</span>
+     <span class="kw">-</span> app1
+     <span class="kw">-</span> app2</code></pre></div>
+<p>This uses the nginx Docker image that will be downloaded for you. In order to run nginx in a meaningful way, we have to provide a configuration file and place it in <code>/etc/nginx/nginx.conf</code>, which we do by mounting a local file at that location on the container.</p>
+<p>A basic nginx config file could look something like the following:</p>
+<pre><code>events {
+  worker_connections  4096;  ## Default: 1024
+}
+
+http {
+        default_type application/octet-stream;
+        sendfile     on;
+        tcp_nopush   on;
+        server_names_hash_bucket_size 128; # this seems to be required for some vhosts
+
+        server {
+                listen 80 default_server;
+                listen [::]:80 default_server ipv6only=on;
+
+                root /usr/share/nginx/html;
+                index index.html index.htm;
+
+                server_name MYSERVER.ORG
+
+                location /app1/ {
+                        proxy_pass http://app1:8000/;
+                        proxy_set_header Host $host;
+                }
+
+                location /app2/ {
+                        proxy_pass http://app2:8000/;
+                        proxy_set_header Host $host;
+                }
+
+
+                location ~ /\.ht {
+                        deny all;
+                }
+        }
+}</code></pre>
+<p>You should set the <code>server_name</code> parameter above to be whatever the public address is of your server. You can save this file as <code>nginx.conf</code> in the same directory as your Compose config file.</p>
+<p>Docker Compose is intelligent enough to know to route traffic for <code>http://app1:8000/</code> to the <code>app1</code> container, port <code>8000</code>, so we can leverage that in our config file. Docker containers are able to contact each other on their non-public ports, so we can go directly to port <code>8000</code> for both containers. This proxy configuration will trim the prefix off of the request before it sends it on to the applications, so your applications don’t need to know anything about being hosted publicly at a URL that includes the <code>/app1/</code> or <code>/app2/</code> prefixes.</p>
+<p>We should also get rid of the previous port mappings to ports <code>7000</code> and <code>7001</code> on our other applications, as we don’t want to expose our APIs on those ports anymore.</p>
+<p>If you now run <code>docker compose up</code> again, you’ll see your two application servers running but now have a new nginx server running, as well. And you’ll find that if you visit your server on port 80, you’ll see the “welcome to Nginx!” page. If you access <code>/app1</code> you’ll be sent to <code>app1</code> just like we had hoped.</p>
+</div>
+<div id="load-balancing" class="section level3">
+<h3><span class="header-section-number">7.4.3</span> Load Balancing</h3>
+<p>If you’re expecting a lot of traffic on one application or have an API that’s particularly computationally complex, you may want to distribute the load across multiple R processes running the same Plumber application. Thankfully, we can use Docker Compose for this, as well.</p>
+<p>First, we’ll want to create multiple instances of the same application. This is easily accomplished with the <code>docker-compose scale</code> command. You simply run <code>docker-compose scale app1=3</code> to run three instances of <code>app1</code>. Now we just need to load balance traffic across these three instances.</p>
+<p>You could setup the nginx configuration that we already have to balance traffic across this pool of workers, but you would need to manually re-configure and update your nginx instance every time that you need to scale the number up or down, which might be a hassle. Luckily, there’s a more elegant solution.</p>
+<p>We can use the <a href="https://github.com/docker/dockercloud-haproxy">dockercloud/haproxy</a> Docker image to automatically balance HTTP traffic across a pool of workers. This image is intelligent enough to listen for workers in your pool arriving or leaving and will automatically remove/add these containers into their pool. Let’s add a new container into our configuration that defines this load balancer</p>
+<div class="sourceCode"><pre class="sourceCode yaml"><code class="sourceCode yaml">  <span class="fu">lb:</span>
+    <span class="fu">image:</span><span class="at"> </span><span class="st">&#39;dockercloud/haproxy:1.2.1&#39;</span>
+    <span class="fu">links:</span>
+     <span class="kw">-</span> app1
+    <span class="fu">volumes:</span>
+      <span class="kw">-</span> <span class="fu">/var/run/docker.sock:</span><span class="at">/var/run/docker.sock</span></code></pre></div>
+<p>The trick that allows this image to listen in to our scaling of <code>app1</code> is by passing in the docker socket as a shared volume. Note that this particular arrangement will differ based on your host OS. The above configuration is intended for Linux, but MacOS X users would require a <a href="https://github.com/docker/dockercloud-haproxy#example-of-docker-composeyml-running-in-linux">slightly different config</a>.</p>
+<p>We could export port <code>80</code> of our new load balancer to port <code>80</code> of our host machine if we solely wanted to load-balance a single application. Alternatively, we can actually use both nginx (to handle the routing of various applications) and HAProxy (to handle the load balancing of a particular application). To do that, we’d merely add a new <code>location</code> block to our <code>nginx.conf</code> file that knows how to send traffic to HAproxy, or modify the existing <code>location</code> block to send traffic to the load balancer instead of going directly to the application.</p>
+<p>So the <code>location /app1/</code> block becomes:</p>
+<pre><code>location /app1/ {
+  proxy_pass http://lb:8000/;
+  proxy_set_header Host $host;
+}</code></pre>
+<p>Where <code>lb</code> is the name of the HAProxy load balancer that we defined in our Compose configuration.</p>
+<p>The next time you start/redeploy your Docker Compose cluster, you’ll be balancing your incoming requests to <code>/app1/</code> across a pool of 1 or more R processes based on whatever you’ve set the <code>scale</code> to be for that application.</p>
+<p>Do keep in mind that when using load-balancing that it’s not longer guaranteed that subsequent requests for a particular application will land on the same process. This means that if you maintain any state in your Plumber application (like a global counter, or a user’s session state), you can’t expect that to be shared across the processes that the user might encounter. There are at least three possible solutions to this problem:</p>
+<ol style="list-style-type: decimal">
+<li>Use a more robust means of maintaing state. You could put the state in a database, for instance, that lives outside of your R processes and your Plumber processes could get and save their state externally.</li>
+<li>You could serialize the state to the user using <a href="rendering-and-output.html#encrypted-cookies">(encrypted) session cookies</a>, assuming it’s small enough. In this scenario, your workers would write data back to the user in the form of a cookie, then the user would include that same cookie in its subsequent requests. This works best if the state is going to be set rarely and read often (for instance, the cookie could be set when the user logs in, then read on each request to detect the identity of this user).</li>
+<li>You can enable “sticky sessions” in the HAProxy load balancer. This would ensure that each user’s traffic always gets routed to the same worker. The downside of this approach is that it will distribute traffic less evenly. You could end up in a situation in which you have 2 R processes for an application but 90% of your traffic is hitting one of them if it happens the users triggering the majority of the requests are all “stuck” to one particular worker.</li>
+</ol>
+</div>
+</div>
+<div id="pm2" class="section level2">
+<h2><span class="header-section-number">7.5</span> pm2</h2>
+<p>If you don’t have the luxury of running your Plumber instance on a designated server (as is discussed in the <a href="hosting.html#digitalocean">DigitalOcean section</a>) and you’re not comfortable hosting the API in <a href="hosting.html#docker">Docker</a>, then you’ll need to find a way to run and manage your Plumber APIs on your server directly.</p>
+<p>There are a variety of tools that were built to help manage web hosting in a single-threaded environment like R. Some of the most compelling tools were developed around Ruby (like <a href="https://www.phusionpassenger.com/">Phusion Passenger</a>) or Node.js (like <a href="https://github.com/petruisfan/node-supervisor">Node Supervisor</a>, <a href="https://github.com/foreverjs/forever">forever</a> or <a href="http://pm2.keymetrics.io/">pm2</a>). Thankfully, many of these tools can be adapted to support managing an R process running a Plumber API.</p>
+<p><a href="http://pm2.keymetrics.io/">pm2</a> is a process manager initially targeting Node.js. Here we’ll show the commands needed to do this in Ubuntu 14.04, but you can use any Operating System or distribution that is supported by pm2. At the end, you’ll have a server that automatically starts your plumber services when booted, restarts them if they ever crash, and even centralizes the logs for your plumber services.</p>
+<div id="server-deployment-and-preparation" class="section level3">
+<h3><span class="header-section-number">7.5.1</span> Server Deployment and Preparation</h3>
+<p>The first thing you’ll need to do, regardless of which process manager you choose, is to deploy the R files containing your plumber applications to the server where they’ll be hosted. Keep in mind that you’ll also need to include any supplemental R files that are <code>source()</code>d in your plumber file, and any other datasets or dependencies that your files have.</p>
+<p>You’ll also need to make sure that the R packages you need (and the appropriate versions) are available on the remote server. You can either do this manually by installing those packages or you can consider using a tool like <a href="https://rstudio.github.io/packrat/">Packrat</a> to help with this.</p>
+<p>There are a myriad of features in pm2 that we won’t cover here. It is a good idea to spend some time reading through their documentation to see which features might be of interest to you and to ensure that you understand all the implications of how pm2 hosts services (which user you want to run your processes as, etc.). Their <a href="http://pm2.keymetrics.io/docs/usage/quick-start/">quick-start guide</a> may be especially relevant. For the sake of simplicity, we will do a basic installation here without customizing many of those options.</p>
+</div>
+<div id="install-pm2" class="section level3">
+<h3><span class="header-section-number">7.5.2</span> Install pm2</h3>
+<p>Now you’re ready to install pm2. pm2 is a package that’s maintained in <code>npm</code> (Node.js’s package management system); it also requires Node.js in order to run. So to start you’ll want to install Node.js. On Ubuntu 14.04, the necessary commands are:</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="fu">sudo</span> apt-get update
+<span class="fu">sudo</span> apt-get install nodejs npm</code></pre></div>
+<p>Once you have npm and Node.js installed, you’re ready to install pm2.</p>
+<pre><code>sudo npm install -g pm2</code></pre>
+<p>This will install pm2 globally (<code>-g</code>) on your server, meaning you should now be able to run <code>pm2 --version</code> and get the version number of pm2 that you’ve installed.</p>
+<p>In order to get pm2 to startup your services on boot, you should run <code>sudo pm2 startup</code> which will create the necessary files for your system to run pm2 when you boot your machine.</p>
+</div>
+<div id="wrap-your-plumber-file" class="section level3">
+<h3><span class="header-section-number">7.5.3</span> Wrap Your Plumber File</h3>
+<p>Once you’ve deployed your Plumber files onto the server, you’ll still need to tell the server <em>how</em> to run your server. You’re probably used to running commands like</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">pr &lt;-<span class="st"> </span><span class="kw">plumb</span>(<span class="st">&quot;myfile.R&quot;</span>)
+pr<span class="op">$</span><span class="kw">run</span>(<span class="dt">port=</span><span class="dv">4500</span>)</code></pre></div>
+<p>Unfortunately, pm2 doesn’t understand R scripts natively; however, it is possible to specify a custom interpreter. We can use this feature to launch an R-based wrapper for our plumber file using the <code>Rscript</code> scripting front-end that comes with R. The following script will run the two commands listed above.</p>
+<pre><code>#!/usr/bin/env Rscript
+
+library(plumber)
+pr &lt;- plumb(&#39;myfile.R&#39;)
+pr$run(port=4000)</code></pre>
+<p>Save this R script on your server as something like <code>run-myfile.R</code>. You should also make it executable by changing the permissions on the file using a command like <code>chmod 755 run-myfile.R</code>. You should now execute that file to make sure that it runs the service like you expect. You should be able to make requests to your server on the appropriate port and have the plumber service respond. You can kill the process using <code>Ctrl-c</code> when you’re convinced that it’s working. Make sure the shell script is in a permanent location so that it won’t be erased or modified accidentally. You can consider creating a designated directory for all your plumber services in some directory like <code>/usr/local/plumber</code>, then put all services and their associated Rscript-runners in their own subdirectory like <code>/usr/local/plumber/myfile/</code>.</p>
+</div>
+<div id="introduce-our-service-to-pm2" class="section level3">
+<h3><span class="header-section-number">7.5.4</span> Introduce Our Service to pm2</h3>
+<p>We’ll now need to teach pm2 about our Plumber API so that we can put it to work. You can register and configure any number of services with pm2; let’s start with our <code>myfile</code> Plumber service.</p>
+<p>You can use the <code>pm2 list</code> command to see which services pm2 is already running. If you run this command now, you’ll see that pm2 doesn’t have any services that it’s in charge of. Once you have the scripts and code stored in the directory where you want them, use the following command to tell pm2 about your service.</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="ex">pm2</span> start --interpreter=<span class="st">&quot;Rscript&quot;</span> /usr/local/plumber/myfile/run-myfile.R</code></pre></div>
+<p>You should see some output about pm2 starting an instance of your service, followed by some status information from pm2. If everything worked properly, you’ll see that your new service has been registered and is running. You can see this same output by executing <code>pm2 list</code> again.</p>
+<p>Once you’re happy with the pm2 services you have defined, you can use <code>pm2 save</code> to tell pm2 to retain the set of services you have running next time you boot the machine. All of the services you have defined will be automatically restarted for you.</p>
+<p>At this point, you have a persistent pm2 service created for your Plumber application. This means that you can reboot your server, or find and kill the underlying R process that your plumber application is using and pm2 will automatically bring a new process in to replace it. This should help guarantee that you always have a Plumber process running on the port number you specified in the shell script. It is a good idea to reboot the server to ensure that everything comes back the way you expected.</p>
+<p>You can repeat this process with all the plumber applications you want to deploy, as long as you give each a unique port to run on. Remember that you can’t have more than one service running on a single port. And be sure to <code>pm2 save</code> every time you add services that you want to survive a restart.</p>
+</div>
+<div id="logs-and-management" class="section level3">
+<h3><span class="header-section-number">7.5.5</span> Logs and Management</h3>
+<p>Now that you have your applications defined in pm2, you may want to drill down into them to manage or debug them. If you want to see more information, use the <code>pm2 show</code> command and specify the name of the application from <code>pm2 list</code>. This is usually the same as the name of the shell script you specified, so it may be something like <code>pm2 show run-myfile</code>.</p>
+<p>You can peruse this information but keep an eye on the <code>restarts</code> count for your applications. If your application has had to restart many times, that implies that the process is crashing often, which is a sign that there’s a problem in your code.</p>
+<p>Thankfully, pm2 automatically manages the log files from your underlying processes. If you ever need to check the log files of a service, you can just run <code>pm2 logs run-myfile</code>, where <code>myfile</code> is again the name of the service obtained from <code>pm2 list</code>. This command will show you the last few lines logged from your process, and then begin streaming any incoming log lines until you exit (<code>Ctrl-c</code>).</p>
+<p>If you want a big-picture view of the health of your server and all the pm2 services, you can run <code>pm2 monit</code> which will show you a dashboard of the RAM and CPU usage of all your services.</p>
+</div>
+</div>
+<div id="systemd" class="section level2">
+<h2><span class="header-section-number">7.6</span> systemd</h2>
+<blockquote>
+<p><code>systemd</code> is the service manager used by certain Linux distributions including RedHat/CentOS 7, SUSE 12, and Ubuntu versions 16.04 and later.</p>
+</blockquote>
+<p>If you use a Linux server you can use <code>systemd</code> to run Plumber as a service that can be accessed from your local network or even outside your network depending on your firewall rules. This option is similar to using the <a href="hosting.html#docker">Docker method</a>. One of the main advantages of using <code>systemd</code> over using Docker is that <code>systemd</code> won’t bypass firewall rules (Docker does!) and avoids the overhead of running a container.</p>
+<p>Compared to <code>plumber::do_provision()</code> this option won’t create a new droplet if you use <a href="hosting.html#digitalocean">Digital Ocean</a>; it will run on your existing droplet instead.</p>
+<p>To implement this option you’ll complete the following three steps from the terminal:</p>
+<ol style="list-style-type: decimal">
+<li>Verify that you have the <code>plumber</code> package available globally on the server:</li>
+</ol>
+<pre><code>R -e &#39;install.packages(&quot;plumber&quot;, repos = &quot;https://cran.rstudio.com/&quot;)&#39;</code></pre>
+<ol start="2" style="list-style-type: decimal">
+<li>Run <code>sudo nano /etc/systemd/system/plumber-api.service</code>, then paste and adapt this content:</li>
+</ol>
+<pre><code>[Unit]
+Description=Plumber API
+# After=postgresql 
+# (or mariadb, mysql, etc if you use a DB with Plumber, otherwise leave this commented)
+
+[Service]
+ExecStart=/usr/bin/Rscript -e &quot;api &lt;- plumber::plumb(&#39;/your-dir/your-api-script.R&#39;); api$run(port=8080, host=&#39;0.0.0.0&#39;)&quot;
+Restart=on-abnormal
+WorkingDirectory=/your-dir/
+
+[Install]
+WantedBy=multi-user.target</code></pre>
+<ol start="3" style="list-style-type: decimal">
+<li>Activate the service (for auto-start on power/reboot) and start it:</li>
+</ol>
+<pre><code>sudo systemctl activate plumber-api   # automatically start the service when the server boots
+sudo systemctl start plumber-api      # start the service right now</code></pre>
+<p>To check if your API is running, type <code>systemctl | grep running</code> in the terminal and should display <code>plumber-api.service \ loaded active running Plumber API</code>.</p>
+
+</div>
+</div>
+            </section>
+
+          </div>
+        </div>
+      </div>
+<a href="security.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="programmatic-usage.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+    </div>
+  </div>
+<script src="libs/gitbook-2.6.7/js/app.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/lunr.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-search.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-sharing.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-fontsettings.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-bookdown.js"></script>
+<script src="libs/gitbook-2.6.7/js/jquery.highlight.js"></script>
+<script>
+gitbook.require(["gitbook"], function(gitbook) {
+gitbook.start({
+"sharing": {
+"github": false,
+"facebook": true,
+"twitter": true,
+"google": false,
+"linkedin": false,
+"weibo": false,
+"instapper": false,
+"vk": false,
+"all": ["facebook", "google", "twitter", "linkedin", "weibo", "instapaper"]
+},
+"fontsettings": {
+"theme": "white",
+"family": "sans",
+"size": 2
+},
+"edit": {
+"link": "https://github.com/trestletech/apis-plumber/edit/master/07-hosting.Rmd",
+"text": "Edit"
+},
+"download": {},
+"toc": {
+"collapse": "subsection"
+}
+});
+});
+</script>
+
+</body>
+
+</html>

@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html >
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>Creating APIs in R with Plumber</title>
+  <meta name="description" content="Use the plumber R package to create HTTP APIs in R.">
+  <meta name="generator" content="bookdown 0.7.4 and GitBook 2.6.7">
+
+  <meta property="og:title" content="Creating APIs in R with Plumber" />
+  <meta property="og:type" content="book" />
+  
+  <meta property="og:image" content="./files/images/cover.jpg" />
+  <meta property="og:description" content="Use the plumber R package to create HTTP APIs in R." />
+  <meta name="github-repo" content="trestletech/apis-plumber" />
+
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="Creating APIs in R with Plumber" />
+  
+  <meta name="twitter:description" content="Use the plumber R package to create HTTP APIs in R." />
+  <meta name="twitter:image" content="./files/images/cover.jpg" />
+
+<meta name="author" content="Jeff Allen">
+
+
+
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <link rel="apple-touch-icon-precomposed" sizes="152x152" href="./files/images/apple-icon-152x152.png">
+  <link rel="shortcut icon" href="./files/images/favicon.png" type="image/x-icon">
+<link rel="prev" href="rendering-and-output.html">
+<link rel="next" href="security.html">
+<script src="libs/jquery-2.2.3/jquery.min.js"></script>
+<link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-fontsettings.css" rel="stylesheet" />
+
+
+
+
+
+
+
+<link href="libs/bootstrap-0.0.0/bootstrap.min.css" rel="stylesheet" />
+<script src="libs/bootstrap-0.0.0/bootstrap.min.js"></script>
+
+
+<style type="text/css">
+div.sourceCode { overflow-x: auto; }
+table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
+  margin: 0; padding: 0; vertical-align: baseline; border: none; }
+table.sourceCode { width: 100%; line-height: 100%; }
+td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
+td.sourceCode { padding-left: 5px; }
+code > span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code > span.dt { color: #902000; } /* DataType */
+code > span.dv { color: #40a070; } /* DecVal */
+code > span.bn { color: #40a070; } /* BaseN */
+code > span.fl { color: #40a070; } /* Float */
+code > span.ch { color: #4070a0; } /* Char */
+code > span.st { color: #4070a0; } /* String */
+code > span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code > span.ot { color: #007020; } /* Other */
+code > span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code > span.fu { color: #06287e; } /* Function */
+code > span.er { color: #ff0000; font-weight: bold; } /* Error */
+code > span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+code > span.cn { color: #880000; } /* Constant */
+code > span.sc { color: #4070a0; } /* SpecialChar */
+code > span.vs { color: #4070a0; } /* VerbatimString */
+code > span.ss { color: #bb6688; } /* SpecialString */
+code > span.im { } /* Import */
+code > span.va { color: #19177c; } /* Variable */
+code > span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code > span.op { color: #666666; } /* Operator */
+code > span.bu { } /* BuiltIn */
+code > span.ex { } /* Extension */
+code > span.pp { color: #bc7a00; } /* Preprocessor */
+code > span.at { color: #7d9029; } /* Attribute */
+code > span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code > span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code > span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+</style>
+
+<link rel="stylesheet" href="style.css" type="text/css" />
+
+<style>
+
+/**
+ * Icons
+ */
+.icon > svg {
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  vertical-align: middle; }
+  .icon > svg path {
+    fill: #828282; }
+
+.book-header, .book-summary, .body-inner {
+  margin-top: 50px;
+}
+
+.navbar {
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-size: 16px !important;
+  line-height: 1.5 !important;
+  font-weight: 300;
+  color: #111;
+  -webkit-text-size-adjust: 100%;
+}
+
+</style>
+
+</head>
+
+<body>
+<nav class="navbar navbar-inverse navbar-fixed-top">
+    <div class="container">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar"> <span class="sr-only">Toggle navigation</span> <span class="icon-bar"></span> <span class="icon-bar"></span> <span class="icon-bar"></span> </button> <a class="navbar-brand" href="/">plumber</a> </div>
+        <div id="navbar" class="navbar-collapse collapse">
+            <ul class="nav navbar-nav">
+                <li> <a href="/docs/">Docs</a></li>
+                <li class="dropdown"> <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Examples <span class="caret"></span></a>
+                    <ul class="dropdown-menu" role="menu">
+                        <li><a href="/examples/github">GitHub Webhook</a></li>
+                        <li><a href="/examples/mailgun">Receive Emails (mailgun)</a></li>
+                    </ul>
+                </li>
+            </ul>
+            <ul class="nav navbar-nav navbar-right">
+                <li>
+                    <a href="https://github.com/trestletech/plumber"> <span class="icon icon--github"> <svg viewBox="0 0 16 16"> <path fill="#828282" d="M7.999,0.431c-4.285,0-7.76,3.474-7.76,7.761 c0,3.428,2.223,6.337,5.307,7.363c0.388,0.071,0.53-0.168,0.53-0.374c0-0.184-0.007-0.672-0.01-1.32 c-2.159,0.469-2.614-1.04-2.614-1.04c-0.353-0.896-0.862-1.135-0.862-1.135c-0.705-0.481,0.053-0.472,0.053-0.472 c0.779,0.055,1.189,0.8,1.189,0.8c0.692,1.186,1.816,0.843,2.258,0.645c0.071-0.502,0.271-0.843,0.493-1.037 C4.86,11.425,3.049,10.76,3.049,7.786c0-0.847,0.302-1.54,0.799-2.082C3.768,5.507,3.501,4.718,3.924,3.65 c0,0,0.652-0.209,2.134,0.796C6.677,4.273,7.34,4.187,8,4.184c0.659,0.003,1.323,0.089,1.943,0.261 c1.482-1.004,2.132-0.796,2.132-0.796c0.423,1.068,0.157,1.857,0.077,2.054c0.497,0.542,0.798,1.235,0.798,2.082 c0,2.981-1.814,3.637-3.543,3.829c0.279,0.24,0.527,0.713,0.527,1.437c0,1.037-0.01,1.874-0.01,2.129 c0,0.208,0.14,0.449,0.534,0.373c3.081-1.028,5.302-3.935,5.302-7.362C15.76,3.906,12.285,0.431,7.999,0.431z"></path> </svg> </span> See code on GitHub </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+
+  <div class="book without-animation with-summary font-size-2 font-family-1" data-basepath=".">
+
+    <div class="book-summary">
+      <nav role="navigation">
+
+<ul class="summary">
+<li class="chapter" data-level="1" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i><b>1</b> Introduction</a><ul>
+<li class="chapter" data-level="1.1" data-path="index.html"><a href="index.html#web-apis"><i class="fa fa-check"></i><b>1.1</b> Web APIs</a></li>
+<li class="chapter" data-level="1.2" data-path="index.html"><a href="index.html#installation"><i class="fa fa-check"></i><b>1.2</b> Installation</a></li>
+</ul></li>
+<li class="chapter" data-level="2" data-path="quickstart.html"><a href="quickstart.html"><i class="fa fa-check"></i><b>2</b> Quickstart</a><ul>
+<li class="chapter" data-level="2.1" data-path="quickstart.html"><a href="quickstart.html#specifying-the-inputs"><i class="fa fa-check"></i><b>2.1</b> Specifying the Inputs</a></li>
+<li class="chapter" data-level="2.2" data-path="quickstart.html"><a href="quickstart.html#customizing-the-output"><i class="fa fa-check"></i><b>2.2</b> Customizing The Output</a></li>
+</ul></li>
+<li class="chapter" data-level="3" data-path="routing-and-input.html"><a href="routing-and-input.html"><i class="fa fa-check"></i><b>3</b> Routing &amp; Input</a><ul>
+<li class="chapter" data-level="3.1" data-path="routing-and-input.html"><a href="routing-and-input.html#endpoints"><i class="fa fa-check"></i><b>3.1</b> Endpoints</a></li>
+<li class="chapter" data-level="3.2" data-path="routing-and-input.html"><a href="routing-and-input.html#filters"><i class="fa fa-check"></i><b>3.2</b> Filters</a><ul>
+<li class="chapter" data-level="3.2.1" data-path="routing-and-input.html"><a href="routing-and-input.html#forward-to-another-handler"><i class="fa fa-check"></i><b>3.2.1</b> Forward to Another Handler</a></li>
+<li class="chapter" data-level="3.2.2" data-path="routing-and-input.html"><a href="routing-and-input.html#return-a-response"><i class="fa fa-check"></i><b>3.2.2</b> Return a Response</a></li>
+<li class="chapter" data-level="3.2.3" data-path="routing-and-input.html"><a href="routing-and-input.html#throw-an-error"><i class="fa fa-check"></i><b>3.2.3</b> Throw an Error</a></li>
+</ul></li>
+<li class="chapter" data-level="3.3" data-path="routing-and-input.html"><a href="routing-and-input.html#dynamic-routes"><i class="fa fa-check"></i><b>3.3</b> Dynamic Routes</a></li>
+<li class="chapter" data-level="3.4" data-path="routing-and-input.html"><a href="routing-and-input.html#typed-dynamic-routes"><i class="fa fa-check"></i><b>3.4</b> Typed Dynamic Routes</a></li>
+<li class="chapter" data-level="3.5" data-path="routing-and-input.html"><a href="routing-and-input.html#static-file-handler"><i class="fa fa-check"></i><b>3.5</b> Static File Handler</a></li>
+<li class="chapter" data-level="3.6" data-path="routing-and-input.html"><a href="routing-and-input.html#input-handling"><i class="fa fa-check"></i><b>3.6</b> Input Handling</a><ul>
+<li class="chapter" data-level="3.6.1" data-path="routing-and-input.html"><a href="routing-and-input.html#the-request-object"><i class="fa fa-check"></i><b>3.6.1</b> The Request Object</a></li>
+<li class="chapter" data-level="3.6.2" data-path="routing-and-input.html"><a href="routing-and-input.html#query-strings"><i class="fa fa-check"></i><b>3.6.2</b> Query Strings</a></li>
+<li class="chapter" data-level="3.6.3" data-path="routing-and-input.html"><a href="routing-and-input.html#request-body"><i class="fa fa-check"></i><b>3.6.3</b> Request Body</a></li>
+<li class="chapter" data-level="3.6.4" data-path="routing-and-input.html"><a href="routing-and-input.html#read-cookies"><i class="fa fa-check"></i><b>3.6.4</b> Cookies</a></li>
+<li class="chapter" data-level="3.6.5" data-path="routing-and-input.html"><a href="routing-and-input.html#headers"><i class="fa fa-check"></i><b>3.6.5</b> Headers</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="4" data-path="rendering-and-output.html"><a href="rendering-and-output.html"><i class="fa fa-check"></i><b>4</b> Rendering Output</a><ul>
+<li class="chapter" data-level="4.1" data-path="rendering-and-output.html"><a href="rendering-and-output.html#response-object"><i class="fa fa-check"></i><b>4.1</b> The Response Object</a></li>
+<li class="chapter" data-level="4.2" data-path="rendering-and-output.html"><a href="rendering-and-output.html#serializers"><i class="fa fa-check"></i><b>4.2</b> Serializers</a><ul>
+<li class="chapter" data-level="4.2.1" data-path="rendering-and-output.html"><a href="rendering-and-output.html#bypassing-serialization"><i class="fa fa-check"></i><b>4.2.1</b> Bypassing Serialization</a></li>
+<li class="chapter" data-level="4.2.2" data-path="rendering-and-output.html"><a href="rendering-and-output.html#boxed-vs-unboxed-json"><i class="fa fa-check"></i><b>4.2.2</b> Boxed vs Unboxed JSON</a></li>
+<li class="chapter" data-level="4.2.3" data-path="rendering-and-output.html"><a href="rendering-and-output.html#customizing-image-serializers"><i class="fa fa-check"></i><b>4.2.3</b> Customizing Image Serializers</a></li>
+</ul></li>
+<li class="chapter" data-level="4.3" data-path="rendering-and-output.html"><a href="rendering-and-output.html#error-handling"><i class="fa fa-check"></i><b>4.3</b> Error Handling</a></li>
+<li class="chapter" data-level="4.4" data-path="rendering-and-output.html"><a href="rendering-and-output.html#custom-serializers"><i class="fa fa-check"></i><b>4.4</b> Custom Serializers</a></li>
+<li class="chapter" data-level="4.5" data-path="rendering-and-output.html"><a href="rendering-and-output.html#setting-cookies"><i class="fa fa-check"></i><b>4.5</b> Setting Cookies</a><ul>
+<li class="chapter" data-level="4.5.1" data-path="rendering-and-output.html"><a href="rendering-and-output.html#setting-unencrypted-cookies"><i class="fa fa-check"></i><b>4.5.1</b> Setting Unencrypted Cookies</a></li>
+<li class="chapter" data-level="4.5.2" data-path="rendering-and-output.html"><a href="rendering-and-output.html#encrypted-cookies"><i class="fa fa-check"></i><b>4.5.2</b> Setting Encrypted Cookies</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="5" data-path="runtime.html"><a href="runtime.html"><i class="fa fa-check"></i><b>5</b> Runtime</a><ul>
+<li class="chapter" data-level="5.1" data-path="runtime.html"><a href="runtime.html#execution-model"><i class="fa fa-check"></i><b>5.1</b> Execution Model</a></li>
+<li class="chapter" data-level="5.2" data-path="runtime.html"><a href="runtime.html#environments"><i class="fa fa-check"></i><b>5.2</b> Environments</a></li>
+<li class="chapter" data-level="5.3" data-path="runtime.html"><a href="runtime.html#performance-request-processing"><i class="fa fa-check"></i><b>5.3</b> Performance &amp; Request Processing</a></li>
+<li class="chapter" data-level="5.4" data-path="runtime.html"><a href="runtime.html#managing-state"><i class="fa fa-check"></i><b>5.4</b> Managing State</a><ul>
+<li class="chapter" data-level="5.4.1" data-path="runtime.html"><a href="runtime.html#in-memory"><i class="fa fa-check"></i><b>5.4.1</b> In-Memory</a></li>
+<li class="chapter" data-level="5.4.2" data-path="runtime.html"><a href="runtime.html#file-system"><i class="fa fa-check"></i><b>5.4.2</b> File System</a></li>
+<li class="chapter" data-level="5.4.3" data-path="runtime.html"><a href="runtime.html#state-cookies"><i class="fa fa-check"></i><b>5.4.3</b> Cookies</a></li>
+<li class="chapter" data-level="5.4.4" data-path="runtime.html"><a href="runtime.html#external-data-store"><i class="fa fa-check"></i><b>5.4.4</b> External Data Store</a></li>
+</ul></li>
+<li class="chapter" data-level="5.5" data-path="runtime.html"><a href="runtime.html#exit-handlers"><i class="fa fa-check"></i><b>5.5</b> Exit Handlers</a></li>
+</ul></li>
+<li class="chapter" data-level="6" data-path="security.html"><a href="security.html"><i class="fa fa-check"></i><b>6</b> Security</a><ul>
+<li class="chapter" data-level="6.1" data-path="security.html"><a href="security.html#networking"><i class="fa fa-check"></i><b>6.1</b> Networking &amp; Firewalls</a></li>
+<li class="chapter" data-level="6.2" data-path="security.html"><a href="security.html#https"><i class="fa fa-check"></i><b>6.2</b> HTTPS</a></li>
+<li class="chapter" data-level="6.3" data-path="security.html"><a href="security.html#dos"><i class="fa fa-check"></i><b>6.3</b> Denial Of Service (DoS)</a></li>
+<li class="chapter" data-level="6.4" data-path="security.html"><a href="security.html#sanitization"><i class="fa fa-check"></i><b>6.4</b> Sanitization &amp; Injection</a></li>
+<li class="chapter" data-level="6.5" data-path="security.html"><a href="security.html#cross-origin-resource-sharing-cors"><i class="fa fa-check"></i><b>6.5</b> Cross-Origin Resource Sharing (CORS)</a></li>
+<li class="chapter" data-level="6.6" data-path="security.html"><a href="security.html#cross-site-request-forgery-csrf-or-xsrf"><i class="fa fa-check"></i><b>6.6</b> Cross-Site Request Forgery (CSRF, or XSRF)</a></li>
+<li class="chapter" data-level="6.7" data-path="security.html"><a href="security.html#security-cookies"><i class="fa fa-check"></i><b>6.7</b> Cookies</a></li>
+</ul></li>
+<li class="chapter" data-level="7" data-path="hosting.html"><a href="hosting.html"><i class="fa fa-check"></i><b>7</b> Hosting</a><ul>
+<li class="chapter" data-level="7.1" data-path="hosting.html"><a href="hosting.html#digitalocean"><i class="fa fa-check"></i><b>7.1</b> DigitalOcean</a></li>
+<li class="chapter" data-level="7.2" data-path="hosting.html"><a href="hosting.html#rstudio-connect"><i class="fa fa-check"></i><b>7.2</b> RStudio Connect</a></li>
+<li class="chapter" data-level="7.3" data-path="hosting.html"><a href="hosting.html#docker"><i class="fa fa-check"></i><b>7.3</b> Docker (Basic)</a><ul>
+<li class="chapter" data-level="7.3.1" data-path="hosting.html"><a href="hosting.html#default-dockerfile"><i class="fa fa-check"></i><b>7.3.1</b> Default Dockerfile</a></li>
+<li class="chapter" data-level="7.3.2" data-path="hosting.html"><a href="hosting.html#custom-dockerfiles"><i class="fa fa-check"></i><b>7.3.2</b> Custom Dockerfiles</a></li>
+<li class="chapter" data-level="7.3.3" data-path="hosting.html"><a href="hosting.html#automatically-run-on-restart"><i class="fa fa-check"></i><b>7.3.3</b> Automatically Run on Restart</a></li>
+</ul></li>
+<li class="chapter" data-level="7.4" data-path="hosting.html"><a href="hosting.html#docker-advanced"><i class="fa fa-check"></i><b>7.4</b> Docker (Advanced)</a><ul>
+<li class="chapter" data-level="7.4.1" data-path="hosting.html"><a href="hosting.html#multiple-plumber-applications"><i class="fa fa-check"></i><b>7.4.1</b> Multiple Plumber Applications</a></li>
+<li class="chapter" data-level="7.4.2" data-path="hosting.html"><a href="hosting.html#multiple-applications-on-one-port"><i class="fa fa-check"></i><b>7.4.2</b> Multiple Applications on One Port</a></li>
+<li class="chapter" data-level="7.4.3" data-path="hosting.html"><a href="hosting.html#load-balancing"><i class="fa fa-check"></i><b>7.4.3</b> Load Balancing</a></li>
+</ul></li>
+<li class="chapter" data-level="7.5" data-path="hosting.html"><a href="hosting.html#pm2"><i class="fa fa-check"></i><b>7.5</b> pm2</a><ul>
+<li class="chapter" data-level="7.5.1" data-path="hosting.html"><a href="hosting.html#server-deployment-and-preparation"><i class="fa fa-check"></i><b>7.5.1</b> Server Deployment and Preparation</a></li>
+<li class="chapter" data-level="7.5.2" data-path="hosting.html"><a href="hosting.html#install-pm2"><i class="fa fa-check"></i><b>7.5.2</b> Install pm2</a></li>
+<li class="chapter" data-level="7.5.3" data-path="hosting.html"><a href="hosting.html#wrap-your-plumber-file"><i class="fa fa-check"></i><b>7.5.3</b> Wrap Your Plumber File</a></li>
+<li class="chapter" data-level="7.5.4" data-path="hosting.html"><a href="hosting.html#introduce-our-service-to-pm2"><i class="fa fa-check"></i><b>7.5.4</b> Introduce Our Service to pm2</a></li>
+<li class="chapter" data-level="7.5.5" data-path="hosting.html"><a href="hosting.html#logs-and-management"><i class="fa fa-check"></i><b>7.5.5</b> Logs and Management</a></li>
+</ul></li>
+<li class="chapter" data-level="7.6" data-path="hosting.html"><a href="hosting.html#systemd"><i class="fa fa-check"></i><b>7.6</b> systemd</a></li>
+</ul></li>
+<li class="chapter" data-level="8" data-path="programmatic-usage.html"><a href="programmatic-usage.html"><i class="fa fa-check"></i><b>8</b> Programmatic Usage</a><ul>
+<li class="chapter" data-level="8.1" data-path="programmatic-usage.html"><a href="programmatic-usage.html#creating-and-controlling-a-router"><i class="fa fa-check"></i><b>8.1</b> Creating and Controlling a Router</a></li>
+<li class="chapter" data-level="8.2" data-path="programmatic-usage.html"><a href="programmatic-usage.html#defining-endpoints"><i class="fa fa-check"></i><b>8.2</b> Defining Endpoints</a></li>
+<li class="chapter" data-level="8.3" data-path="programmatic-usage.html"><a href="programmatic-usage.html#defining-filters"><i class="fa fa-check"></i><b>8.3</b> Defining Filters</a></li>
+<li class="chapter" data-level="8.4" data-path="programmatic-usage.html"><a href="programmatic-usage.html#router-hooks"><i class="fa fa-check"></i><b>8.4</b> Registering Hooks on a Router</a></li>
+<li class="chapter" data-level="8.5" data-path="programmatic-usage.html"><a href="programmatic-usage.html#mount-static"><i class="fa fa-check"></i><b>8.5</b> Mounting &amp; Static File Routers</a></li>
+<li class="chapter" data-level="8.6" data-path="programmatic-usage.html"><a href="programmatic-usage.html#customize-router"><i class="fa fa-check"></i><b>8.6</b> Customizing a Router</a></li>
+</ul></li>
+<li class="chapter" data-level="9" data-path="tips-tricks.html"><a href="tips-tricks.html"><i class="fa fa-check"></i><b>9</b> Tips &amp; Tricks</a><ul>
+<li class="chapter" data-level="9.1" data-path="tips-tricks.html"><a href="tips-tricks.html#debugging"><i class="fa fa-check"></i><b>9.1</b> Debugging</a><ul>
+<li class="chapter" data-level="9.1.1" data-path="tips-tricks.html"><a href="tips-tricks.html#print-debugging"><i class="fa fa-check"></i><b>9.1.1</b> Print Debugging</a></li>
+<li class="chapter" data-level="9.1.2" data-path="tips-tricks.html"><a href="tips-tricks.html#interactive-debugging"><i class="fa fa-check"></i><b>9.1.2</b> Interactive Debugging</a></li>
+</ul></li>
+<li class="chapter" data-level="9.2" data-path="tips-tricks.html"><a href="tips-tricks.html#testing"><i class="fa fa-check"></i><b>9.2</b> Testing</a></li>
+<li class="chapter" data-level="9.3" data-path="tips-tricks.html"><a href="tips-tricks.html#organizing-large-applications"><i class="fa fa-check"></i><b>9.3</b> Organizing Large Applications</a></li>
+<li class="chapter" data-level="9.4" data-path="tips-tricks.html"><a href="tips-tricks.html#swagger"><i class="fa fa-check"></i><b>9.4</b> Swagger</a></li>
+<li class="chapter" data-level="9.5" data-path="tips-tricks.html"><a href="tips-tricks.html#performance"><i class="fa fa-check"></i><b>9.5</b> Performance</a></li>
+</ul></li>
+<li class="appendix"><span><b>Appendix</b></span></li>
+<li class="chapter" data-level="A" data-path="all-annotations.html"><a href="all-annotations.html"><i class="fa fa-check"></i><b>A</b> All Annotations</a></li>
+<li class="chapter" data-level="B" data-path="plumber-0-4-0-migration-guide.html"><a href="plumber-0-4-0-migration-guide.html"><i class="fa fa-check"></i><b>B</b> Plumber 0.4.0 Migration Guide</a></li>
+<li class="chapter" data-level="C" data-path="citations.html"><a href="citations.html"><i class="fa fa-check"></i><b>C</b> Citations</a></li>
+<li class="divider"></li>
+<li><a href="https://www.netlify.com" target="_blank">Site hosting from Netlify</a></li>
+<script> (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){ (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o), m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m) })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');  ga('create', 'UA-43159940-7', 'auto'); ga('send', 'pageview');</script>
+
+</ul>
+
+      </nav>
+    </div>
+
+    <div class="book-body">
+      <div class="body-inner">
+        <div class="book-header" role="navigation">
+          <h1>
+            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">Creating APIs in R with Plumber</a>
+          </h1>
+        </div>
+
+        <div class="page-wrapper" tabindex="-1" role="main">
+          <div class="page-inner">
+
+            <section class="normal" id="section-">
+<div id="runtime" class="section level1">
+<h1><span class="header-section-number">Chapter 5</span> Runtime</h1>
+<div id="execution-model" class="section level2">
+<h2><span class="header-section-number">5.1</span> Execution Model</h2>
+<p>When you <code>plumb()</code> a file, Plumber calls <code>source()</code> on that file which will evaluate any top-level code that you have defined.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># Global code; gets executed at plumb() time.</span>
+counter &lt;-<span class="st"> </span><span class="dv">0</span>
+
+<span class="co">#&#39; @get /</span>
+<span class="cf">function</span>(){
+  <span class="co"># Only gets evaluated when this endpoint is requested.</span>
+  counter &lt;&lt;-<span class="st"> </span>counter <span class="op">+</span><span class="st"> </span><span class="dv">1</span>
+}</code></pre></div>
+<p>If you call <code>plumb()</code> on this file, the <code>counter</code> variable will be created and will live in the environment created for this API. However, the endpoint defined will not be evaluated until it is invoked in response to an incoming request. Because the endpoint uses <code>&lt;&lt;-</code>, the “double-assignment” operator, it mutates the <code>counter</code> variable that was previously defined when the file was <code>plumb()</code>d. This technique allows all endpoints and filters to share some data defined at the top-level of your API.</p>
+</div>
+<div id="environments" class="section level2">
+<h2><span class="header-section-number">5.2</span> Environments</h2>
+<p>By default, when you create a new Plumber router (which happens implicitly when you call <code>plumb()</code> on a file), a new environment is created especially for this router. It is in this environment that all expressions will be evaluated and all endpoints invoked.</p>
+<p>This can become important if you consider mounting routers onto one another. In that case, you may expect that they would be able to share state via their environment, but that will not work by default. If you’re <a href="programmatic-usage.html#programmatic-usage">creating your routers programmatically</a>, then you can specify an environment when initializing your Plumber router using the <code>envir</code> parameter. This is the environment in which:</p>
+<ul>
+<li>A decorated R script, if provided, will be <code>source()</code>d.</li>
+<li>All expressions will be evaluated.</li>
+<li>All endpoint and filter functions will be executed.</li>
+</ul>
+<p>It is important to be aware that subrouters, by default, would each have their own environment. If you want multiple Plumber routers to share an environment, you will need to provide a single, shared environment when you create the routers.</p>
+</div>
+<div id="performance-request-processing" class="section level2">
+<h2><span class="header-section-number">5.3</span> Performance &amp; Request Processing</h2>
+<p>R is a single-threaded programming language, meaning that it can only do one task at a time. This is still true when serving APIs using Plumber, so if you have a single endpoint that takes two seconds to generate a response, then every time that endpoint is requested, your R process will be unable to respond to any additional incoming requests for those two seconds.</p>
+<p>Incoming HTTP requests are serviced in the order in which they appeared, but if requests are coming in more quickly than they can be processed by the API, a backlog of requests will accrue. The common solutions to this problem are to do either or both of:</p>
+<ol style="list-style-type: decimal">
+<li>Keep your API performant. All filters and endpoints should complete very quickly and any long-running or complicated tasks should be done outside of the API process.</li>
+<li>Run multiple R processes to redundantly host a single Plumber API and load-balance incoming requests between all available processes. See the <a href="hosting.html#hosting">hosting section</a> for details on which hosting environments support this feature.</li>
+</ol>
+</div>
+<div id="managing-state" class="section level2">
+<h2><span class="header-section-number">5.4</span> Managing State</h2>
+<p>Often, Plumber APIs will require coordination of some state. This state may need to be shared between multiple endpoints in the same API (e.g. a counter that increments every time an endpoint is invoked). Alternatively, it could be information that needs to be persisted across requests from a single client (e.g. storing a preference or setting for some user). Lastly, it might require coordinating between multiple Plumber processes running independently behind a load-balancer. Each of these scenarios have unique properties that determine which solution might be appropriate.</p>
+<p>As previously discussed, R is single-threaded. Therefore it’s important that you consider the fact that you may eventually need multiple R processes running in parallel to handle the incoming traffic of your API. While this may not seem important initially, you may thank yourself later for designing a “horizontally scalable” API (or one that can be scaled by adding more R processes in parallel).</p>
+<p>The key to building a horizontally scalable API is to ensure that each Plumber process is “stateless,” meaning that any persistent state lives outside of the Plumber process. In any of the hosting environments that exist today, it is not guaranteed that two subsequent requests from a single client will be served by the same process. Thus it’s never safe to assume that information stored in-memory will be available between requests for a horizontally scaled app. Below are a few options to consider to coordinate state for a Plumber API.</p>
+<div id="in-memory" class="section level3">
+<h3><span class="header-section-number">5.4.1</span> In-Memory</h3>
+<p>As shown previous in the <a href="runtime.html#execution-model">Execution Model section</a>, it is possible to share state using the environment associated with the Plumber router.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># Global code; gets executed at plumb() time.</span>
+counter &lt;-<span class="st"> </span><span class="dv">0</span>
+
+<span class="co">#&#39; @get /</span>
+<span class="cf">function</span>(){
+  <span class="co"># Only gets evaluated when this endpoint is requested.</span>
+  counter &lt;&lt;-<span class="st"> </span>counter <span class="op">+</span><span class="st"> </span><span class="dv">1</span>
+}</code></pre></div>
+<p>This is the one approach presented that does not allow your Plumber process to be stateless. The approach is sufficient for coordinating state within a single process, but as you scale your API by adding processes, this state will no longer be coordinated between them.</p>
+<p>Therefore this approach can be effective for “read-only” data – such as if you were to load a single, large dataset into memory when the API starts, then allow all filters and endpoints to reference that dataset moving forward – but it will not allow you to share state across multiple processes as you scale. If you want to build a scalable, stateless application, you should avoid relying on the in-memory R environment to coordinate state between the pieces of your API.</p>
+</div>
+<div id="file-system" class="section level3">
+<h3><span class="header-section-number">5.4.2</span> File System</h3>
+<p>Writing to files on disk is often the next most obvious choice for storing state. Plumber APIs could modify a data frame then use <code>write.csv()</code> to save that data to disk, or use <code>writeLines()</code> to append some new data to an existing file. These approaches enable your R process to be stateless, but are not always resilient to concurrency issues. For instance, if you’ve horizontally scaled your API to five R processes and two go to <code>write.csv()</code> simultaneously, you will either see one process’s data get immediately overwritten by the other’s, or – even worse – you may end up with a corrupted CSV file which can’t be read. Unless otherwise stated, it’s safe to assume that any R function that writes data to disk is not resilient to concurrency contention, so you should not rely on the filesystem to coordinate shared state for any more than a single R process running concurrently.</p>
+<p>It’s also important to ask whether or not the <a href="hosting.html#hosting">hosting platform</a> you’ll be using supports persistent storage on disk. For instance, Docker may insulate your R process from your hardware and not allow you to write outside of your container. RStudio Connect, too, will provision a new directory every time you deploy an updated version of your API which will discard any data you had written to disk up to that point. So if you’re considering writing your state to disk long-term, be sure that your hosting environment supports persistent on-disk storage and that you’ve considered the concurrency implications of your code.</p>
+</div>
+<div id="state-cookies" class="section level3">
+<h3><span class="header-section-number">5.4.3</span> Cookies</h3>
+<p>HTTP cookies are a convention that allow web servers to send some state to a client with the expectation that the client would then include that state in future requests. See the <a href="rendering-and-output.html#setting-cookies">Setting Cookies section</a> for details on how to leverage cookies in Plumber.</p>
+<p>// TODO: graphic</p>
+<p>All modern web browsers support cookies (unless configured not to) and many other clients do, as well, though some clients require additional configuration in order to do so. If you’re confident that the intended clients for your API support cookies then you could consider storing some state in cookies. This approach mitigates concerns about horizontal scalability, as the state is written to each client independently and then included in subsequent requests from that client. This also minimizes the infrastructure requirements for hosting your Plumber APIs since you don’t need to setup a system capable of storing all of this state; instead, you’ve commissioned your clients to store their own state.</p>
+<p>One issue with maintaining state in cookies is that their size should be kept to a minimum. Clients impose restrictions differently, but you should not plan to store more than 4kB of information in a cookie. And realize that whatever information gets placed in the cookie must be retransmitted by the client with <em>every</em> request. This can significantly increase the size of each HTTP request that your clients make.</p>
+<p>The most notable concern when considering using cookies to store state is that since your clients are responsible for storing and sending their state, you cannot expect that the state has not been tampered with. Thus, while it may be acceptable to store user preferences like <code>preferredColor=&quot;blue&quot;</code>, you should <em>not</em> store authentication information like <code>userID=1493</code>, since the user could trivially change that cookie to another user’s ID to impersonate them.</p>
+<p>If you’d like to use cookies to store information with guarantees that the user cannot either read or modify the state, see the <a href="rendering-and-output.html#encrypted-cookies">Encrypted Cookies section</a>).</p>
+</div>
+<div id="external-data-store" class="section level3">
+<h3><span class="header-section-number">5.4.4</span> External Data Store</h3>
+<p>The final option to consider when coordinating state for an API is leveraging an external data store. This could be a relational database (like MySQL or Amazon RedShift), a non-relational database (like MongoDB), or an transactional data store like Redis.</p>
+<p>One important consideration for any of these options is to ensure that they are “transactional,” meaning that two Plumber processes trying to write at the same time won’t overwrite one another. If you’re interested in pursuing this option you should see <a href="http://db.rstudio.com/">db.rstudio.com</a> or looks at <a href="http://shiny.rstudio.com/articles/overview.html">some</a> of the <a href="http://shiny.rstudio.com/articles/sql-injections.html">resources</a> <a href="http://shiny.rstudio.com/articles/pool-basics.html">put together</a> for Shiny as pertains to dealing with databases in a web-accessible R platform.</p>
+</div>
+</div>
+<div id="exit-handlers" class="section level2">
+<h2><span class="header-section-number">5.5</span> Exit Handlers</h2>
+<p>It may be useful to define a function that you want to run as your API is closing – for instance, if you have a pool of database connections that need to be cleaned up when your Plumber process is being terminated. You can use the <code>exit</code> hook to define such a handler.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">pr &lt;-<span class="st"> </span><span class="kw">plumb</span>(<span class="st">&quot;plumber.R&quot;</span>)
+pr<span class="op">$</span><span class="kw">registerHook</span>(<span class="st">&quot;exit&quot;</span>, <span class="cf">function</span>(){
+  <span class="kw">print</span>(<span class="st">&quot;Bye bye!&quot;</span>)
+})
+pr<span class="op">$</span><span class="kw">run</span>()</code></pre></div>
+<p>When you interrupt the API (for instance by pressing the <code>Escape</code> key or <code>Ctrl+C</code>) you’ll see <code>Bye bye!</code> printed to the console. You can even register multiple <code>exit</code> hooks and they’ll be run in the order in which they were registered.</p>
+
+</div>
+</div>
+            </section>
+
+          </div>
+        </div>
+      </div>
+<a href="rendering-and-output.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="security.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+    </div>
+  </div>
+<script src="libs/gitbook-2.6.7/js/app.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/lunr.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-search.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-sharing.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-fontsettings.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-bookdown.js"></script>
+<script src="libs/gitbook-2.6.7/js/jquery.highlight.js"></script>
+<script>
+gitbook.require(["gitbook"], function(gitbook) {
+gitbook.start({
+"sharing": {
+"github": false,
+"facebook": true,
+"twitter": true,
+"google": false,
+"linkedin": false,
+"weibo": false,
+"instapper": false,
+"vk": false,
+"all": ["facebook", "google", "twitter", "linkedin", "weibo", "instapaper"]
+},
+"fontsettings": {
+"theme": "white",
+"family": "sans",
+"size": 2
+},
+"edit": {
+"link": "https://github.com/trestletech/apis-plumber/edit/master/05-execution-model.Rmd",
+"text": "Edit"
+},
+"download": {},
+"toc": {
+"collapse": "subsection"
+}
+});
+});
+</script>
+
+</body>
+
+</html>
