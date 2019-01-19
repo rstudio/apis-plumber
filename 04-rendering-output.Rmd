@@ -107,27 +107,26 @@ At a lower level, the arguments inside the parentheses will be used as the argum
 
 While this approach can be used to statically define the size of an image, it will not work for dynamic sizing of an image. If you wish to dynamically size images, you will need render and capture the graphical output yourself and return the contents with the appropriate `Content-Type` header. See the existing image renderers as a model of how to do this.
 
-### Return a file
+### Return a File
 
-Sometimes it is good to have an endpoint where a particular file lives. This could be a [mounted](#mount-static) directory where serveral files would live and querying any of these would "save" the file at the front end. However, this could be an R object that is generated on the fly and returned at a particular URL. For example, `http://localhost:8000/docs/users.txt`. This could be achieved by: 
+Sometimes it is good to have an end-point where a particular file lives. This could be a [mounted](#mount-static) directory where serveral files would live and querying any of these would "save" the file at the front end. However, this could be an R object that is generated on the fly and returned at a particular URL. For example, `http://localhost:8000/sample.pdf`. This could be achieved by: 
 
 ```{r, eval=FALSE}
 #' Example to show how to specify a file name
-#' Note modern browsers display text/plain instead of "downloading" it.
-#' Saving the file will use the endpoint 'users.txt' file name.
-#' 
-#' @serializer contentType list(type="text/plain")
-#' @get /docs/users.txt
-download_users <- function () {
-    content <- "plain text contents"
-  # You can pass the serialization from above @serializer tag
-  # by setting the header type yourself for instance:
-  # add 'res' object to the function parameter above and
-  # res$headers$`Content-type` <- "text/plain"
-  # res$body <- content
-  # then return the res object instead of 'content' object.
+#* @serializer contentType list(type="application/pdf")
+#* @get /sample.pdf
+function(){
+  tmp <- tempfile()
+  pdf(tmp)
+  plot(1:10, type="b")
+  text(4, 8, "PDF from plumber!")
+  text(6, 2, paste("The time is", Sys.time()))
+  dev.off()
+
+  readBin(tmp, "raw", n=file.info(tmp)$size)
 }
 ```
+Then you can download the file from the `http://localhost:8000/sample.pdf` end-point and save it as `samaple.pdf`. The trick is to name your end-point (`/sample.pdf`) with the file name you would like your users to save their file in.
 
 ## Error Handling
 
