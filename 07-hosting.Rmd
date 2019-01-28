@@ -220,7 +220,7 @@ http {
                 root /usr/share/nginx/html;
                 index index.html index.htm;
 
-                server_name MYSERVER.ORG
+                server_name MYSERVER.ORG;
 
                 location /app1/ {
                         proxy_pass http://app1:8000/;
