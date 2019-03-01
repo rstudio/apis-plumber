@@ -25,6 +25,8 @@ Annotation | Content Type | Description/References
 `@png` | `image/png` | `png()`
 `@serializer htmlwidget` | `text/html; charset=utf-8` | `htmlwidgets::saveWidget()`
 `@serializer unboxedJSON` | `application/json` | `jsonlite::toJSON(unboxed=TRUE)`
+`@serializer rds` | `application/octet-stream` | `base::serialize(version="2")`
+`@serializer rds3` | `application/octet-stream` | `base::serialize(version="3")`
 
 ### Bypassing Serialization
 
