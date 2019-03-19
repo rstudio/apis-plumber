@@ -320,6 +320,14 @@ Once you have npm and Node.js installed, you're ready to install pm2.
 ```
 sudo npm install -g pm2
 ```
+If you find errors like SSL Error: CERT_UNTRUSTED while using npm command then to bypass https we use below commands:
+```
+npm config set strict-ssl false
+```
+or set the registry URL from https or http like below: use
+```
+npm config set registry="http://registry.npmjs.org/"
+```
 
 This will install pm2 globally (`-g`) on your server, meaning you should now be able to run `pm2 --version` and get the version number of pm2 that you've installed.
 
