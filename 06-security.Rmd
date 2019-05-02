@@ -93,7 +93,7 @@ One solution in this case is to strip all special characters off of the user inp
 include_r("files/apis/07-04-file-safe.R")
 ```
 
-File paths are not the opportunity for malicious input to do damage to your system, however. Another way in which user input can be dangerous is an attack known as "cross site scripting," or "XSS." This attack can be leveraged whenever user input may be rendered in a user's browser. For instance if you had an endpoint which allows users to comment on a page and then later displays those comments to other users, an attacked could craft a comment such as: 
+File paths are not the only opportunity for malicious input to do damage to your system, however. Another way in which user input can be dangerous is an attack known as "cross site scripting," or "XSS." This attack can be leveraged whenever user input may be rendered in a user's browser. For instance if you had an endpoint which allows users to comment on a page and then later displays those comments to other users, an attacked could craft a comment such as: 
 
 ```
 "This is a comment with JavaScript! <script>alert('I could do something bad here!');</script>
