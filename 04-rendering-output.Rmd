@@ -24,7 +24,7 @@ Annotation | Content Type | Description/References
 `@jpeg` | `image/jpeg` | `jpeg()`
 `@png` | `image/png` | `png()`
 `@serializer htmlwidget` | `text/html; charset=utf-8` | `htmlwidgets::saveWidget()`
-`@serializer unboxedJSON` | `application/json` | `jsonlite::toJSON(unboxed=TRUE)`
+`@serializer unboxedJSON` | `application/json` | `jsonlite::toJSON(auto_unbox=TRUE)`
 
 ### Bypassing Serialization
 
