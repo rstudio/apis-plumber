@@ -117,9 +117,9 @@ CMD ["/app/plumber.R"]
 
 This Dockerfile would just extend the `trestletech/plumber` image in two ways. First, it `RUN`s one additional command to install the `broom` package. Second, it customizes the default `CMD` argument that will be used when running the image. In this case, you would be expected to mount a Plumber application into the container at `/app/plumber.R`
 
-You could then build your custom Docker image from this Dockerfile using the command `docker build -t myCustomDocker .` (where `.` -- the current directory -- is the directory where that Dockerfile is stored).
+You could then build your custom Docker image from this Dockerfile using the command `docker build -t mycustomdocker .` (where `.` -- the current directory -- is the directory where that Dockerfile is stored).
 
-Then you'd be able to use `docker run --rm -v `pwd`:/app myCustomDocker` to run your custom image, passing in your application's directory as a volume mounted at `/app`.
+Then you'd be able to use `docker run --rm -v `pwd`:/app mycustomdocker` to run your custom image, passing in your application's directory as a volume mounted at `/app`.
 
 ### Automatically Run on Restart
 
