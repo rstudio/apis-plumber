@@ -342,7 +342,8 @@ Unfortunately, pm2 doesn't understand R scripts natively; however, it is possibl
 library(plumber)
 pr <- plumb('myfile.R')
 pr$run(port=4000, host="0.0.0.0") 
-#Setting the host option on a VM instance ensures the application can be accessed externally. This may be only true for Linux users.
+# Setting the host option on a VM instance ensures the application can be accessed externally.
+# (This may be only true for Linux users.)
 ```
 
 Save this R script on your server as something like `run-myfile.R`. You should also make it executable by changing the permissions on the file using a command like `chmod 755 run-myfile.R`. You should now execute that file to make sure that it runs the service like you expect. You should be able to make requests to your server on the appropriate port and have the plumber service respond. You can kill the process using `Ctrl-c` when you're convinced that it's working. Make sure the shell script is in a permanent location so that it won't be erased or modified accidentally. You can consider creating a designated directory for all your plumber services in some directory like `/usr/local/plumber`, then put all services and their associated Rscript-runners in their own subdirectory like `/usr/local/plumber/myfile/`.
@@ -365,7 +366,7 @@ At this point, you have a persistent pm2 service created for your Plumber applic
 
 You can repeat this process with all the plumber applications you want to deploy, as long as you give each a unique port to run on. Remember that you can't have more than one service running on a single port. And be sure to `pm2 save` every time you add services that you want to survive a restart.
 
-Run `netstat -tulpn` to see how the application is being ran. If you see the application on host 127.0.0.0/1, the application cannot be accessed externally. You should change the host parameter to 0.0.0.0 (quoted) in the `run` method of plumber
+Run `netstat -tulpn` to see how the application is being ran. If you see the application on host `127.0.0.0` or `127.0.0.1`, the application cannot be accessed externally. You should change the host parameter to `0.0.0.0`, for example: `pr$run(host = "0.0.0.0").
 
 ### Logs and Management
 
