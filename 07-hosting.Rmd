@@ -410,8 +410,8 @@ WantedBy=multi-user.target
 3. Activate the service (for auto-start on power/reboot) and start it:
 
 ```
-sudo systemctl enable plumber-api     # automatically start the service when the server boots
-sudo systemctl start plumber-api      # start the service right now
+sudo systemctl enable plumber-api  # automatically start the service when the server boots
+sudo systemctl start plumber-api   # start the service right now
 ```
 
 To check if your API is running, type `systemctl | grep running` in the terminal and should display `plumber-api.service \ loaded active running Plumber API`.
