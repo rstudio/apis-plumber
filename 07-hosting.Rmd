@@ -320,11 +320,11 @@ Once you have npm and Node.js installed, you're ready to install pm2.
 ```
 sudo npm install -g pm2
 ```
-If you find errors like SSL Error: CERT_UNTRUSTED while using npm command then to bypass https we use below commands:
+If you find errors like `SSL Error: CERT_UNTRUSTED` while using `npm` command, you can bypass the ssl error using:
 ```
 npm config set strict-ssl false
 ```
-or set the registry URL from https or http like below: use
+or set the registry URL from `https://` to `http://`:
 ```
 npm config set registry="http://registry.npmjs.org/"
 ```
