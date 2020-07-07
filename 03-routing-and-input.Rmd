@@ -238,6 +238,7 @@ Name | Example | Description
 `SERVER_NAME` | `"127.0.0.1"` | The host portion of the incoming request. You may favor `HTTP_HOST`, if available.
 `SERVER_PORT` | `"8000"` | The target port for the request
 `HTTP_*` | `"HTTP_USER_AGENT"` | Entries for all of the HTTP headers sent with this request.
+`args` | `"a=123"` | A list of the `QUERY_STRING` parameters and their values.
 
 ### Query Strings {#query-strings}
 
@@ -323,4 +324,35 @@ You can print out the names of all of the properties attached to the request by 
 
 // TODO: Conflicts between path, query string, body?
 
+### Form Submit
 
+One common way of developing API's is to submit a form with its inputs using a POST request. For example, to send the following information to the server, we may have the following HTML inputs:
+
+```html
+<h2>Basic submit form</h2>
+<form action="http://localhost:8000/submit" method="post">
+  <input type="text" placeholder="Email" name="email" required>
+  <input type="checkbox" name="bike" value="bike"> I have a bike
+  <input type="text" placeholder="Bike color" name="color">
+  <button type="submit">Submit</button>
+</form>
+```
+
+and  a `/submit` endpoint as below:
+
+```{r, echo=FALSE, results='asis'}
+include_r("files/apis/03-06-args.R")
+```
+
+The `name` in the inputs correspond to the `names` of the `req$args` list passed to the Plumber endpoint.
+
+To run/test the example above, using `plumber`:
+
+```{r, eval=FALSE}
+p = plumber::plumb("files/apis/03-06-args.R")
+p$run(port = 8000)
+
+# then visit
+http://localhost:8000 # to see the form
+# http://localhost:8000/submit is the endpoint
+```
