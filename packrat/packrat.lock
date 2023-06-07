@@ -1,6 +1,6 @@
 PackratFormat: 1.4
 PackratVersion: 0.4.8.1
-RVersion: 3.4.1
+RVersion: 3.5.2
 Repos: CRAN=https://cran.rstudio.com/
 
 Package: R6
@@ -10,8 +10,14 @@ Hash: b2366cd9d2f3851a5704b4e192b985c2
 
 Package: Rcpp
 Source: CRAN
-Version: 0.12.11
-Hash: 2ee22f3b5e75dec80b1d8eca61cd96d8
+Version: 1.0.0
+Hash: c7273c0f0bc9f5e41f4c52a8cf571f0f
+
+Package: askpass
+Source: CRAN
+Version: 1.1
+Hash: 6f6c430e3cd0dd7d48f447700f4d7e7f
+Requires: sys
 
 Package: backports
 Source: CRAN
@@ -74,8 +80,8 @@ Requires: stringr
 
 Package: git2r
 Source: CRAN
-Version: 0.18.0
-Hash: 9dfaafbcca68be29b89ef7783dc1dac0
+Version: 0.24.0
+Hash: 39f31b2fa33028b8c4f16d527ab01b19
 
 Package: highr
 Source: CRAN
@@ -85,13 +91,13 @@ Hash: aa3d5b7912b5fed4b546ed5cd2a1760b
 Package: htmltools
 Source: CRAN
 Version: 0.3.6
-Hash: eeba9fb36d4cb6cc66f060187102be41
+Hash: 9707abea0a9b7406e98fb1242e97e1f6
 Requires: Rcpp, digest
 
 Package: httpuv
 Source: CRAN
 Version: 1.3.5
-Hash: e2d5ec877601df43efe66e9096d0fc93
+Hash: fbc2b034e883fc194ffd255805d9bb64
 Requires: Rcpp
 
 Package: httr
@@ -135,8 +141,9 @@ Hash: 463550cf44fb6f0a2359368f42eebe62
 
 Package: openssl
 Source: CRAN
-Version: 0.9.6
-Hash: 5f4711e142a44655dfea4d64fcf2f641
+Version: 1.2.1
+Hash: c3c2751a977ed402ec7a2a32698fb533
+Requires: askpass
 
 Package: packrat
 Source: CRAN
@@ -181,6 +188,10 @@ Source: CRAN
 Version: 1.2.0
 Hash: 25a86d7f410513ebb7c0bc6a5e16bdc3
 Requires: magrittr, stringi
+
+Package: sys
+Source: CRAN
+Version: 2.1
 
 Package: whisker
 Source: CRAN

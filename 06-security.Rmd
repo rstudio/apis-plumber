@@ -5,9 +5,6 @@ The majority of R programmers have not been trained to give much attention to th
 
 There are a variety of factors and attacks that you should consider when developing your Plumber APIs, but the attention you give to each will vary based on the audience of your API. On one extreme, if your API is running on an internal server on your own network and uses authentication to restrict access to only a handful of trusted users, you may be justified in overlooking some of these attack vectors. On the other hand, if your Plumber API is available on the Internet with no authentication, then you should seriously consider each of these potential vulnerabilities and convince yourself that you have properly accounted for each.
 
-// TODO: HTTPS
-// TODO: HSTS: https://www.troyhunt.com/understanding-http-strict-transport/
-
 ## Networking & Firewalls {#networking}
 
 From a networking standpoint, there are two fundamentally different approaches for developing R code.
@@ -20,6 +17,19 @@ In the first case, there's typically very little to consider from a networking p
 In the second case, however, you may need to consider the network environment in between yourself and the server running the API. These are the same considerations you'll need to make when hosting an API on a server for production use. In particular, you should investigate whether or not there are any firewalls between the server hosting the Plumber API and the clients that you want to be able to connect.
 
 Firewalls are a way to block undesired network traffic. Most desktop computers and many servers come with firewalls enabled out-of-the-box. This means that if you want to expose your API running on port 8000, you will need to configure your firewall to accept incoming connections on that port. Firewalls can also be configured on other network intermediaries, so you may need to configure multiple firewalls to allow traffic through in order to expose the desired port to your API clients.
+
+## HTTPS
+
+HTTPS is a secure form of HTTP. Many people are now aware that they should check that their browser displays a padlock associated with HTTPS before they enter sensitive information like a credit card number. HTTPS is important to consider when developing Plumber APIs, as well. HTTPS primarily offers two protections:
+
+1. It encrypts the information being sent between the API client and the Plumber process using TLS (often still referred to as its predecessor, "SSL"). This prevents others on the network from being able to read the information being sent back and forth.
+2. It gives the API client confidence that it's communicating with your Plumber process, as opposed to an imposter.
+
+These two assurances are critical if your API will be handling any sensitive data or performing actions intended only for authenticated users. Some hosting options support serving on both HTTP and HTTPS simultaneously. The most secure configuration would be to redirect incoming HTTP traffic to your HTTPS hosting option.
+
+As an added layer of protection, you can consider enabling [HTTP Strict Transport Security (HSTS)](https://www.troyhunt.com/understanding-http-strict-transport/). HSTS is a way to instruct clients that -- in the future -- they should refuse to connect to this server over unsecure HTTP. This ensures that no imposter server would be able to trick a client into connecting over insecure HTTP in the future. 
+
+Unfortunately, Plumber does not implement HTTPS support natively, but most of the [documented hosting options](#hosting) offer ways to deploy HTTPS and HSTS in front of your Plumber API.
 
 ## Denial Of Service (DoS) {#dos}
 
@@ -83,7 +93,7 @@ One solution in this case is to strip all special characters off of the user inp
 include_r("files/apis/07-04-file-safe.R")
 ```
 
-File paths are not the opportunity for malicious input to do damage to your system, however. Another way in which user input can be dangerous is an attack known as "cross site scripting," or "XSS." This attack can be leveraged whenever user input may be rendered in a user's browser. For instance if you had an endpoint which allows users to comment on a page and then later displays those comments to other users, an attacked could craft a comment such as: 
+File paths are not the only opportunity for malicious input to do damage to your system, however. Another way in which user input can be dangerous is an attack known as "cross site scripting," or "XSS." This attack can be leveraged whenever user input may be rendered in a user's browser. For instance if you had an endpoint which allows users to comment on a page and then later displays those comments to other users, an attacked could craft a comment such as: 
 
 ```
 "This is a comment with JavaScript! <script>alert('I could do something bad here!');</script>

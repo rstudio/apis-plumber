@@ -117,9 +117,9 @@ CMD ["/app/plumber.R"]
 
 This Dockerfile would just extend the `trestletech/plumber` image in two ways. First, it `RUN`s one additional command to install the `broom` package. Second, it customizes the default `CMD` argument that will be used when running the image. In this case, you would be expected to mount a Plumber application into the container at `/app/plumber.R`
 
-You could then build your custom Docker image from this Dockerfile using the command `docker build -t myCustomDocker .` (where `.` -- the current directory -- is the directory where that Dockerfile is stored).
+You could then build your custom Docker image from this Dockerfile using the command `docker build -t mycustomdocker .` (where `.` -- the current directory -- is the directory where that Dockerfile is stored).
 
-Then you'd be able to use `docker run --rm -v `pwd`:/app myCustomDocker` to run your custom image, passing in your application's directory as a volume mounted at `/app`.
+Then you'd be able to use `docker run --rm -v `pwd`:/app mycustomdocker` to run your custom image, passing in your application's directory as a volume mounted at `/app`.
 
 ### Automatically Run on Restart
 
@@ -220,7 +220,7 @@ http {
                 root /usr/share/nginx/html;
                 index index.html index.htm;
 
-                server_name MYSERVER.ORG
+                server_name MYSERVER.ORG;
 
                 location /app1/ {
                         proxy_pass http://app1:8000/;
@@ -286,7 +286,7 @@ The next time you start/redeploy your Docker Compose cluster, you'll be balancin
 
 Do keep in mind that when using load-balancing that it's not longer guaranteed that subsequent requests for a particular application will land on the same process. This means that if you maintain any state in your Plumber application (like a global counter, or a user's session state), you can't expect that to be shared across the processes that the user might encounter. There are at least three possible solutions to this problem:
 
- 1. Use a more robust means of maintaing state. You could put the state in a database, for instance, that lives outside of your R processes and your Plumber processes could get and save their state externally.
+ 1. Use a more robust means of maintaining state. You could put the state in a database, for instance, that lives outside of your R processes and your Plumber processes could get and save their state externally.
  2. You could serialize the state to the user using [(encrypted) session cookies](#encrypted-cookies), assuming it's small enough. In this scenario, your workers would write data back to the user in the form of a cookie, then the user would include that same cookie in its subsequent requests. This works best if the state is going to be set rarely and read often (for instance, the cookie could be set when the user logs in, then read on each request to detect the identity of this user).
  3. You can enable "sticky sessions" in the HAProxy load balancer. This would ensure that each user's traffic always gets routed to the same worker. The downside of this approach is that it will distribute traffic less evenly. You could end up in a situation in which you have 2 R processes for an application but 90% of your traffic is hitting one of them if it happens the users triggering the majority of the requests are all "stuck" to one particular worker.
 
@@ -320,6 +320,14 @@ Once you have npm and Node.js installed, you're ready to install pm2.
 ```
 sudo npm install -g pm2
 ```
+If you find errors like `SSL Error: CERT_UNTRUSTED` while using `npm` command, you can bypass the ssl error using:
+```
+npm config set strict-ssl false
+```
+or set the registry URL from `https://` to `http://`:
+```
+npm config set registry="http://registry.npmjs.org/"
+```
 
 This will install pm2 globally (`-g`) on your server, meaning you should now be able to run `pm2 --version` and get the version number of pm2 that you've installed.
 
@@ -341,7 +349,9 @@ Unfortunately, pm2 doesn't understand R scripts natively; however, it is possibl
 
 library(plumber)
 pr <- plumb('myfile.R')
-pr$run(port=4000)
+pr$run(port=4000, host="0.0.0.0") 
+# Setting the host option on a VM instance ensures the application can be accessed externally.
+# (This may be only true for Linux users.)
 ```
 
 Save this R script on your server as something like `run-myfile.R`. You should also make it executable by changing the permissions on the file using a command like `chmod 755 run-myfile.R`. You should now execute that file to make sure that it runs the service like you expect. You should be able to make requests to your server on the appropriate port and have the plumber service respond. You can kill the process using `Ctrl-c` when you're convinced that it's working. Make sure the shell script is in a permanent location so that it won't be erased or modified accidentally. You can consider creating a designated directory for all your plumber services in some directory like `/usr/local/plumber`, then put all services and their associated Rscript-runners in their own subdirectory like `/usr/local/plumber/myfile/`.
@@ -364,6 +374,8 @@ At this point, you have a persistent pm2 service created for your Plumber applic
 
 You can repeat this process with all the plumber applications you want to deploy, as long as you give each a unique port to run on. Remember that you can't have more than one service running on a single port. And be sure to `pm2 save` every time you add services that you want to survive a restart.
 
+Run `netstat -tulpn` to see how the application is being ran. If you see the application on host `127.0.0.0` or `127.0.0.1`, the application cannot be accessed externally. You should change the host parameter to `0.0.0.0`, for example: `pr$run(host = "0.0.0.0").
+
 ### Logs and Management
 
 Now that you have your applications defined in pm2, you may want to drill down into them to manage or debug them. If you want to see more information, use the `pm2 show` command and specify the name of the application from `pm2 list`. This is usually the same as the name of the shell script you specified, so it may be something like `pm2 show run-myfile`. 
@@ -373,3 +385,45 @@ You can peruse this information but keep an eye on the `restarts` count for your
 Thankfully, pm2 automatically manages the log files from your underlying processes. If you ever need to check the log files of a service, you can just run `pm2 logs run-myfile`, where `myfile` is again the name of the service obtained from `pm2 list`. This command will show you the last few lines logged from your process, and then begin streaming any incoming log lines until you exit (`Ctrl-c`). 
 
 If you want a big-picture view of the health of your server and all the pm2 services, you can run `pm2 monit` which will show you a dashboard of the RAM and CPU usage of all your services.
+
+## systemd {#systemd}
+
+> `systemd` is the service manager used by certain Linux distributions including RedHat/CentOS 7, SUSE 12, and Ubuntu versions 16.04 and later. 
+
+If you use a Linux server you can use `systemd` to run Plumber as a service that can be accessed from your local network or even outside your network depending on your firewall rules. This option is similar to using the [Docker method](#docker). One of the main advantages of using `systemd` over using Docker is that `systemd` won't bypass firewall rules (Docker does!) and avoids the overhead of running a container.
+
+Compared to `plumber::do_provision()` this option won't create a new droplet if you use [Digital Ocean](#digitalocean); it will run on your existing droplet instead.
+
+To implement this option you'll complete the following three steps from the terminal:
+
+1. Verify that you have the `plumber` package available globally on the server:
+
+```
+R -e 'install.packages("plumber", repos = "https://cran.rstudio.com/")'
+```
+
+2. Run `sudo nano /etc/systemd/system/plumber-api.service`, then paste and adapt this content:
+
+```
+[Unit]
+Description=Plumber API
+# After=postgresql 
+# (or mariadb, mysql, etc if you use a DB with Plumber, otherwise leave this commented)
+
+[Service]
+ExecStart=/usr/bin/Rscript -e "api <- plumber::plumb('/your-dir/your-api-script.R'); api$run(port=8080, host='0.0.0.0')"
+Restart=on-abnormal
+WorkingDirectory=/your-dir/
+
+[Install]
+WantedBy=multi-user.target
+```
+
+3. Activate the service (for auto-start on power/reboot) and start it:
+
+```
+sudo systemctl enable plumber-api  # automatically start the service when the server boots
+sudo systemctl start plumber-api   # start the service right now
+```
+
+To check if your API is running, type `systemctl | grep running` in the terminal and should display `plumber-api.service \ loaded active running Plumber API`.
